@@ -28,6 +28,3 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-
-### ESLint Fix
-./node_modules/.bin/eslint --fix . --ext .js,.vue src
