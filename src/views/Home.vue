@@ -45,15 +45,6 @@
 
             <mapChart></mapChart>
             <!--
-            <input id="new-word-search">
-            <button type="button" @click="addNewWord">Add new word</button>
-            <li v-for="(word,i) in queryTerms" :key="i">
-                {{word}}
-                <button type="button" @click="removeWord(i)">Remove word</button>
-            </li>
-            -->
-
-            <!--
             <d3-l-choropleth :data="mapData">
             </d3-l-choropleth>
             -->
@@ -84,8 +75,7 @@ export default {
       freqTemporalData: [],
       mapData: { coordinates: [{ lat: -25.363, lng: 131.044 }, { lat: 12.97, lng: 77.59 }] },
       queryTerms: ['haus'],
-      // engineApi: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
-      engineApi: ' https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
+      engineApi: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
       timeFreqQuery: 'freqtt?corpname=amc3_demo&format=json&fttattr=doc.year',
     };
   },
@@ -93,76 +83,21 @@ export default {
   },
   mounted() {
     console.log('Home loaded');
-    this.fetchData();
+    console.log(this.$corpusProvider);
     // this.fetchMapData();
   },
   watch: {
-    /*
-  	queryTerms: function(newVal, oldVal) {
-    	console.log('value changed from ' + oldVal + ' to ' + newVal);
-    },
-    */
-    /*
-    queryTerms(val) {
-      this.fetchData();
-      // console.log(this.queryTerms);
-    },
-    */
   },
   methods: {
     onQueryTermAdded(queryTerm) {
       this.fetchData(queryTerm);
-      //console.log(this.queryTerms);
     },
 
     onQueryTermRemoved(queryTerm) {
       this.freqTemporalData = this.freqTemporalData.filter(function( termData ) {
           return termData.group !== queryTerm;
       });
-      /*
-      for (let i = 0; i <= this.freqTemporalData.length; i += 1) {
-        if (this.freqTemporalData[i]["group"] == queryTerm) {
-          console.log(this.freqTemporalData[i]);
-          console.log(i);
-          this.freqTemporalData.splice(i, 1);
-        } else {
-          console.log("Not this: " + this.freqTemporalData[i]);
-          console.log("Not this: " + i);
-        }
-      }
-      console.log(this.freqTemporalData);
-      */
-      /*
-      for(var termData in this.freqTemporalData) {
-        if(termData["group"] == queryTerm) {
-          console.log(termData);
-          //delete termData;
-        }
-      }
-      */
-      //delete this.freqTemporalData[[queryTerm]];
-      /*
-      for (let i = 0; i < this.freqTemporalData.length; i++) { 
-          if(this.freqTemporalData[i].hasOwnProperty('references')) { 
-              a.splice(i, 1);
-          } 
-      }
-      
-      this.freqTemporalData = this.freqTemporalData.filter(function(key) { 
-        return key !== queryTerm; 
-      });
-      */
-      //console.log(this.queryTerms);
     },
-    /*
-    addNewWord() {
-      const newWord = document.getElementById('new-word-search').value;
-      this.queryTerms.push(newWord);
-    },
-    removeWord(index) {
-      this.queryTerms.splice(index, 1);
-    },
-    */
     fetchData(queryTerm) {
       if (queryTerm) {
         this.axios.get(`${this.engineApi + this.timeFreqQuery}&q=q[lc="${queryTerm}"]`)
