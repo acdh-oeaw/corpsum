@@ -1,4 +1,10 @@
 export default {
+  data() {
+    return {
+      engineApi: 'http://192.168.3.19:3010/corpus/',
+      timeFreqQuery: 'freqtt?corpname=amc3_demo&format=json&fttattr=doc.year',
+    };
+  },
   methods: {
     processFreqTemporalData(data, word) {
       const items = data.Blocks[0].Items;

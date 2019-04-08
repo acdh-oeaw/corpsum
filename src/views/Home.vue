@@ -61,7 +61,7 @@
 // import HelloWorld from '@/components/HelloWorld.vue';
 import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
-import corpusInterface from '@/mixins/corpusInterface';
+import corpusInterface from '@/interfaces/corpusInterface';
 
 export default {
   name: 'home',
@@ -75,38 +75,27 @@ export default {
       freqTemporalData: [],
       mapData: { coordinates: [{ lat: -25.363, lng: 131.044 }, { lat: 12.97, lng: 77.59 }] },
       queryTerms: ['haus'],
-      engineApi: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
-      timeFreqQuery: 'freqtt?corpname=amc3_demo&format=json&fttattr=doc.year',
     };
   },
   created() {
   },
   mounted() {
     console.log('Home loaded');
-    console.log(this.$corpusProvider);
     // this.fetchMapData();
   },
   watch: {
   },
   methods: {
     onQueryTermAdded(queryTerm) {
-      this.fetchData(queryTerm);
+      this.queryFreqTemporalData(this.freqTemporalData, queryTerm)
+        .then((response) => {
+        this.freqTemporalData = response;
+      });
     },
-
     onQueryTermRemoved(queryTerm) {
       this.freqTemporalData = this.freqTemporalData.filter(function( termData ) {
           return termData.group !== queryTerm;
       });
-    },
-    fetchData(queryTerm) {
-      if (queryTerm) {
-        this.axios.get(`${this.engineApi + this.timeFreqQuery}&q=q[lc="${queryTerm}"]`)
-          .then((response) => {
-            const wordFreq = this.processFreqTemporalData(response.data, queryTerm);
-            this.freqTemporalData = this.freqTemporalData.concat(wordFreq);
-            console.log(this.freqTemporalData);
-          });
-      }
     },
     fetchMapData() {
       this.axios.get('https://raw.githubusercontent.com/timwis/leaflet-choropleth/gh-pages/examples/basic/crimes_by_district.geojson')
