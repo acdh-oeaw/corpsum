@@ -1,50 +1,81 @@
 <template>
-  <div class="home">
-    <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <mapChart></mapChart>
-    <input id="new-word-search">
-    <button type="button" @click="addNewWord">Add new word</button>
-    <li v-for="(word,i) in checkedWords" :key="i">
-        {{word}}
-        <button type="button" @click="removeWord(i)">Remove word</button>
-    </li>
+  <div id="app">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">vis-corpus</a>
+      <tags-input element-id="queryTerms" class="w-100"
+        v-model="queryTerms"
+        placeholder="Type another term to query"
+        @tag-added="onQueryTermAdded"
+        @tag-removed="onQueryTermRemoved">
+      </tags-input>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
 
-    <!--
-    <div id='example-3'>
-      <input type="checkbox" id="haus" value="haus" v-model="checkedWords">
-      <label for="haus">haus</label>
-      <input type="checkbox" id="auto" value="auto" v-model="checkedWords">
-      <label for="auto">auto</label>
-      <input type="checkbox" id="ball" value="ball" v-model="checkedWords">
-      <label for="ball">ball</label>
-      <br>
-      <span>Checked workds: {{ checkedWords }}</span>
+        <sideNav></sideNav>
+
+        <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="btn-group mr-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                Dropdown
+              </button>
+            </div>
+          </div>
+
+          <div class="home">
+            <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
+
+            <d3-multi-line
+                :data="freqTemporalData"
+                width="100%"
+                height="300px">
+            </d3-multi-line>
+
+            <mapChart></mapChart>
+            <!--
+            <input id="new-word-search">
+            <button type="button" @click="addNewWord">Add new word</button>
+            <li v-for="(word,i) in queryTerms" :key="i">
+                {{word}}
+                <button type="button" @click="removeWord(i)">Remove word</button>
+            </li>
+            -->
+
+            <!--
+            <d3-l-choropleth :data="mapData">
+            </d3-l-choropleth>
+            -->
+          </div>
+
+        </main>
+      </div>
     </div>
-    -->
-    <span>Checked workds: {{ checkedWords }}</span>
-    <d3-multi-line
-        :data="freqTemporalData"
-        width="100%"
-        height="300px">
-    </d3-multi-line>
-
-    <!--
-    <d3-l-choropleth :data="mapData">
-    </d3-l-choropleth>
-    -->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue';
+import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
 import corpusInterface from '@/mixins/corpusInterface';
 
 export default {
   name: 'home',
   components: {
-    mapChart,
+    sideNav, mapChart,
     // HelloWorld,
   },
   mixins: [corpusInterface],
@@ -52,9 +83,9 @@ export default {
     return {
       freqTemporalData: [],
       mapData: { coordinates: [{ lat: -25.363, lng: 131.044 }, { lat: 12.97, lng: 77.59 }] },
-      checkedWords: ['haus'],
+      queryTerms: ['haus'],
       // engineApi: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
-      engineApi: 'https://asilcetin.com/projects/amc-temp/api.php?',
+      engineApi: ' https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
       timeFreqQuery: 'freqtt?corpname=amc3_demo&format=json&fttattr=doc.year',
     };
   },
@@ -66,26 +97,79 @@ export default {
     // this.fetchMapData();
   },
   watch: {
-    checkedWords(val) {
-      this.fetchData();
-      console.log(this.checkedWords);
+    /*
+  	queryTerms: function(newVal, oldVal) {
+    	console.log('value changed from ' + oldVal + ' to ' + newVal);
     },
+    */
+    /*
+    queryTerms(val) {
+      this.fetchData();
+      // console.log(this.queryTerms);
+    },
+    */
   },
   methods: {
+    onQueryTermAdded(queryTerm) {
+      this.fetchData(queryTerm);
+      //console.log(this.queryTerms);
+    },
+
+    onQueryTermRemoved(queryTerm) {
+      this.freqTemporalData = this.freqTemporalData.filter(function( termData ) {
+          return termData.group !== queryTerm;
+      });
+      /*
+      for (let i = 0; i <= this.freqTemporalData.length; i += 1) {
+        if (this.freqTemporalData[i]["group"] == queryTerm) {
+          console.log(this.freqTemporalData[i]);
+          console.log(i);
+          this.freqTemporalData.splice(i, 1);
+        } else {
+          console.log("Not this: " + this.freqTemporalData[i]);
+          console.log("Not this: " + i);
+        }
+      }
+      console.log(this.freqTemporalData);
+      */
+      /*
+      for(var termData in this.freqTemporalData) {
+        if(termData["group"] == queryTerm) {
+          console.log(termData);
+          //delete termData;
+        }
+      }
+      */
+      //delete this.freqTemporalData[[queryTerm]];
+      /*
+      for (let i = 0; i < this.freqTemporalData.length; i++) { 
+          if(this.freqTemporalData[i].hasOwnProperty('references')) { 
+              a.splice(i, 1);
+          } 
+      }
+      
+      this.freqTemporalData = this.freqTemporalData.filter(function(key) { 
+        return key !== queryTerm; 
+      });
+      */
+      //console.log(this.queryTerms);
+    },
+    /*
     addNewWord() {
       const newWord = document.getElementById('new-word-search').value;
-      this.checkedWords.push(newWord);
+      this.queryTerms.push(newWord);
     },
     removeWord(index) {
-      this.checkedWords.splice(index, 1);
+      this.queryTerms.splice(index, 1);
     },
-    fetchData() {
-      this.freqTemporalData = [];
-      for (let i = 0; i < this.checkedWords.length; i += 1) {
-        this.axios.get(`${this.engineApi + this.timeFreqQuery}&q=q[lc="${this.checkedWords[i]}"]`)
+    */
+    fetchData(queryTerm) {
+      if (queryTerm) {
+        this.axios.get(`${this.engineApi + this.timeFreqQuery}&q=q[lc="${queryTerm}"]`)
           .then((response) => {
-            const wordFreq = this.processFreqTemporalData(response.data, this.checkedWords[i]);
+            const wordFreq = this.processFreqTemporalData(response.data, queryTerm);
             this.freqTemporalData = this.freqTemporalData.concat(wordFreq);
+            console.log(this.freqTemporalData);
           });
       }
     },
