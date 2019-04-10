@@ -43,11 +43,8 @@
                 height="300px">
             </d3-multi-line>
 
-            <mapChart></mapChart>
-            <!--
-            <d3-l-choropleth :data="mapData">
-            </d3-l-choropleth>
-            -->
+            <mapChart :mapData="mapData"></mapChart>
+
           </div>
 
         </main>
@@ -73,36 +70,37 @@ export default {
   data() {
     return {
       freqTemporalData: [],
-      mapData: { coordinates: [{ lat: -25.363, lng: 131.044 }, { lat: 12.97, lng: 77.59 }] },
-      queryTerms: ['haus'],
+      mapData: [],
+      queryTerms: ['coche'],
     };
   },
   created() {
   },
   mounted() {
-    console.log('Home loaded');
-    // this.fetchMapData();
+    /*
+    this.queryRegionsData()
+      .then((response) => {
+      this.mapData = response;
+    });
+    */
   },
   watch: {
   },
   methods: {
     onQueryTermAdded(queryTerm) {
-      this.queryFreqTemporalData(this.freqTemporalData, queryTerm)
+      this.initialSearchQuery(this.freqTemporalData, this.mapData, queryTerm)
         .then((response) => {
-        this.freqTemporalData = response;
+        this.freqTemporalData = response.temporal;
+        this.mapData = response.regional;
       });
     },
     onQueryTermRemoved(queryTerm) {
       this.freqTemporalData = this.freqTemporalData.filter(function( termData ) {
           return termData.group !== queryTerm;
       });
-    },
-    fetchMapData() {
-      this.axios.get('https://raw.githubusercontent.com/timwis/leaflet-choropleth/gh-pages/examples/basic/crimes_by_district.geojson')
-        .then((response) => {
-          this.mapData = response.data.features;
-          console.log(response.data.features);
-        });
+      this.mapData = this.mapData.filter(function( termData ) {
+          return mapData.group !== queryTerm;
+      });
     },
   },
 };

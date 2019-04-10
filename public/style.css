@@ -104,3 +104,37 @@ body {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
+
+
+/* App Styles * /
+
+/* Tags input overwrites */
+.tags-input-badge {
+  font-size: 100%;
+}
+
+.tags-input-badge-pill {
+  padding: 0.5rem 0.5rem;
+  border-radius: .25rem;
+}
+
+.tags-input-wrapper-default {
+  border: 0;
+  background: #ffffff;
+  padding: .25rem .5rem;
+}
+
+.tags-input span {
+  margin-right: 0.4rem;
+}
+
+.tags-input-badge-selected-default {
+  background-color: #eff2f5;
+  box-shadow: 1px 1px 0px 0px #afafafba;
+}
+
+.tags-input-remove {
+  width: 0.75rem;
+  height: 0.75rem;
+  vertical-align: middle;
+}
