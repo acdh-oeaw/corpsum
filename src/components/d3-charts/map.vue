@@ -103,7 +103,7 @@ export default {
       const maxValue = d3.max(mapData, function(d) { return d.value });
       
       const colorScale = d3.scaleLinear().domain([0, maxValue]).range(['beige', 'red']);
-      const sizeScale = d3.scaleLinear().domain([0, maxValue]).range([10, 50]);
+      const sizeScale = d3.scaleLinear().domain([0, maxValue]).range([6, 12]);
       const ordinalColorScale = d3.scaleOrdinal(d3.schemeCategory10);
       const ordinalPositionScale = d3.scaleOrdinal().range([0, 20, 40, 60]);
 
@@ -186,32 +186,43 @@ export default {
           }
         })
 
-        var arcs = countryPies
-        .selectAll(".country-arc")
-        .data(function(d) { return pie(d) })
-        .enter()
-        .append("g")
-        .attr("class", function(d, i) { return "arc arc-" + d.data.group; })
+        countryPies.each(function(d){
+            let pieTotalFreq = 0;
+            for (let i = 0; i < d.length; i += 1) {
+              pieTotalFreq += parseInt(d[i].value);
+            }
+            arc = arc.outerRadius(sizeScale(pieTotalFreq));
 
-        arcs.append("path")
-        .attr("d", arc)
-        .attr("fill", function(d) {
-          return ordinalColorScale(d.data.group);
-        })
-        .on("mouseover", function(d) {
-          d3.select(this.parentNode).selectAll("text")
-          .style("display", "block");
-        })
-        .on("mouseout", function(d) {
-          d3.select(this.parentNode).selectAll("text")
-          .style("display", "none");
+            var slice = d3.select(this)
+            .selectAll(".country-arc")
+            .data(function(d) { return pie(d) })
+            .enter()
+            .append("g")
+            .attr("class", function(d, i) { return "arc arc-" + d.data.group; })
+
+            slice.append("path")
+            .attr("d", arc)
+            .attr("fill", function(d) {
+              return ordinalColorScale(d.data.group);
+            })
+            .on("mouseover", function(d) {
+              d3.select(this.parentNode).selectAll("text")
+              .style("display", "block");
+            })
+            .on("mouseout", function(d) {
+              d3.select(this.parentNode).selectAll("text")
+              .style("display", "none");
+            })
+
+            slice.append("text")
+            .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+            .attr("dy", ".35em")
+            .style("display", "none")
+            .text(function(d) { return d.data.group; });
+ 
         })
 
-        arcs.append("text")
-        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
-        .attr("dy", ".35em")
-        .style("display", "none")
-        .text(function(d) { return d.data.group; });
+
 
 /*
         .data(pie(function(d) { console.log(d); return d.value; }))
