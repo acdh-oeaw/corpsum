@@ -62,33 +62,33 @@ export default {
       return geoMapData;
     },
     appendMapData(mapData, geoMapData) {
-
-      d3.selectAll(".pie-country").remove();
+      console.log(mapData)
+      d3.selectAll(".country-pie").remove();
 
       const countries = [
         { id: '032', name: "Argentina" },
         { id: '068', name: "Bolivia" },
-        { id: 152, name: "Chile" },
-        { id: 170, name: "Colombia" },
-        { id: 188, name: "Costa_Rica" },
-        { id: 192, name: "Cuba" },
-        { id: 218, name: "Ecuador" },
-        { id: 222, name: "El_Salvador" },
-        { id: 724, name: "España" },
-        { id: 840, name: "Estados_Unidos" },
-        { id: 608, name: "Filipinas" },
-        { id: 320, name: "Guatemala" },
-        { id: 226, name: "Guinea_Ecuatorial" },
-        { id: 340, name: "Honduras" },
-        { id: 484, name: "México" },
-        { id: 558, name: "Nicaragua" },
-        { id: 591, name: "Panamá" },
-        { id: 600, name: "Paraguay" },
-        { id: 604, name: "Perú" },
-        { id: 630, name: "Puerto_Rico" },
-        { id: 214, name: "República_Dominicana" },
-        { id: 858, name: "Uruguay" },
-        { id: 862, name: "Venezuela" }
+        { id: '152', name: "Chile" },
+        { id: '170', name: "Colombia" },
+        { id: '188', name: "Costa Rica" },
+        { id: '192', name: "Cuba" },
+        { id: '218', name: "Ecuador" },
+        { id: '222', name: "El Salvador" },
+        { id: '724', name: "España" },
+        { id: '840', name: "Estados Unidos" },
+        { id: '608', name: "Filipinas" },
+        { id: '320', name: "Guatemala" },
+        { id: '226', name: "Guinea Ecuatorial" },
+        { id: '340', name: "Honduras" },
+        { id: '484', name: "México" },
+        { id: '558', name: "Nicaragua" },
+        { id: '591', name: "Panamá" },
+        { id: '600', name: "Paraguay" },
+        { id: '604', name: "Perú" },
+        { id: '630', name: "Puerto Rico" },
+        { id: '214', name: "República Dominicana" },
+        { id: '858', name: "Uruguay" },
+        { id: '862', name: "Venezuela" }
       ];
 
       for (let i = 0; i < mapData.length; i += 1) {
@@ -101,10 +101,12 @@ export default {
       }
 
       const maxValue = d3.max(mapData, function(d) { return d.value });
+      
       const colorScale = d3.scaleLinear().domain([0, maxValue]).range(['beige', 'red']);
       const sizeScale = d3.scaleLinear().domain([0, maxValue]).range([10, 50]);
       const ordinalColorScale = d3.scaleOrdinal(d3.schemeCategory10);
       const ordinalPositionScale = d3.scaleOrdinal().range([0, 20, 40, 60]);
+
 
         /*
         .attr("fill", function(d) {
@@ -147,8 +149,8 @@ export default {
 
       var mapData2 = groupBy(mapData, "key");
 
-      var width = 50,
-          height = 50,
+      var width = 35,
+          height = 35,
           radius = Math.min(width, height) / 2;
 
       var color = d3.scaleOrdinal()
@@ -164,7 +166,7 @@ export default {
 
       var pie = d3.pie()
           .sort(null)
-          .value(function(d) { return d.value; });
+          .value(function(d) { return d.relValue; });
 
 
       var countryPies = d3.select(".map-group").selectAll(".country-pie")

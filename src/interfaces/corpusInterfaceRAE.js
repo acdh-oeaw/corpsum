@@ -7,9 +7,9 @@ export default {
   methods: {
     initialSearchQuery(freqTemporalData, mapData, queryTerm) {
       const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', query: queryTerm }).then((response) => {
-        const facetsData = this.axios.post(`${this.engineApi}fetch-facets/`, { corpus: 'corpes', result: response.data.result }).then((facetsResponse) => {
-          const wordFreq = this.processFreqTemporalData(facetsResponse.data.facets[0], queryTerm);
-          const mapCountries = this.processCountriesMapData(facetsResponse.data.facets[3], queryTerm);
+        const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
+          const wordFreq = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
+          const mapCountries = this.processCountriesMapData(facetsResponse.data[1].data, queryTerm);
           return { temporal: freqTemporalData.concat(wordFreq), regional: mapData.concat(mapCountries) };
         });
         return facetsData;
@@ -17,10 +17,12 @@ export default {
       return updatedData;
     },
     processCountriesMapData(data, word) {
-      const items = data.values;
+      const items = data;
       const output = [];
       for (let i = 0; i < items.length; i += 1) {
-        output.push({ group: word, key: items[i].id, value: items[i].count });
+        output.push({
+          group: word, key: items[i][0], value: items[i][2], relValue: items[i][1],
+        });
       }
       // Sort by country
       output.sort((a, b) => a.key - b.key);
@@ -28,22 +30,17 @@ export default {
       return output;
     },
     processFreqTemporalData(data, word) {
-      const items = data.values;
+      const items = data;
       const output = [];
       for (let i = 0; i < items.length; i += 1) {
-        output.push({ group: word, key: items[i].id, value: items[i].count });
+        output.push({
+          group: word, key: items[i][0], value: items[i][2], relValue: items[i][1],
+        });
       }
       // Sort by year
       output.sort((a, b) => a.key - b.key);
       // Return processed data
       return output;
     },
-    queryRegionsData() {
-      const mapData = this.axios.get('http://timwis.com/leaflet-choropleth/examples/basic/crimes_by_district.geojson').then((response) => {
-        return response.data;
-      });
-      return mapData;
-    },
   },
 };
-
