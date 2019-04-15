@@ -53,6 +53,8 @@ export default {
             return "country-group"
           })
           .append("path")
+          .attr("stroke", "white")
+          .attr("stroke-width", 1)
           .attr("fill", function(d) {
             return '#ddd';
           })
@@ -178,13 +180,36 @@ export default {
         // position a circle for matches in mapData array
         .attr("transform", function(d) {
           var element = document.getElementById("country-"+d[0].id);
+          fillCountryColors(d);
           if (element) {
             var boundingBox = element.getBBox();
-            var x = Math.round(boundingBox.x) + ordinalPositionScale(d[0].group);
+            var x = Math.round(boundingBox.x);
             var y = Math.round(boundingBox.y);
             return "translate("+x+","+y+")";
           }
         })
+
+        function fillCountryColors(d) {
+          var max = d.reduce(function(l, e) {
+            return e.value > l.value ? e : l;
+          });
+          d3.select("#country-"+d[0].id).select("path")
+          .attr("fill", ordinalColorScale(max.group))
+        }
+
+
+
+/*
+        .attr("fill", function(d) {
+          for (let i = 0; i < mapData.length; i += 1) {
+            if (mapData[i].id == d.id) {
+              let country = mapData[i];
+              return colorScale(country.value);
+            }
+          }
+          return '#ddd';
+        })
+*/
 
         countryPies.each(function(d){
             let pieTotalFreq = 0;

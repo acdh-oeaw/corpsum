@@ -138,3 +138,11 @@ body {
   height: 0.75rem;
   vertical-align: middle;
 }
+
+
+/* d3 Components */
+
+/* Geo world map */
+.country-group {
+  opacity: 0.7;
+}
