@@ -37,16 +37,9 @@
           <div class="home">
             <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
 
-            <vue-plotly :data="freqTemporalData" :layout="layout" :options="options"/>
+            <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
 
-            <billboard-chart :options="chartData"></billboard-chart>
-
-            <d3-multi-line
-                class="vis-el"
-                :data="freqTemporalData"
-                width="100%"
-                height="300px">
-            </d3-multi-line>
+            <vue-plotly class="col-md-6" :data="temporalData.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
 
             <mapChart class="vis-el" :mapData="mapData"></mapChart>
 
@@ -76,34 +69,12 @@ export default {
   mixins: [corpusInterface],
   data() {
     return {
-      freqTemporalData: [],
-      layout: {},
-      options: {displaylogo: false, // displayModeBar: false},
+      temporalData: { absolute: [], relative: [] },
+      freqTemporalLayout: {title:'Temporal distribution of absolute frequencies'},
+      freqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
+      relFreqTemporalLayout: {title:'Temporal distribution of relative frequencies'},
+      relFreqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
       mapData: [],
-      chartData: {
-        title: {
-          text: 'Temporal distribution of absolute frequencies',
-        },
-        data: {
-          json: [
-            {name: "coche", value: 200, year: 2010},
-            {name: "coche", value: 100, year: 2011},
-            {name: "carro", value: 300, year: 2010},
-            {name: "carro", value: 400, year: 2011}
-          ],
-          keys: {
-            // x: "name", // it's possible to specify "x" when category axis
-            value: ["value"],
-            x: "year"
-          }
-        },
-        axis: {
-          x: {
-            type: "category"
-          }
-        },
-        type: 'spline',
-      },
       queryTerms: ["coche"],
     };
   },
@@ -115,16 +86,16 @@ export default {
   },
   methods: {
     onQueryTermAdded(queryTerm) {
-      this.initialSearchQuery(this.freqTemporalData, this.mapData, queryTerm)
+      this.initialSearchQuery(this.temporalData, this.mapData, queryTerm)
         .then((response) => {
-          this.freqTemporalData = response.temporal;
-          console.log(this.freqTemporalData);
+          this.temporalData = response.temporal;
           this.mapData = response.regional;
         });
     },
     onQueryTermRemoved(queryTerm) {
-      this.freqTemporalData = this.freqTemporalData.filter(termData => termData.group !== queryTerm);
-      this.mapData = this.mapData.filter(termData => termData.group !== queryTerm);
+      this.freqTemporalData.absolute = this.freqTemporalData.absolute.filter(termData => termData.name !== queryTerm);
+      this.freqTemporalData.relative = this.freqTemporalData.relative.filter(termData => termData.name !== queryTerm);
+      this.mapData = this.mapData.filter(termData => termData.name !== queryTerm);
     },
   },
 };

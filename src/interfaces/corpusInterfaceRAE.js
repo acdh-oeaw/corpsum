@@ -5,13 +5,19 @@ export default {
     };
   },
   methods: {
-    initialSearchQuery(freqTemporalData, mapData, queryTerm) {
+    initialSearchQuery(temporalData, mapData, queryTerm) {
       const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', query: queryTerm }).then((response) => {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
           console.log(facetsResponse.data);
-          const wordFreq = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
+          const temporalDataUpdate = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
           const mapCountries = this.processCountriesMapData(facetsResponse.data[1].data, queryTerm);
-          return { temporal: freqTemporalData.concat(wordFreq), regional: mapData.concat(mapCountries) };
+          return {
+            temporal: {
+              absolute: temporalData.absolute.concat(temporalDataUpdate.absolute),
+              relative: temporalData.relative.concat(temporalDataUpdate.relative),
+            },
+            regional: mapData.concat(mapCountries)
+          };
         });
         return facetsData;
       });
@@ -32,11 +38,15 @@ export default {
     },
     processFreqTemporalData(data, word) {
       const items = data;
-      const output = { x: [], y: [] };
+      const outputAbs = { x: [], y: [], name: word };
+      const outputRel = { x: [], y: [], name: word };
       for (let i = 0; i < items.length; i += 1) {
-        output.x.push(items[i][0]);
-        output.y.push(items[i][2]);
+        outputAbs.x.push(items[i][0]);
+        outputAbs.y.push(items[i][2]);
+        outputRel.x.push(items[i][0]);
+        outputRel.y.push(items[i][1]);
       }
+      const output = { absolute: outputAbs, relative: outputRel };
       // Sort by year
       // output.sort((a, b) => a.key - b.key);
       // Return processed data
