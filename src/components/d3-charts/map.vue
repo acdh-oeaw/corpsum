@@ -11,7 +11,7 @@ export default {
   props: ["mapData"],
   data() {
     return {
-      height: 500,
+      height: 600,
       width: "100%",
       geoMapData: [],
     };
@@ -40,8 +40,7 @@ export default {
         var mapGroup = svg
           .append("g")
           .attr("class", "map-group")
-          .attr("transform", "translate(0,0)")
-          .attr("transform", "scale(1)")
+          .attr("transform", "translate(-200, -160) scale(1.75)")
         var paths = mapGroup.selectAll("path")
           .data(topojson.feature(world, world.objects.countries).features)
           .enter()

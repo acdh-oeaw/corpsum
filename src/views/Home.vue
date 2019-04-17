@@ -38,12 +38,13 @@
             <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
 
             <d3-multi-line
+                class="vis-el"
                 :data="freqTemporalData"
                 width="100%"
                 height="300px">
             </d3-multi-line>
 
-            <mapChart :mapData="mapData"></mapChart>
+            <mapChart class="vis-el" :mapData="mapData"></mapChart>
 
           </div>
 
