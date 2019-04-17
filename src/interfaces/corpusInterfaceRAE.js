@@ -8,6 +8,7 @@ export default {
     initialSearchQuery(freqTemporalData, mapData, queryTerm) {
       const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', query: queryTerm }).then((response) => {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
+          console.log(facetsResponse.data);
           const wordFreq = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
           const mapCountries = this.processCountriesMapData(facetsResponse.data[1].data, queryTerm);
           return { temporal: freqTemporalData.concat(wordFreq), regional: mapData.concat(mapCountries) };

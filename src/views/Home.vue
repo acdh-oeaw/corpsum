@@ -44,6 +44,11 @@
                 height="300px">
             </d3-multi-line>
 
+            <billboard-chart :options="chartData"></billboard-chart>
+
+            <vue-plotly :data="data" :layout="layout" :options="options"/>
+
+
             <mapChart class="vis-el" :mapData="mapData"></mapChart>
 
           </div>
@@ -60,11 +65,14 @@
 import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
+import VuePlotly from '@statnett/vue-plotly'
+//import {bb} from 'billboard.js'
+
 
 export default {
   name: 'home',
   components: {
-    sideNav, mapChart,
+    sideNav, mapChart, VuePlotly
     // HelloWorld,
   },
   mixins: [corpusInterface],
@@ -73,6 +81,45 @@ export default {
       freqTemporalData: [],
       mapData: [],
       queryTerms: ["coche"],
+      chartData: {
+        title: {
+          text: 'sample chart'
+        },
+        data: {
+          columns: [
+            ['data3', 300, 200, 160, 400, 250, 250]
+          ],
+          type: 'spline'
+        }
+      },
+      data: [{
+    type: 'scattergeo',
+    mode: 'markers',
+    locations: ['FRA', 'DEU', 'RUS', 'ESP'],
+    marker: {
+        size: [20, 30, 15, 10],
+        color: [10, 20, 40, 50],
+        cmin: 0,
+        cmax: 50,
+        colorscale: 'Greens',
+        colorbar: {
+            title: 'Some rate',
+            ticksuffix: '%',
+            showticksuffix: 'last'
+        },
+        line: {
+            color: 'black'
+        }
+    },
+    name: 'europe data'
+}],
+      layout: {
+    'geo': {
+        'scope': 'world',
+        'resolution': 50
+    }
+},
+      options: {displaylogo: false}
     };
   },
   created() {

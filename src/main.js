@@ -5,6 +5,9 @@ import VoerroTagsInput from '@voerro/vue-tagsinput';
 import App from './App.vue';
 import router from './router';
 
+import BillboardChart from '@/components/Chart';
+Vue.use(BillboardChart);
+
 // install globally all d3-vs components
 Vue.use(Vs);
 
@@ -21,3 +24,6 @@ new Vue({
   router,
   render(h) { return h(App); },
 }).$mount('#app');
+
+// CSS Files
+require('../node_modules/billboard.js/dist/billboard.min.css');
