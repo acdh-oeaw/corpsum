@@ -4,8 +4,8 @@ import axios from 'axios';
 import VoerroTagsInput from '@voerro/vue-tagsinput';
 import App from './App.vue';
 import router from './router';
-
 import BillboardChart from '@/components/Chart';
+
 Vue.use(BillboardChart);
 
 // install globally all d3-vs components

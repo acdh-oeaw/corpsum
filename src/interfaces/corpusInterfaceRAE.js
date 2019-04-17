@@ -32,14 +32,13 @@ export default {
     },
     processFreqTemporalData(data, word) {
       const items = data;
-      const output = [];
+      const output = { x: [], y: [] };
       for (let i = 0; i < items.length; i += 1) {
-        output.push({
-          group: word, key: items[i][0], value: items[i][2], relValue: items[i][1],
-        });
+        output.x.push(items[i][0]);
+        output.y.push(items[i][2]);
       }
       // Sort by year
-      output.sort((a, b) => a.key - b.key);
+      // output.sort((a, b) => a.key - b.key);
       // Return processed data
       return output;
     },

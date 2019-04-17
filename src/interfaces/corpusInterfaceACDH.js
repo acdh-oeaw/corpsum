@@ -25,9 +25,7 @@ export default {
       return output;
     },
     queryRegionsData() {
-      const mapData = this.axios.get('http://timwis.com/leaflet-choropleth/examples/basic/crimes_by_district.geojson').then((response) => {
-        return response.data;
-      });
+      const mapData = this.axios.get('http://timwis.com/leaflet-choropleth/examples/basic/crimes_by_district.geojson').then(response => response.data);
       return mapData;
     },
   },

@@ -37,17 +37,16 @@
           <div class="home">
             <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
 
+            <vue-plotly :data="freqTemporalData" :layout="layout" :options="options"/>
+
+            <billboard-chart :options="chartData"></billboard-chart>
+
             <d3-multi-line
                 class="vis-el"
                 :data="freqTemporalData"
                 width="100%"
                 height="300px">
             </d3-multi-line>
-
-            <billboard-chart :options="chartData"></billboard-chart>
-
-            <vue-plotly :data="data" :layout="layout" :options="options"/>
-
 
             <mapChart class="vis-el" :mapData="mapData"></mapChart>
 
@@ -65,61 +64,47 @@
 import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
-import VuePlotly from '@statnett/vue-plotly'
-//import {bb} from 'billboard.js'
+import VuePlotly from '@statnett/vue-plotly';
+// import {bb} from 'billboard.js'
 
 
 export default {
   name: 'home',
   components: {
-    sideNav, mapChart, VuePlotly
-    // HelloWorld,
+    sideNav, mapChart, VuePlotly,
   },
   mixins: [corpusInterface],
   data() {
     return {
       freqTemporalData: [],
+      layout: {},
+      options: {displaylogo: false, // displayModeBar: false},
       mapData: [],
-      queryTerms: ["coche"],
       chartData: {
         title: {
-          text: 'sample chart'
+          text: 'Temporal distribution of absolute frequencies',
         },
         data: {
-          columns: [
-            ['data3', 300, 200, 160, 400, 250, 250]
+          json: [
+            {name: "coche", value: 200, year: 2010},
+            {name: "coche", value: 100, year: 2011},
+            {name: "carro", value: 300, year: 2010},
+            {name: "carro", value: 400, year: 2011}
           ],
-          type: 'spline'
-        }
-      },
-      data: [{
-    type: 'scattergeo',
-    mode: 'markers',
-    locations: ['FRA', 'DEU', 'RUS', 'ESP'],
-    marker: {
-        size: [20, 30, 15, 10],
-        color: [10, 20, 40, 50],
-        cmin: 0,
-        cmax: 50,
-        colorscale: 'Greens',
-        colorbar: {
-            title: 'Some rate',
-            ticksuffix: '%',
-            showticksuffix: 'last'
+          keys: {
+            // x: "name", // it's possible to specify "x" when category axis
+            value: ["value"],
+            x: "year"
+          }
         },
-        line: {
-            color: 'black'
-        }
-    },
-    name: 'europe data'
-}],
-      layout: {
-    'geo': {
-        'scope': 'world',
-        'resolution': 50
-    }
-},
-      options: {displaylogo: false}
+        axis: {
+          x: {
+            type: "category"
+          }
+        },
+        type: 'spline',
+      },
+      queryTerms: ["coche"],
     };
   },
   created() {
@@ -132,17 +117,14 @@ export default {
     onQueryTermAdded(queryTerm) {
       this.initialSearchQuery(this.freqTemporalData, this.mapData, queryTerm)
         .then((response) => {
-        this.freqTemporalData = response.temporal;
-        this.mapData = response.regional;
-      });
+          this.freqTemporalData = response.temporal;
+          console.log(this.freqTemporalData);
+          this.mapData = response.regional;
+        });
     },
     onQueryTermRemoved(queryTerm) {
-      this.freqTemporalData = this.freqTemporalData.filter(function( termData ) {
-          return termData.group !== queryTerm;
-      });
-      this.mapData = this.mapData.filter(function( termData ) {
-          return termData.group !== queryTerm;
-      });
+      this.freqTemporalData = this.freqTemporalData.filter(termData => termData.group !== queryTerm);
+      this.mapData = this.mapData.filter(termData => termData.group !== queryTerm);
     },
   },
 };

@@ -1,17 +1,18 @@
 <script>
+import equal from 'deep-equal';
 import {
   createGenerateChart,
   createDestoryChart,
-  createLoadDataChart
-} from "./chartMethods";
-import equal from "deep-equal";
+  createLoadDataChart,
+} from './chartMethods';
+
 export default {
-  name: "billboard-chart",
+  name: 'billboard-chart',
   props: {
     options: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   created() {
     // instance methods
@@ -26,13 +27,13 @@ export default {
     this.destoryChart();
   },
   watch: {
-    "options.data": {
+    'options.data': {
       deep: true,
       handler(newData) {
         this.loadDataChart(newData);
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 
