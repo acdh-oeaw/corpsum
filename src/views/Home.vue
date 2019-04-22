@@ -37,11 +37,25 @@
           <div class="home">
             <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
 
-            <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
+            <div class="row">
+              <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
 
-            <vue-plotly class="col-md-6" :data="temporalData.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
+              <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
 
-            <mapChart class="vis-el" :mapData="mapData"></mapChart>
+              <vue-plotly class="col-md-6" :data="temporalData.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3">
+                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
+                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
+                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
+                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
+              </div>
+
+              <mapChart class="col-md-9 vis-el" :mapData="mapData"></mapChart>
+
+            </div>
 
           </div>
 
@@ -74,6 +88,50 @@ export default {
       freqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
       relFreqTemporalLayout: {title:'Temporal distribution of relative frequencies'},
       relFreqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
+      regionalData: [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico'],
+        z: [150, 200, 90, 35],
+        text: ['Argentine', 'Spain', 'Colombia', 'Mexico'],
+        autocolorscale: true,
+        colorbar: {
+          x: -0.15999999999999992, 
+          y: 0.5, 
+          lenmode: 'fraction', 
+          thickness: 15, 
+          thicknessmode: 'pixels', 
+          tickangle: 'auto', 
+          tickmode: 'auto', 
+          ticks: '', 
+          title: {side: 'top'}, 
+          xanchor: 'left', 
+          yanchor: 'middle', 
+          ypad: 20
+        },
+        showscale: false,
+      }],
+      regionalLayout: {
+        title: 'Regional distribution of the results',
+        height: 200,
+        margin: {
+          r: 10, 
+          t: 30, 
+          b: 20, 
+          l: 10
+        }, 
+        geo: {
+          center: {
+            lat: -5.1017044588664975, 
+            lon: -29.237649476804474
+          }, 
+          projection: {
+            scale: 1.7438683100062125, 
+            type: 'equirectangular'
+          }
+        }
+      },
+      regionalOptions: {displaylogo: false, responsive: true, displayModeBar: false },
       mapData: [],
       queryTerms: ["coche"],
     };
