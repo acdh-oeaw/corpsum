@@ -38,11 +38,26 @@
             <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
 
             <div class="row">
-              <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
+              <vue-plotly
+              class="col-md-4"
+              :data="chartData.dispersion"
+              :layout="{
+                title: 'Dispersion measures of the dimensions',
+                margin: { r: 30, t: 30, b: 30, l: 30 },
+                height: 300,
+                polar: {
+                  radialaxis: {
+                    visible: true,
+                    range: [0, 1],
+                  },
+                },
+              }"
+              :options="dispersionOptions"
+              />
 
-              <vue-plotly class="col-md-6" :data="temporalData.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
+              <vue-plotly class="col-md-4" :data="chartData.temporal.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
 
-              <vue-plotly class="col-md-6" :data="temporalData.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
+              <vue-plotly class="col-md-4" :data="chartData.temporal.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
             </div>
 
             <div class="row">
@@ -53,7 +68,7 @@
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
               </div>
 
-              <mapChart class="col-md-9 vis-el" :mapData="mapData"></mapChart>
+              <mapChart class="col-md-9 vis-el" :mapData="chartData.regional"></mapChart>
 
             </div>
 
@@ -83,11 +98,23 @@ export default {
   mixins: [corpusInterface],
   data() {
     return {
-      temporalData: { absolute: [], relative: [] },
-      freqTemporalLayout: {title:'Temporal distribution of absolute frequencies'},
-      freqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
-      relFreqTemporalLayout: {title:'Temporal distribution of relative frequencies'},
-      relFreqTemporalOptions: {displaylogo: false, responsive: true /* displayModeBar: false */ },
+      chartData: {
+        temporal: { absolute: [], relative: [] },
+        regional: [],
+        dispersion: [],
+      },
+      freqTemporalLayout: {
+        title:'Temporal distribution of absolute frequencies',
+        margin: { r: 30, t: 30, b: 30, l: 30 },
+        height: 300,
+      },
+      freqTemporalOptions: {displaylogo: false, responsive: true, displayModeBar: false },
+      relFreqTemporalLayout: {
+        title:'Temporal distribution of relative frequencies',
+        margin: { r: 30, t: 30, b: 30, l: 30 },
+        height: 300,
+      },
+      relFreqTemporalOptions: {displaylogo: false, responsive: true, displayModeBar: false },
       regionalData: [{
         type: 'choropleth',
         locationmode: 'country names',
@@ -114,12 +141,7 @@ export default {
       regionalLayout: {
         title: 'Regional distribution of the results',
         height: 200,
-        margin: {
-          r: 10, 
-          t: 30, 
-          b: 20, 
-          l: 10
-        }, 
+        margin: { r: 10, t: 30, b: 20, l: 10 }, 
         geo: {
           center: {
             lat: -5.1017044588664975, 
@@ -132,7 +154,7 @@ export default {
         }
       },
       regionalOptions: {displaylogo: false, responsive: true, displayModeBar: false },
-      mapData: [],
+      dispersionOptions: {displaylogo: false, responsive: true, displayModeBar: false },
       queryTerms: ["coche"],
     };
   },
@@ -144,16 +166,16 @@ export default {
   },
   methods: {
     onQueryTermAdded(queryTerm) {
-      this.initialSearchQuery(this.temporalData, this.mapData, queryTerm)
+      this.initialSearchQuery(this.chartData, queryTerm)
         .then((response) => {
-          this.temporalData = response.temporal;
-          this.mapData = response.regional;
+          this.chartData = response;
         });
     },
     onQueryTermRemoved(queryTerm) {
-      this.freqTemporalData.absolute = this.freqTemporalData.absolute.filter(termData => termData.name !== queryTerm);
-      this.freqTemporalData.relative = this.freqTemporalData.relative.filter(termData => termData.name !== queryTerm);
-      this.mapData = this.mapData.filter(termData => termData.name !== queryTerm);
+      this.chartData.temporal.absolute = this.chartData.temporal.absolute.filter(termData => termData.name !== queryTerm);
+      this.chartData.temporal.relative = this.chartData.temporal.relative.filter(termData => termData.name !== queryTerm);
+      this.chartData.regional = this.chartData.regional.filter(termData => termData.name !== queryTerm);
+      this.chartData.dispersion = this.chartData.dispersion.filter(termData => termData.name !== queryTerm);
     },
   },
 };

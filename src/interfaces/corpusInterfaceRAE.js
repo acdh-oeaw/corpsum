@@ -5,18 +5,20 @@ export default {
     };
   },
   methods: {
-    initialSearchQuery(temporalData, mapData, queryTerm) {
+    initialSearchQuery(chartData, queryTerm) {
       const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', query: queryTerm }).then((response) => {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
           console.log(facetsResponse.data);
           const temporalDataUpdate = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
           const mapCountries = this.processCountriesMapData(facetsResponse.data[1].data, queryTerm);
+          const dispersionDataUpdate = this.processDispersionData(facetsResponse.data, queryTerm);
           return {
             temporal: {
-              absolute: temporalData.absolute.concat(temporalDataUpdate.absolute),
-              relative: temporalData.relative.concat(temporalDataUpdate.relative),
+              absolute: chartData.temporal.absolute.concat(temporalDataUpdate.absolute),
+              relative: chartData.temporal.relative.concat(temporalDataUpdate.relative),
             },
-            regional: mapData.concat(mapCountries)
+            regional: chartData.regional.concat(mapCountries),
+            dispersion: chartData.dispersion.concat(dispersionDataUpdate),
           };
         });
         return facetsData;
@@ -50,6 +52,20 @@ export default {
       // Sort by year
       // output.sort((a, b) => a.key - b.key);
       // Return processed data
+      return output;
+    },
+    processDispersionData(data, word) {
+      const output = {
+        type: 'scatterpolar',
+        r: [],
+        theta: ['Year', 'Country', 'Region', 'Type', 'Medium', 'Theme', 'Year'],
+        fill: 'toself',
+        name: word,
+      };
+      const facets = [data[6], data[1], data[7], data[0], data[3], data[4]];
+      for (let i = 0; i < facets.length; i += 1) {
+        output.r.push(facets[i].disp);
+      }
       return output;
     },
   },
