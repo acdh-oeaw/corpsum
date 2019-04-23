@@ -10,33 +10,23 @@ export default {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
           console.log(facetsResponse.data);
           const temporalDataUpdate = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
-          const mapCountries = this.processCountriesMapData(facetsResponse.data[1].data, queryTerm);
+          const regionalDataUpdate = this.processRegionalData(facetsResponse.data, chartData, queryTerm);
           const dispersionDataUpdate = this.processDispersionData(facetsResponse.data, queryTerm);
           return {
             temporal: {
               absolute: chartData.temporal.absolute.concat(temporalDataUpdate.absolute),
               relative: chartData.temporal.relative.concat(temporalDataUpdate.relative),
             },
-            regional: chartData.regional.concat(mapCountries),
+            regional: {
+              countries: chartData.regional.countries.concat(regionalDataUpdate.countries),
+              regions: chartData.regional.regions,
+            },
             dispersion: chartData.dispersion.concat(dispersionDataUpdate),
           };
         });
         return facetsData;
       });
       return updatedData;
-    },
-    processCountriesMapData(data, word) {
-      const items = data;
-      const output = [];
-      for (let i = 0; i < items.length; i += 1) {
-        output.push({
-          group: word, key: items[i][0], value: items[i][2], relValue: items[i][1],
-        });
-      }
-      // Sort by country
-      output.sort((a, b) => a.key - b.key);
-      // Return processed data
-      return output;
     },
     processFreqTemporalData(data, word) {
       const items = data;
@@ -54,6 +44,36 @@ export default {
       // Return processed data
       return output;
     },
+    processRegionalData(responseData, chartData, word) {
+      // COUNTRIES
+      const outputCountries = [];
+      const itemsCountries = responseData[1].data;
+      console.log(itemsCountries);
+      for (let i = 0; i < itemsCountries.length; i += 1) {
+        outputCountries.push({
+          group: word, key: itemsCountries[i][0], value: itemsCountries[i][2], relValue: itemsCountries[i][1],
+        });
+      }
+      // Sort by country
+      outputCountries.sort((a, b) => a.key - b.key);
+      // REGIONS
+      const outputRegions = chartData.regional.regions[0];
+      outputRegions.y.push(word);
+      outputRegions.z.push([]);
+      console.log(outputRegions);
+      const tableRow = this.getKeyByValue(outputRegions.y, word);
+      console.log(tableRow);
+      console.log(outputRegions.z[tableRow]);
+      const itemsRegions = responseData[7].data;
+      for (let i = 0; i < itemsRegions.length; i += 1) {
+        outputRegions.x.push(itemsRegions[i][0]);
+        outputRegions.z[tableRow].push(itemsRegions[i][1]);
+      }
+      // Return processed data
+      const output = { countries: outputCountries, regions: outputRegions };
+      console.log(output);
+      return output;
+    },
     processDispersionData(data, word) {
       const output = {
         type: 'scatterpolar',
@@ -67,6 +87,9 @@ export default {
         output.r.push(facets[i].disp);
       }
       return output;
+    },
+    getKeyByValue(array, value) {
+      return Object.keys(array).find(key => array[key] === value);
     },
   },
 };

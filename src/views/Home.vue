@@ -60,6 +60,8 @@
               <vue-plotly class="col-md-4" :data="chartData.temporal.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
             </div>
 
+            <vue-plotly class="col-md-12" :data="chartData.regional.regions"/>
+
             <div class="row">
               <div class="col-md-3">
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
@@ -68,7 +70,7 @@
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
               </div>
 
-              <mapChart class="col-md-9 vis-el" :mapData="chartData.regional"></mapChart>
+              <mapChart class="col-md-9 vis-el" :mapData="chartData.regional.countries"></mapChart>
 
             </div>
 
@@ -99,8 +101,19 @@ export default {
   data() {
     return {
       chartData: {
-        temporal: { absolute: [], relative: [] },
-        regional: [],
+        temporal: {
+          absolute: [],
+          relative: []
+        },
+        regional: {
+          countries: [],
+          regions: [{
+            z: [],
+            x: [],
+            y: [],
+            type: 'heatmap',
+          }],
+        },        
         dispersion: [],
       },
       freqTemporalLayout: {
@@ -174,7 +187,7 @@ export default {
     onQueryTermRemoved(queryTerm) {
       this.chartData.temporal.absolute = this.chartData.temporal.absolute.filter(termData => termData.name !== queryTerm);
       this.chartData.temporal.relative = this.chartData.temporal.relative.filter(termData => termData.name !== queryTerm);
-      this.chartData.regional = this.chartData.regional.filter(termData => termData.name !== queryTerm);
+      this.chartData.regional.countries = this.chartData.regional.countries.filter(termData => termData.name !== queryTerm);
       this.chartData.dispersion = this.chartData.dispersion.filter(termData => termData.name !== queryTerm);
     },
   },
