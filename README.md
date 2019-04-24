@@ -1,7 +1,7 @@
 # corpsum
-CORPSUM is a web-based tool enabling visual corpus analysis for multi-Dimensional exploration.
+CORPSUM is a web-based tool enabling visual corpus analysis for multi-dimensional exploration.
 
-## Installation / usage
+## Installation / Usage
 ### Project setup
 ```
 npm install
