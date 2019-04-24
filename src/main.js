@@ -1,15 +1,8 @@
 import Vue from 'vue';
-import Vs from 'd3-vs';
 import axios from 'axios';
 import VoerroTagsInput from '@voerro/vue-tagsinput';
 import App from './App.vue';
 import router from './router';
-import BillboardChart from '@/components/Chart';
-
-Vue.use(BillboardChart);
-
-// install globally all d3-vs components
-Vue.use(Vs);
 
 // Axios properties
 Vue.prototype.$http = axios;
@@ -26,4 +19,4 @@ new Vue({
 }).$mount('#app');
 
 // CSS Files
-require('../node_modules/billboard.js/dist/billboard.min.css');
+// require('../node_modules/@voerro/vue-tagsinput/dist/style.css');

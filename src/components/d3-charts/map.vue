@@ -281,3 +281,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+/* Geo world map */
+.country-group {
+  opacity: 0.7;
+}
+
+</style>

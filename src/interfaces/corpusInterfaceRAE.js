@@ -6,13 +6,14 @@ export default {
   },
   methods: {
     initialSearchQuery(chartData, queryTerm) {
-      const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', query: queryTerm }).then((response) => {
+      const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', form: [{ word: 'teléfono' }, { word: queryTerm }] }).then((response) => {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
           console.log(facetsResponse.data);
+          console.log(response.data.result);
           const temporalDataUpdate = this.processFreqTemporalData(facetsResponse.data[6].data, queryTerm);
           const regionalDataUpdate = this.processRegionalData(facetsResponse.data, chartData, queryTerm);
           const dispersionDataUpdate = this.processDispersionData(facetsResponse.data, queryTerm);
-          const typesDataUpdate = this.processTypesData(facetsResponse.data[0].data, queryTerm);
+          // const typesDataUpdate = this.processTypesData(facetsResponse.data[0].data, queryTerm);
           return {
             temporal: {
               absolute: chartData.temporal.absolute.concat(temporalDataUpdate.absolute),
@@ -23,7 +24,7 @@ export default {
               regions: chartData.regional.regions,
             },
             dispersion: chartData.dispersion.concat(dispersionDataUpdate),
-            types: chartData.types.concat(typesDataUpdate),
+            // types: chartData.types.concat(typesDataUpdate),
           };
         });
         return facetsData;
