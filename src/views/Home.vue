@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">vis-corpus</a>
+      <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
       <tags-input element-id="queryTerms" class="w-100"
         v-model="queryTerms"
         placeholder="Type another term to query"
@@ -60,7 +60,16 @@
               <vue-plotly class="col-md-4" :data="chartData.temporal.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
             </div>
 
-            <vue-plotly class="col-md-12" :data="chartData.regional.regions"/>
+            <div class="row">
+              <vue-plotly class="col-md-6"
+                :data="chartData.types"
+                :layout="{
+                  title: 'Distribution of publication type per query',
+                  barmode: 'stack'
+                }"
+              />
+              <vue-plotly class="col-md-6" :data="chartData.regional.regions"/>
+            </div>
 
             <div class="row">
               <div class="col-md-3">
@@ -115,6 +124,7 @@ export default {
           }],
         },        
         dispersion: [],
+        types: [],
       },
       freqTemporalLayout: {
         title:'Temporal distribution of absolute frequencies',
@@ -189,6 +199,7 @@ export default {
       this.chartData.temporal.relative = this.chartData.temporal.relative.filter(termData => termData.name !== queryTerm);
       this.chartData.regional.countries = this.chartData.regional.countries.filter(termData => termData.name !== queryTerm);
       this.chartData.dispersion = this.chartData.dispersion.filter(termData => termData.name !== queryTerm);
+      this.chartData.types = this.chartData.types.filter(termData => termData.name !== queryTerm);
     },
   },
 };
