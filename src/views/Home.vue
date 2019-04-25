@@ -68,6 +68,7 @@
 
 <script>
 // @ is an alias to /src
+import store from '@/store/store'
 import topNav from '@/components/topNav.vue';
 import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
@@ -76,29 +77,14 @@ import VuePlotly from '@statnett/vue-plotly';
 
 export default {
   name: 'home',
+  store,
   components: {
     topNav, sideNav, mapChart, VuePlotly,
   },
   mixins: [corpusInterface],
   data() {
     return {
-      chartData: {
-        temporal: {
-          absolute: [],
-          relative: [],
-        },
-        regional: {
-          countries: [],
-          regions: [{
-            z: [],
-            x: [],
-            y: [],
-            type: 'heatmap',
-          }],
-        },
-        dispersion: [],
-        types: [],
-      },
+      chartData: this.$store.getters.chartData,
       freqTemporalLayout: {
         title: 'Temporal distribution of absolute frequencies',
         margin: {
@@ -174,10 +160,14 @@ export default {
   watch: {
   },
   methods: {
+    changed: function(event) {
+      this.$store.commit('change', event.target.value)
+    },
     onQueryTermAdded(queryTerm) {
       this.initialSearchQuery(this.chartData, queryTerm)
         .then((response) => {
           this.chartData = response;
+          this.$store.commit('chartDataUpdate', this.chartData);
         });
     },
     onQueryTermRemoved(queryTerm) {
@@ -186,6 +176,7 @@ export default {
       this.chartData.regional.countries = this.chartData.regional.countries.filter(termData => termData.name !== queryTerm);
       this.chartData.dispersion = this.chartData.dispersion.filter(termData => termData.name !== queryTerm);
       this.chartData.types = this.chartData.types.filter(termData => termData.name !== queryTerm);
+      this.$store.commit('chartDataUpdate', this.chartData);
     },
   },
 };
