@@ -49,11 +49,10 @@
                 }"
               />
               -->
-              <vue-plotly class="col-md-12" :data="chartData.regional.regions"/>
+              <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>
             </div>
             <div class="row">
               <div class="col-md-3">
-                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
                 <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
@@ -119,9 +118,9 @@ export default {
       regionalData: [{
         type: 'choropleth',
         locationmode: 'country names',
-        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico'],
-        z: [150, 200, 90, 35],
-        text: ['Argentine', 'Spain', 'Colombia', 'Mexico'],
+        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
+        z: [150, 200, 90, 35, 40, 80, 130],
+        text: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
         autocolorscale: true,
         colorbar: {
           x: -0.15999999999999992,
@@ -158,7 +157,14 @@ export default {
       },
       regionalOptions: { displaylogo: false, responsive: true, displayModeBar: false },
       dispersionOptions: { displaylogo: false, responsive: true, displayModeBar: false },
-      queryTerms: ['celular'],
+      heatmapLayout: {
+        title: 'Heatmap view of regions in relative frequencies',
+        margin: {
+          r: 60, t: 50, b: 100, l: 60,
+        },
+        height: 300,
+      },
+      queryTerms: [],
     };
   },
   created() {
