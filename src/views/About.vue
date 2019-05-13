@@ -33,7 +33,7 @@
 
 <script>
 // @ is an alias to /src
-import store from '@/store/store'
+import store from '@/store/store';
 import topNav from '@/components/topNav.vue';
 import sideNav from '@/components/sideNav.vue';
 

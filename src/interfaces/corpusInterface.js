@@ -1,5 +1,5 @@
 import corpusInterfaceRAE from '@/interfaces/corpusInterfaceRAE';
-import corpusInterfaceACDH from '@/interfaces/corpusInterfaceACDH';
+// import corpusInterfaceACDH from '@/interfaces/corpusInterfaceACDH';
 
 const activeInterface = corpusInterfaceRAE;
 

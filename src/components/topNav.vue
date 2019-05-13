@@ -2,7 +2,7 @@
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
     <tags-input element-id="queryTerms" class="w-100"
-      v-model="inputTerms"
+      v-model="queryTerms"
       @tag-added="onQueryTermAdded"
       @tag-removed="onQueryTermRemoved"
       placeholder="Type another term to query">
@@ -16,25 +16,24 @@
 </template>
 
 <script>
+import store from '@/store/store';
+
 export default {
   name: 'topNav',
-  props: {
-    queryTerms: { type: [Array, String] },
-  },
   data() {
     return {
-      inputTerms: this.queryTerms,
+      queryTerms: this.$store.getters.queryTerms,
     };
   },
   methods: {
     onQueryTermAdded(queryTerm) {
-      this.$emit('queryTerms', this.inputTerms);
+      this.$store.commit('queryTermAdded', queryTerm);
       this.$emit('onQueryTermAdded', queryTerm);
     },
     onQueryTermRemoved(queryTerm) {
-      this.$emit('queryTerms', this.inputTerms);
+      this.$store.commit('queryTermRemoved', queryTerm);
       this.$emit('onQueryTermRemoved', queryTerm);
-    },
+    }
   },
 };
 </script>

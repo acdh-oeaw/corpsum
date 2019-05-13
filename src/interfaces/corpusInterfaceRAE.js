@@ -6,6 +6,7 @@ export default {
   },
   methods: {
     initialSearchQuery(chartData, queryTerm) {
+      // console.log(queryTerm)
       const updatedData = this.axios.post(`${this.engineApi}search/`, { corpus: 'corpes', form: [{ word: queryTerm }] }).then((response) => {
         const facetsData = this.axios.post(`${this.engineApi}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: response.data.result }).then((facetsResponse) => {
           console.log(facetsResponse.data);

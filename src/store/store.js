@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    queryTerms: [],
     chartData: {
       temporal: {
         absolute: [],
@@ -27,8 +28,15 @@ export default new Vuex.Store({
     chartDataUpdate(state, chartData) {
       state.chartData = chartData;
     },
+    queryTermAdded(state, queryTerm) {
+      state.queryTerms.push(queryTerm);
+    },
+    queryTermRemoved(state, queryTerm) {
+      state.queryTerms.filter(value => value !== queryTerm);
+    },
   },
   getters: {
     chartData: state => state.chartData,
+    queryTerms: state => state.queryTerms,
   },
 });

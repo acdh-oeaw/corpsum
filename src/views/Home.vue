@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <topNav :queryTerms="queryTerms" @onQueryTermAdded="onQueryTermAdded" @onQueryTermRemoved="onQueryTermRemoved"/>
+    <topNav @onQueryTermAdded="onQueryTermAdded" @onQueryTermRemoved="onQueryTermRemoved"/>
     <div class="container-fluid">
       <div class="row">
         <sideNav/>
@@ -68,7 +68,7 @@
 
 <script>
 // @ is an alias to /src
-import store from '@/store/store'
+import store from '@/store/store';
 import topNav from '@/components/topNav.vue';
 import sideNav from '@/components/sideNav.vue';
 import mapChart from '@/components/d3-charts/map.vue';
@@ -150,7 +150,6 @@ export default {
         },
         height: 300,
       },
-      queryTerms: [],
     };
   },
   created() {
@@ -160,9 +159,6 @@ export default {
   watch: {
   },
   methods: {
-    changed: function(event) {
-      this.$store.commit('change', event.target.value)
-    },
     onQueryTermAdded(queryTerm) {
       this.initialSearchQuery(this.chartData, queryTerm)
         .then((response) => {
