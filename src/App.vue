@@ -8,6 +8,7 @@
  */
 body {
   font-size: .875rem;
+  background-color: #F1F1F1;
 }
 
 .feather {

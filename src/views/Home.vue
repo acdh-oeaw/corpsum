@@ -20,7 +20,6 @@
           </div>
           <div class="home">
             <div class="row">
-              <p>{{ fruits }}</p>
               <vue-plotly
                 class="col-md-4"
                 :data="chartData.dispersion"
@@ -50,6 +49,8 @@
                 }"
               />
               -->
+              <stackedBarChart class="col-md-4 vis-component"></stackedBarChart>
+              <heatmapChart class="col-md-8 vis-component"></heatmapChart>
               <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>
             </div>
             <div class="row">
@@ -73,13 +74,15 @@ import sideNav from '@/components/sideNav.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
 import VuePlotly from '@statnett/vue-plotly';
 
-import mapChart from '@/components/d3-charts/mapChart.vue'
+import mapChart from '@/components/charts/mapChart.vue'
+import stackedBarChart from '@/components/charts/stackedBarChart.vue'
+import heatmapChart from '@/components/charts/heatmapChart.vue'
 
 export default {
   name: 'home',
   store,
   components: {
-    topNav, sideNav, mapChart, VuePlotly,
+    topNav, sideNav, mapChart, VuePlotly, stackedBarChart, heatmapChart
   },
   mixins: [corpusInterface],
   data() {
@@ -184,9 +187,11 @@ export default {
   watch: {
   },
   computed: {
-    fruits () {
-      return this.$store.getters.fruits;
+    /*
+    chartData () {
+      return this.$store.getters.chartData;
     }
+    */
   },
   methods: {
     onQueryTermAdded(queryTerm) {
@@ -210,3 +215,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.vis-component > div {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+</style>

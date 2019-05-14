@@ -27,7 +27,19 @@ export const state = {
       }],
     },
     dispersion: [],
-    types: [],
+    narrative: {
+      categories: [],
+      series: [
+        {
+          name: 'Fiction',
+          data: [],
+        },
+        {
+          name: 'Non-Fiction',
+          data: [],
+        },
+      ],
+    },
   },
 };
 
@@ -84,7 +96,7 @@ export const mutations = {
     const dispersion = {
       type: 'scatterpolar',
       r: [],
-      theta: ['Year', 'Country', 'Region', 'Type', 'Medium', 'Theme', 'Year'],
+      theta: ['Year', 'Country', 'Region', 'Narrative Form', 'Medium', 'Theme', 'Year'],
       fill: 'toself',
       name: payload.term,
     };
@@ -93,6 +105,13 @@ export const mutations = {
       dispersion.r.push(facets[i].disp);
     }
     state.chartData.dispersion.push(dispersion);
+  },
+  processNarrative(state, payload) {
+    const items = payload.result.data;
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.narrative.series[i].data.push(items[i][2]);
+    }
+    state.chartData.narrative.categories.push(payload.term);
   },
 };
 
@@ -124,6 +143,7 @@ export const actions = {
       commit('processTemporal', { term: params.term, result: response.data[6] });
       commit('processRegional', { term: params.term, result: response.data });
       commit('processDispersion', { term: params.term, result: response.data });
+      commit('processNarrative', { term: params.term, result: response.data[0] });
     } catch (error) {
       console.log(error);
     }
