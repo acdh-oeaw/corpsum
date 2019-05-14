@@ -3,8 +3,8 @@
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
     <tags-input element-id="queryTerms" class="w-100"
       v-model="queryTerms"
-      @tag-added="onQueryTermAdded"
-      @tag-removed="onQueryTermRemoved"
+      @tag-added="tagAdded"
+      @tag-removed="tagRemoved"
       placeholder="Type another term to query">
     </tags-input>
     <ul class="navbar-nav px-3">
@@ -26,13 +26,14 @@ export default {
     };
   },
   methods: {
-    onQueryTermAdded(queryTerm) {
-      this.$store.commit('queryTermAdded', queryTerm);
-      this.$emit('onQueryTermAdded', queryTerm);
+    tagAdded(queryTerm) {
+      //this.$store.commit('queryTermAdded', queryTerm);
+      this.$store.dispatch('corpusQuery', queryTerm);
+      //this.$emit('onQueryTermAdded', queryTerm);
     },
-    onQueryTermRemoved(queryTerm) {
-      this.$store.commit('queryTermRemoved', queryTerm);
-      this.$emit('onQueryTermRemoved', queryTerm);
+    tagRemoved(queryTerm) {
+      //this.$store.commit('queryTermRemoved', queryTerm);
+      //this.$emit('onQueryTermRemoved', queryTerm);
     }
   },
 };

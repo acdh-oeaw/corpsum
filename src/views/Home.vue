@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <topNav @onQueryTermAdded="onQueryTermAdded" @onQueryTermRemoved="onQueryTermRemoved"/>
+    <topNav/>
     <div class="container-fluid">
       <div class="row">
         <sideNav/>
@@ -20,6 +20,7 @@
           </div>
           <div class="home">
             <div class="row">
+              <p>{{ fruits }}</p>
               <vue-plotly
                 class="col-md-4"
                 :data="chartData.dispersion"
@@ -52,12 +53,9 @@
               <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>
             </div>
             <div class="row">
-              <div class="col-md-3">
-                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
-                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
-                <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
-              </div>
-              <mapChart class="col-md-9 vis-el" :mapData="chartData.regional.countries"/>
+              <mapChart class="col-md-12"></mapChart>
+              <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
+              <!--<mapChart class="col-md-9 vis-el" :mapData="chartData.regional.countries"/>-->
             </div>
           </div>
         </main>
@@ -71,9 +69,11 @@
 import store from '@/store/store';
 import topNav from '@/components/topNav.vue';
 import sideNav from '@/components/sideNav.vue';
-import mapChart from '@/components/d3-charts/map.vue';
+// import mapChart from '@/components/d3-charts/map.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
 import VuePlotly from '@statnett/vue-plotly';
+
+import mapChart from '@/components/d3-charts/mapChart.vue'
 
 export default {
   name: 'home',
@@ -101,6 +101,31 @@ export default {
         height: 300,
       },
       relFreqTemporalOptions: { displaylogo: false, responsive: true, displayModeBar: false },
+      /*
+      regionalData: [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
+        z: [150, 200, 90, 35, 40, 80, 130],
+        text: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
+        autocolorscale: true,
+        colorbar: {
+          x: -0.15999999999999992,
+          y: 0.5,
+          lenmode: 'fraction',
+          thickness: 15,
+          thicknessmode: 'pixels',
+          tickangle: 'auto',
+          tickmode: 'auto',
+          ticks: '',
+          title: { side: 'top' },
+          xanchor: 'left',
+          yanchor: 'middle',
+          ypad: 20,
+        },
+        showscale: false,
+      }],
+      */
       regionalData: [{
         type: 'choropleth',
         locationmode: 'country names',
@@ -158,13 +183,21 @@ export default {
   },
   watch: {
   },
+  computed: {
+    fruits () {
+      return this.$store.getters.fruits;
+    }
+  },
   methods: {
     onQueryTermAdded(queryTerm) {
+      console.log(queryTerm)
+      /*
       this.initialSearchQuery(this.chartData, queryTerm)
         .then((response) => {
           this.chartData = response;
           this.$store.commit('chartDataUpdate', this.chartData);
         });
+        */
     },
     onQueryTermRemoved(queryTerm) {
       this.chartData.temporal.absolute = this.chartData.temporal.absolute.filter(termData => termData.name !== queryTerm);
