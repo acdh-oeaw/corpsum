@@ -7,6 +7,7 @@ import Highcharts from 'highcharts';
 
 import exportingModule from 'highcharts/modules/exporting';
 import exportDataModule from 'highcharts/modules/export-data';
+import moreModule from 'highcharts/highcharts-more';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
 
@@ -15,6 +16,7 @@ import router from './router';
 
 exportingModule(Highcharts);
 exportDataModule(Highcharts);
+moreModule(Highcharts);
 mapInit(Highcharts);
 Highcharts.maps.myMapName = worldmap;
 
@@ -41,6 +43,7 @@ Highcharts.setOptions({
       },
     },
   },
+  credits: false,
 });
 
 Vue.use(HighchartsVue);

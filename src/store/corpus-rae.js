@@ -14,8 +14,16 @@ export const state = {
   rawResults: [],
   chartData: {
     temporal: {
-      absolute: [],
-      relative: [],
+      absolute: {
+        title: 'Yearly Absolute Frequencies',
+        yAxisText: 'Number of Hits',
+        data: [],
+      },
+      relative: {
+        title: 'Yearly Relative Frequencies',
+        yAxisText: 'Number of Hits per Million Words',
+        data: [],
+      },
     },
     regional: {
       countries: [],
@@ -36,7 +44,10 @@ export const state = {
         data: [],
       },
     },
-    dispersion: [],
+    dispersion: {
+      categories: ['Year', 'Country', 'Linguistic Region', 'Narrative Form', 'Medium', 'Theme'],
+      series: [],
+    },
     narrative: {
       categories: [],
       series: [
@@ -65,16 +76,14 @@ export const mutations = {
   },
   processTemporal(state, payload) {
     const items = payload.result.data;
-    const absolute = { x: [], y: [], name: payload.term };
-    const relative = { x: [], y: [], name: payload.term };
+    const absolute = { name: payload.term, data: [] };
+    const relative = { name: payload.term, data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      absolute.x.push(items[i][0]);
-      absolute.y.push(items[i][2]);
-      relative.x.push(items[i][0]);
-      relative.y.push(items[i][1]);
+      absolute.data.push([Number(items[i][0]), items[i][2]]);
+      relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
     }
-    state.chartData.temporal.absolute.push(absolute);
-    state.chartData.temporal.relative.push(relative);
+    state.chartData.temporal.absolute.data.push(absolute);
+    state.chartData.temporal.relative.data.push(relative);
   },
   processRegional(state, payload) {
     /* Update Countries Data */
@@ -105,17 +114,15 @@ export const mutations = {
   processDispersion(state, payload) {
     const data = payload.result;
     const dispersion = {
-      type: 'scatterpolar',
-      r: [],
-      theta: ['Year', 'Country', 'Region', 'Narrative Form', 'Medium', 'Theme', 'Year'],
-      fill: 'toself',
       name: payload.term,
+      data: [],
+      pointPlacement: 'on',
     };
-    const facets = [data[6], data[1], data[7], data[0], data[3], data[4], data[6]];
+    const facets = [data[6], data[1], data[7], data[0], data[3], data[4]];
     for (let i = 0; i < facets.length; i += 1) {
-      dispersion.r.push(facets[i].disp);
+      dispersion.data.push(facets[i].disp);
     }
-    state.chartData.dispersion.push(dispersion);
+    state.chartData.dispersion.series.push(dispersion);
   },
   processNarrative(state, payload) {
     const items = payload.result.data;

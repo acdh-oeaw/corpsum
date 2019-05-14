@@ -20,6 +20,9 @@
           </div>
           <div class="home">
             <div class="row">
+              <radarChart class="col-md-4 vis-component"></radarChart>
+              <lineChart :lineData="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
+              <lineChart :lineData="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
               <!--
               <vue-plotly
                 class="col-md-4"
@@ -77,15 +80,17 @@ import sideNav from '@/components/sideNav.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
 import VuePlotly from '@statnett/vue-plotly';
 
-import mapChart from '@/components/charts/mapChart.vue'
+import radarChart from '@/components/charts/radarChart.vue'
+import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
+import mapChart from '@/components/charts/mapChart.vue'
 
 export default {
   name: 'home',
   store,
   components: {
-    topNav, sideNav, mapChart, VuePlotly, stackedBarChart, heatmapChart
+    topNav, sideNav, VuePlotly, radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
   },
   mixins: [corpusInterface],
   data() {

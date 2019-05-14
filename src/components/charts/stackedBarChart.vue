@@ -29,7 +29,6 @@ export default {
             pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
             shared: true
         },
-        credits: false,
         plotOptions: {
             column: {
                 stacking: 'percent'

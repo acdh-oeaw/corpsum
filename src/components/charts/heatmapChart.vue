@@ -52,7 +52,6 @@ export default {
             );
           }
         },
-        credits: false,
         series: [
           {
             name: "Relative frequencies per linguistic region",
