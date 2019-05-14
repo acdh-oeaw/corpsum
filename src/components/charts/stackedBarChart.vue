@@ -3,40 +3,44 @@
 </template>
 
 <script>
-import store from '@/store/store';
-
 export default {
-  store,
-  data () {
+  props: {
+    chartProp: Object
+  },
+  data() {
     return {
       stackedBarOptions: {
         chart: {
-            type: 'column'
+          type: this.chartProp.type
         },
         title: {
-            text: 'Narrative Forms'
+          text: this.chartProp.title
         },
         xAxis: {
-            categories: this.$store.getters.chartData.narrative.categories
+          categories: this.chartProp.categories
         },
         yAxis: {
-            min: 0,
-            title: {
-                text: 'Percentage of Absolute Frequencies'
-            }
+          min: 0,
+          title: {
+            text: this.chartProp.yAxisText
+          }
         },
         tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-            shared: true
+          pointFormat:
+            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+          shared: true
         },
         plotOptions: {
-            column: {
-                stacking: 'percent'
-            }
+          column: {
+            stacking: this.chartProp.stacking
+          },
+          bar: {
+            stacking: this.chartProp.stacking
+          }
         },
-        series: this.$store.getters.chartData.narrative.series
+        series: this.chartProp.series
       }
-    }
+    };
   }
-}
+};
 </script>

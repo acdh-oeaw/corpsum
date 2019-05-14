@@ -21,8 +21,8 @@
           <div class="home">
             <div class="row">
               <radarChart class="col-md-4 vis-component"></radarChart>
-              <lineChart :lineData="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
-              <lineChart :lineData="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
+              <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
+              <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
               <!--
               <vue-plotly
                 class="col-md-4"
@@ -54,8 +54,9 @@
                 }"
               />
               -->
-              <stackedBarChart class="col-md-4 vis-component"></stackedBarChart>
+              <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
               <heatmapChart class="col-md-8 vis-component"></heatmapChart>
+              <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-12 vis-component"></stackedBarChart>
               <!--
               <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>-->
             </div>

@@ -26,7 +26,14 @@ export const state = {
       },
     },
     regional: {
-      countries: [],
+      countries: {
+        title: 'Countries',
+        type: 'column',
+        yAxisText: 'Absolute Frequencies',
+        stacking: 'normal',
+        categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
+        series: [],
+      },
       regions: {
         categoriesX: [
           'Andina',
@@ -49,6 +56,10 @@ export const state = {
       series: [],
     },
     narrative: {
+      title: 'Narrative Forms',
+      type: 'column',
+      yAxisText: 'Percentage of Absolute Frequencies',
+      stacking: 'percent',
       categories: [],
       series: [
         {
@@ -87,19 +98,20 @@ export const mutations = {
   },
   processRegional(state, payload) {
     /* Update Countries Data */
-    const countries = [];
+    const series = {
+      name: payload.term,
+      data: [],
+    };
+    const countries = state.chartData.regional.countries;
     const itemsCountries = payload.result[1].data;
     for (let i = 0; i < itemsCountries.length; i += 1) {
-      countries.push({
-        group: payload.term, key: itemsCountries[i][0], value: itemsCountries[i][2], relValue: itemsCountries[i][1],
-      });
+      const categoriesKey = Object.keys(countries.categories).find(key => countries.categories[key] === itemsCountries[i][0]);
+      series.data[categoriesKey] = itemsCountries[i][1];
     }
-    // Sort by country
-    countries.sort((a, b) => a.key - b.key);
-    state.chartData.regional.countries.push(countries);
+    state.chartData.regional.countries.series.push(series);
 
     /* Update Linguistic Regions Data */
-    const { regions } = state.chartData.regional;
+    const regions = state.chartData.regional.regions;
     regions.categoriesY.push(payload.term);
     const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
     const itemsRegions = payload.result[7].data;

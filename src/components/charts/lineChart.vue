@@ -6,7 +6,7 @@
 
 export default {
   props: {
-    lineData: Object,
+    chartProp: Object,
   },
   data() {
     return {
@@ -15,14 +15,14 @@ export default {
             zoomType: 'x'
         },
         title: {
-          text: this.lineData.title
+          text: this.chartProp.title
         },
         subtitle: {
           text: "Subtitle text extra information"
         },
         yAxis: {
           title: {
-            text: this.lineData.yAxisText
+            text: this.chartProp.yAxisText
           }
         },
         legend: {
@@ -37,7 +37,7 @@ export default {
             }
           }
         },
-        series: this.lineData.data,
+        series: this.chartProp.data,
         responsive: {
           rules: [
             {
