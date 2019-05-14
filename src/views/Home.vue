@@ -20,6 +20,7 @@
           </div>
           <div class="home">
             <div class="row">
+              <!--
               <vue-plotly
                 class="col-md-4"
                 :data="chartData.dispersion"
@@ -38,6 +39,7 @@
               />
               <vue-plotly class="col-md-4" :data="chartData.temporal.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
               <vue-plotly class="col-md-4" :data="chartData.temporal.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
+              -->
             </div>
             <div class="row">
               <!--
@@ -51,7 +53,8 @@
               -->
               <stackedBarChart class="col-md-4 vis-component"></stackedBarChart>
               <heatmapChart class="col-md-8 vis-component"></heatmapChart>
-              <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>
+              <!--
+              <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>-->
             </div>
             <div class="row">
               <mapChart class="col-md-12"></mapChart>

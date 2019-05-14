@@ -19,12 +19,22 @@ export const state = {
     },
     regional: {
       countries: [],
-      regions: [{
-        z: [],
-        x: [],
-        y: [],
-        type: 'heatmap',
-      }],
+      regions: {
+        categoriesX: [
+          'Andina',
+          'Antillas',
+          'Caribe continental',
+          'Chilena',
+          'España',
+          'Estados Unidos',
+          'Filipinas',
+          'Guinea Ecuatorial',
+          'México y Centroamérica',
+          'Río de la Plata',
+        ],
+        categoriesY: [],
+        data: [],
+      },
     },
     dispersion: [],
     narrative: {
@@ -80,15 +90,16 @@ export const mutations = {
     state.chartData.regional.countries.push(countries);
 
     /* Update Linguistic Regions Data */
-    const regions = state.chartData.regional.regions[0];
-    regions.y.push(payload.term);
-    regions.z.push([]);
-    // Get row key by value
-    const tableRow = Object.keys(regions.y).find(key => regions.y[key] === payload.term);
+    const { regions } = state.chartData.regional;
+    regions.categoriesY.push(payload.term);
+    const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
     const itemsRegions = payload.result[7].data;
     for (let i = 0; i < itemsRegions.length; i += 1) {
-      regions.x.push(itemsRegions[i][0]);
-      regions.z[tableRow].push(itemsRegions[i][1]);
+      const regionName = itemsRegions[i][0];
+      const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
+      if (categoriesXKey) {
+        regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i][1])]);
+      }
     }
   },
   processDispersion(state, payload) {
