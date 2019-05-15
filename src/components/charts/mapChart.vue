@@ -12,7 +12,7 @@ export default {
           map: 'myMapName'
         },
         title: {
-          text: 'Highmaps basic demo'
+          text: 'Regions basic demo'
         },
         subtitle: {
           text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world.js">World, Miller projection, medium resolution</a>'

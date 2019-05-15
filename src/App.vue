@@ -1,6 +1,41 @@
 <template>
-  <router-view/>
+  <div id="app">
+    <topNav/>
+    <div class="container-fluid">
+      <div class="row">
+        <sideNav/>
+        <router-view/>
+      </div>
+    </div>
+  </div>
 </template>
+
+<script>
+// @ is an alias to /src
+import store from '@/store/store';
+import topNav from '@/components/topNav.vue';
+import sideNav from '@/components/sideNav.vue';
+
+export default {
+  name: 'App',
+  store,
+  components: {
+    topNav, sideNav
+  },
+  mixins: [],
+  data() {
+    return {}
+  },
+  created() {
+  },
+  mounted() {
+  },
+  watch: {
+  },
+  methods: {
+  },
+};
+</script>
 
 <style lang="scss">
 /*

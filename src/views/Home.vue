@@ -1,82 +1,35 @@
 <template>
-  <div id="app">
-    <topNav/>
-    <div class="container-fluid">
-      <div class="row">
-        <sideNav/>
-        <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="btn-group mr-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-              </div>
-              <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                Dropdown
-              </button>
-            </div>
+    <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
           </div>
-          <div class="home">
-            <div class="row">
-              <radarChart class="col-md-4 vis-component"></radarChart>
-              <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
-              <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
-              <!--
-              <vue-plotly
-                class="col-md-4"
-                :data="chartData.dispersion"
-                :layout="{
-                  title: 'Dispersion measures of the dimensions',
-                  margin: { r: 30, t: 30, b: 30, l: 30 },
-                  height: 300,
-                  polar: {
-                    radialaxis: {
-                      visible: true,
-                      range: [0, 1],
-                    },
-                  },
-                }"
-                :options="dispersionOptions"
-              />
-              <vue-plotly class="col-md-4" :data="chartData.temporal.absolute" :layout="freqTemporalLayout" :options="freqTemporalOptions"/>
-              <vue-plotly class="col-md-4" :data="chartData.temporal.relative" :layout="relFreqTemporalLayout" :options="relFreqTemporalOptions"/>
-              -->
-            </div>
-            <div class="row">
-              <!--
-              <vue-plotly class="col-md-6"
-                :data="chartData.types"
-                :layout="{
-                  title: 'Distribution of publication type per query',
-                  barmode: 'stack'
-                }"
-              />
-              -->
-              <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
-              <heatmapChart class="col-md-8 vis-component"></heatmapChart>
-              <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-12 vis-component"></stackedBarChart>
-              <!--
-              <vue-plotly class="col-md-12" :data="chartData.regional.regions" :layout="heatmapLayout"/>-->
-            </div>
-            <div class="row">
-              <mapChart class="col-md-12"></mapChart>
-              <vue-plotly class="col-md-12" :data="regionalData" :layout="regionalLayout" :options="regionalOptions"/>
-              <!--<mapChart class="col-md-9 vis-el" :mapData="chartData.regional.countries"/>-->
-            </div>
-          </div>
-        </main>
+          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <span data-feather="calendar"></span>
+            Dropdown
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
+      <div class="home">
+        <div class="row vis-wrapper">
+          <radarChart class="col-md-4 vis-component"></radarChart>
+          <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
+          <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
+          <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
+          <heatmapChart class="col-md-4 vis-component"></heatmapChart>
+          <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-4 vis-component"></stackedBarChart>
+          <mapChart class="col-md-12 vis-component"></mapChart>
+        </div>
+      </div>
+    </main>
 </template>
 
 <script>
 // @ is an alias to /src
 import store from '@/store/store';
-import topNav from '@/components/topNav.vue';
-import sideNav from '@/components/sideNav.vue';
 // import mapChart from '@/components/d3-charts/map.vue';
 import corpusInterface from '@/interfaces/corpusInterface';
 import VuePlotly from '@statnett/vue-plotly';
@@ -91,7 +44,7 @@ export default {
   name: 'home',
   store,
   components: {
-    topNav, sideNav, VuePlotly, radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
+    VuePlotly, radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
   },
   mixins: [corpusInterface],
   data() {
@@ -192,6 +145,18 @@ export default {
   created() {
   },
   mounted() {
+    console.log("mounted");
+    var pckry = new Packery( '.vis-wrapper', {
+      itemSelector: '.vis-component',
+      columnWidth: ".vis-component.col-md-4",
+      gutter: 0,
+      percentPosition: true
+    });
+
+    pckry.getItemElements().forEach( function( itemElem ) {
+      var draggie = new Draggabilly( itemElem );
+      pckry.bindDraggabillyEvents( draggie );
+    });
   },
   watch: {
   },
@@ -229,5 +194,9 @@ export default {
 .vis-component > div {
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #fff;
+}
+
+.vis-component {
+  padding: .5rem!important;
 }
 </style>

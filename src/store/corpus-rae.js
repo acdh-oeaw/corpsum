@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'http://192.168.3.19:3010/corpus/',
-  queryTerms: ['coche', 'carro'],
+  queryTerms: [],
   rawResults: [],
   chartData: {
     temporal: {
@@ -29,7 +29,7 @@ export const state = {
       countries: {
         title: 'Countries',
         type: 'column',
-        yAxisText: 'Absolute Frequencies',
+        yAxisText: 'Relative Frequencies',
         stacking: 'normal',
         categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
         series: [],
