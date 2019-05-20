@@ -13,16 +13,14 @@ export default new Router({
       name: 'root',
       redirect: (to) => {
         if (to.params.id !== 'corpes' || to.params.id !== 'amc') {
-          return '/corpes';
+          return '/corpes/info';
         }
         return to.fullPath;
       },
     },
     {
       path: '/:id',
-      components: {
-        default: App,
-      },
+      component: App,
       // Children to the root path '/'
       children: [
         {
@@ -35,14 +33,15 @@ export default new Router({
         {
           path: 'analysis',
           name: 'analysis',
-          // route level code-splitting
-          // this generates a separate chunk (about.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
           components: {
             Content: Analysis,
           },
         },
       ],
+    },
+    {
+      path: '',
+      redirect: { name: 'info' },
     },
   ],
 });

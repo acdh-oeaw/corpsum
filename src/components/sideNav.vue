@@ -21,7 +21,7 @@
         <li class="nav-item">
           <router-link :to="{ name: 'analysis' }" class="nav-link active">
             <span data-feather="activity"></span>
-            Corpus Analysis <span class="sr-only">(current)</span>
+            Corpus Analysis
           </router-link>
         </li>
       </ul>
@@ -105,12 +105,12 @@ export default {
   color: #999;
 }
 
-.sidebar .nav-link.active {
+.sidebar .nav-link.router-link-active {
   color: #007bff;
 }
 
 .sidebar .nav-link:hover .feather,
-.sidebar .nav-link.active .feather {
+.sidebar .nav-link.router-link-active .feather {
   color: inherit;
 }
 

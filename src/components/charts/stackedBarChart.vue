@@ -11,7 +11,8 @@ export default {
     return {
       stackedBarOptions: {
         chart: {
-          type: this.chartProp.type
+          type: this.chartProp.type,
+          height: this.chartProp.height,
         },
         title: {
           text: this.chartProp.title

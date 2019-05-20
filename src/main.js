@@ -12,8 +12,6 @@ import moreModule from 'highcharts/highcharts-more';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
 
-
-import App from './App.vue';
 import router from './router';
 
 exportingModule(Highcharts);
@@ -64,7 +62,7 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
-  render(h) { return h(App); },
+  render(h) { return h('router-view'); },
 }).$mount('#app');
 
 // CSS Files
