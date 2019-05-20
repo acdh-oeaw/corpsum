@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import store from '@/store/store';
 import axios from 'axios';
 import VoerroTagsInput from '@voerro/vue-tagsinput';
 
@@ -61,6 +62,7 @@ Vue.config.productionTip = false;
 
 new Vue({
   router,
+  store,
   render(h) { return h(App); },
 }).$mount('#app');
 

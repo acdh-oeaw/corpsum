@@ -29,10 +29,7 @@
 
 <script>
 // @ is an alias to /src
-import store from '@/store/store';
 // import mapChart from '@/components/d3-charts/map.vue';
-import corpusInterface from '@/interfaces/corpusInterface';
-import VuePlotly from '@statnett/vue-plotly';
 
 import radarChart from '@/components/charts/radarChart.vue'
 import lineChart from '@/components/charts/lineChart.vue'
@@ -42,11 +39,9 @@ import mapChart from '@/components/charts/mapChart.vue'
 
 export default {
   name: 'home',
-  store,
   components: {
-    VuePlotly, radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
   },
-  mixins: [corpusInterface],
   data() {
     return {
       chartData: this.$store.getters.chartData,

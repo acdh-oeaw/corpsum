@@ -12,13 +12,11 @@
 
 <script>
 // @ is an alias to /src
-import store from '@/store/store';
 import topNav from '@/components/topNav.vue';
 import sideNav from '@/components/sideNav.vue';
 
 export default {
   name: 'App',
-  store,
   components: {
     topNav, sideNav
   },

@@ -2,7 +2,17 @@
   <nav class="col-md-1 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-        <span>Corpus</span>
+        <span>Active Corpus:</span>
+        <a class="d-flex align-items-center text-muted" href="#">
+          <span data-feather="plus-circle"></span>
+        </a>
+      </h6>
+      <select class="custom-select custom-select-sm corpus-selector">
+        <option value="rae" selected>RAE: CORPES</option>
+        <option value="amc">AMC: amc3_demo</option>
+      </select>
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Anaylsis:</span>
         <a class="d-flex align-items-center text-muted" href="#">
           <span data-feather="plus-circle"></span>
         </a>
@@ -111,6 +121,11 @@ export default {
 .sidebar-heading {
   font-size: .75rem;
   text-transform: uppercase;
+}
+
+.corpus-selector {
+  margin: 0 1rem;
+  width: calc(100% - 2rem);
 }
 
 </style>
