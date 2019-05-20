@@ -25,11 +25,17 @@ export const state = {
         },
       ],
     },
+    yearsData: {
+      title: 'Yearly Partition Sizes',
+      yAxisText: 'Number of Documents',
+      height: 400,
+      data: [],
+    },
   },
 };
 
 export const mutations = {
-  updateMostUsed(state, payload) {
+  processMostUsed(state, payload) {
     state.infoData.mostUsed.series[0].data = [];
     state.infoData.mostUsed.categories = [];
     const items = payload.result.values;
@@ -40,6 +46,15 @@ export const mutations = {
       }
     }
   },
+  processYears(state, payload) {
+    state.infoData.yearsData.data = [];
+    const items = payload.result.values;
+    const yearlyDocs = { name: 'Documents', data: [] };
+    for (let i = 0; i < 14; i += 1) {
+      yearlyDocs.data.push([Number(items[i].id), items[i].count]);
+    }
+    state.infoData.yearsData.data.push(yearlyDocs);
+  },
 };
 
 export const getters = {
@@ -47,14 +62,27 @@ export const getters = {
 };
 
 export const actions = {
+  queryCorpusInfo({ state, commit, dispatch }) {
+    dispatch('mostUsedQuery');
+    dispatch('facetsInfoQuery');
+  },
   async mostUsedQuery({ state, commit, dispatch }) {
     try {
       const response = await axios.get('http://www.mocky.io/v2/5ce2d5bd3400005588773779');
-      commit('updateMostUsed', { result: response.data });
+      commit('processMostUsed', { result: response.data });
     } catch (error) {
       console.log(error);
     }
   },
+  async facetsInfoQuery({ state, commit, dispatch }) {
+    try {
+      const response = await axios.get('http://www.mocky.io/v2/5ce2dfde34000056887737a0');
+      commit('processYears', { result: response.data.facets[1] });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
 };
 
 export default {

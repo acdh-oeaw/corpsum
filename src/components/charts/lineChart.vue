@@ -12,7 +12,8 @@ export default {
     return {
       lineOptions: {
         chart: {
-            zoomType: 'x'
+            zoomType: 'x',
+            height: this.chartProp.height,
         },
         title: {
           text: this.chartProp.title

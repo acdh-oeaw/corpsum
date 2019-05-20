@@ -16,6 +16,7 @@
       <div class="home">
         <div class="row vis-wrapper">
           <stackedBarChart :chartProp="infoData.mostUsed" class="col-md-4 vis-component"></stackedBarChart>
+          <lineChart :chartProp="infoData.yearsData" class="col-md-4 vis-component"></lineChart>
         </div>
       </div>
     </main>
@@ -23,12 +24,16 @@
 
 <script>
 // @ is an alias to /src
+import radarChart from '@/components/charts/radarChart.vue'
+import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
+import heatmapChart from '@/components/charts/heatmapChart.vue'
+import mapChart from '@/components/charts/mapChart.vue'
 
 export default {
-  name: 'analysis',
+  name: 'info',
   components: {
-    stackedBarChart,
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
   },
   data() {
     return {
@@ -36,7 +41,7 @@ export default {
     };
   },
   created(){
-    this.$store.dispatch('mostUsedQuery');
+    this.$store.dispatch('queryCorpusInfo');
   },
   mounted() {
     console.log("mounted");
