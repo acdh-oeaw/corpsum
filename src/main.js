@@ -12,6 +12,7 @@ import moreModule from 'highcharts/highcharts-more';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
 
+
 import App from './App.vue';
 import router from './router';
 

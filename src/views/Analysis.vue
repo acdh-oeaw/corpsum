@@ -38,7 +38,7 @@ import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
 
 export default {
-  name: 'home',
+  name: 'analysis',
   components: {
     radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
   },

@@ -4,7 +4,7 @@
     <div class="container-fluid">
       <div class="row">
         <sideNav/>
-        <router-view/>
+        <router-view name="Content"></router-view>
       </div>
     </div>
   </div>

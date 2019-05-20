@@ -25,7 +25,7 @@
 // @ is an alias to /src
 
 export default {
-  name: 'about',
+  name: 'info',
   components: {
   },
   mixins: [],
