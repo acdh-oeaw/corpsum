@@ -15,14 +15,14 @@
       </div>
       <div class="home">
         <div class="row vis-wrapper">
-          <sortableTable :tableData="tableData" class="col-md-12 vis-component"></sortableTable>
           <radarChart class="col-md-4 vis-component"></radarChart>
           <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
           <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
+          <sortableTable :tableData="chartData.kwic" class="col-md-12 vis-component"></sortableTable>
           <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
-          <heatmapChart class="col-md-4 vis-component"></heatmapChart>
-          <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-4 vis-component"></stackedBarChart>
-          <mapChart class="col-md-12 vis-component"></mapChart>
+          <heatmapChart class="col-md-8 vis-component"></heatmapChart>
+          <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></stackedBarChart>
+          <mapChart class="col-md-4 vis-component"></mapChart>
         </div>
       </div>
     </main>
@@ -47,7 +47,6 @@ export default {
   data() {
     return {
       chartData: this.$store.getters.chartData,
-      tableData: [['jo',20],['jane',50],['james',30]]
     };
   },
   created() {

@@ -3,6 +3,7 @@
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
     <tags-input element-id="queryTerms" class="w-100"
       v-model="queryTerms"
+      :allow-duplicates="true"
       @tag-added="tagAdded"
       @tag-removed="tagRemoved"
       placeholder="Type another term to query">

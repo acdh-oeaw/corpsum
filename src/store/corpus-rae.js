@@ -72,6 +72,10 @@ export const state = {
         },
       ],
     },
+    kwic: {
+      data: [],
+      height: 400,
+    },
   },
 };
 
@@ -90,8 +94,10 @@ export const mutations = {
     const absolute = { name: payload.term, data: [] };
     const relative = { name: payload.term, data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      absolute.data.push([Number(items[i][0]), items[i][2]]);
-      relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
+      if (items[i][0] !== '2013' && items[i][0] !== '2014' && items[i][0] !== '2015') {
+        absolute.data.push([Number(items[i][0]), items[i][2]]);
+        relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
+      }
     }
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
@@ -143,6 +149,21 @@ export const mutations = {
     }
     state.chartData.narrative.categories.push(payload.term);
   },
+  processKWIC(state, payload) {
+    const items = payload.result.values;
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.kwic.data.push(
+        [
+          items[i].year,
+          items[i].doc,
+          items[i].country,
+          items[i].left,
+          items[i].center,
+          items[i].right,
+        ],
+      );
+    }
+  },
 };
 
 export const getters = {
@@ -164,16 +185,41 @@ export const actions = {
     try {
       // const response = await axios.post(`${state.engineAPI}fetch-dists/`, { corpus: 'corpes', fmt: 'json', result: params.id });
       let response;
+      let kwicResp;
       if (params.term === 'carro') {
         response = await axios.get('http://www.mocky.io/v2/5cda98bd300000650068c84f');
-      } else {
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a1403100007c00742761');
+      } else if (params.term === 'coche') {
         response = await axios.get('http://www.mocky.io/v2/5cd9913f300000b721c016f4');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce39b383100007800742726');
+      } else if (params.term === 'teléfono celular') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3a4603100005a00742780');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a5243100004c00742785');
+      } else if (params.term === 'teléfono móvil') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3a5713100007800742789');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a5a33100000e0074278a');
+      } else if (params.term === 'SIDA') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3a69c3100005b00742795');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a6dd3100004c00742796');
+      } else if (params.term === 'Sida') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3a7443100007c00742797');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a76f3100000e0074279a');
+      } else if (params.term === 'sida') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3a7b73100005a0074279f');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a7e43100005b007427a4');
+      } else if (params.term === 'Iker') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3aaf63100007c007427ba');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3ab4e3100007c007427c1');
+      } else if (params.term === 'Hugo') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3ab9031000078007427c5');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3abc43100005a007427c7');
       }
       commit('updateRawResults', { term: params.term, result: response.data });
       commit('processTemporal', { term: params.term, result: response.data[6] });
       commit('processRegional', { term: params.term, result: response.data });
       commit('processDispersion', { term: params.term, result: response.data });
       commit('processNarrative', { term: params.term, result: response.data[0] });
+      commit('processKWIC', { term: params.term, result: kwicResp.data });
     } catch (error) {
       console.log(error);
     }
