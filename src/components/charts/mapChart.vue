@@ -1,5 +1,5 @@
 <template>
-  <highcharts :constructor-type="'mapChart'" :options="mapOptions" class="map"></highcharts>
+  <highcharts :constructor-type="'mapChart'" :options="chartOptions" class="map"></highcharts>
 </template>
 
 <script>
@@ -7,7 +7,7 @@
 export default {
   data () {
     return {
-      mapOptions: {
+      chartOptions: {
         chart: {
           map: 'myMapName',
           events: {

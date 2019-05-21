@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="heatmapOptions"></highcharts>
+  <highcharts :options="chartOptions"></highcharts>
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
   store,
   data() {
     return {
-      heatmapOptions: {
+      chartOptions: {
         chart: {
           type: "heatmap",
           marginTop: 40,

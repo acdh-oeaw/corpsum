@@ -32,7 +32,8 @@ export const state = {
         yAxisText: 'Relative Frequencies',
         stacking: 'normal',
         categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
-        series: [],
+        series1D: [],
+        series2D: [],
       },
       regions: {
         categoriesX: [
@@ -94,17 +95,19 @@ export const mutations = {
     const absolute = { name: payload.term, data: [] };
     const relative = { name: payload.term, data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      //if (items[i][0] !== '2013' && items[i][0] !== '2014' && items[i][0] !== '2015') {
-        absolute.data.push([Number(items[i][0]), items[i][2]]);
-        relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
-      //}
+      absolute.data.push([Number(items[i][0]), items[i][2]]);
+      relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
     }
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
   },
   processRegional(state, payload) {
     /* Update Countries Data */
-    const series = {
+    const series1D = {
+      name: payload.term,
+      data: [],
+    };
+    const series2D = {
       name: payload.term,
       data: [],
     };
@@ -112,9 +115,11 @@ export const mutations = {
     const itemsCountries = payload.result[1].data;
     for (let i = 0; i < itemsCountries.length; i += 1) {
       const categoriesKey = Object.keys(countries.categories).find(key => countries.categories[key] === itemsCountries[i][0]);
-      series.data[categoriesKey] = itemsCountries[i][1];
+      series1D.data[categoriesKey] = itemsCountries[i][1];
+      series2D.data[categoriesKey] = [itemsCountries[i][1], itemsCountries[i][2]];
     }
-    state.chartData.regional.countries.series.push(series);
+    state.chartData.regional.countries.series1D.push(series1D);
+    state.chartData.regional.countries.series2D.push(series2D);
 
     /* Update Linguistic Regions Data */
     const regions = state.chartData.regional.regions;

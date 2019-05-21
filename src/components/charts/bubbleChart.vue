@@ -11,7 +11,9 @@ export default {
     return {
       chartOptions: {
         chart: {
-          type: this.chartProp.type,
+          type: 'bubble',
+          plotBorderWidth: 1,
+          zoomType: 'xy',
           height: this.chartProp.height,
         },
         title: {
@@ -30,14 +32,6 @@ export default {
           pointFormat:
             '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
           shared: true
-        },
-        plotOptions: {
-          column: {
-            stacking: this.chartProp.stacking
-          },
-          bar: {
-            stacking: this.chartProp.stacking
-          }
         },
         series: this.chartProp.series
       }

@@ -30,6 +30,12 @@ Highcharts.setOptions({
     buttons: {
       contextButton: {
         menuItems: [
+          {
+            text: 'Change Types',
+            onclick() {
+              this.print();
+            },
+          },
           'printChart',
           'separator',
           'downloadPNG',

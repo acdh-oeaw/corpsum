@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="lineOptions"></highcharts>
+  <highcharts :options="chartOptions"></highcharts>
 </template>
 
 <script>
@@ -10,7 +10,7 @@ export default {
   },
   data() {
     return {
-      lineOptions: {
+      chartOptions: {
         chart: {
             zoomType: 'x',
             height: this.chartProp.height,

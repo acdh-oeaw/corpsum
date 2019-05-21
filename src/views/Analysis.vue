@@ -21,7 +21,7 @@
           <sortableTable :tableData="chartData.kwic" class="col-md-12 vis-component"></sortableTable>
           <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
           <heatmapChart class="col-md-8 vis-component"></heatmapChart>
-          <stackedBarChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></stackedBarChart>
+          <genericChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></genericChart>
           <mapChart class="col-md-4 vis-component"></mapChart>
         </div>
       </div>
@@ -38,11 +38,12 @@ import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
 import sortableTable from '@/components/charts/sortableTable.vue'
+import genericChart from '@/components/charts/genericChart.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, sortableTable
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, sortableTable, genericChart
   },
   data() {
     return {

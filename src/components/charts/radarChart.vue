@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="radarOptions"></highcharts>
+  <highcharts :options="chartOptions"></highcharts>
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
   store,
   data() {
     return {
-      radarOptions: {
+      chartOptions: {
         chart: {
           polar: true,
           type: "line"

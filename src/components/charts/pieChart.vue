@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="pieOptions"></highcharts>
+  <highcharts :options="chartOptions"></highcharts>
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
   },
   data() {
     return {
-      pieOptions: {
+      chartOptions: {
         chart: {
           type: "pie",
           height: this.chartProp.height,
