@@ -1,9 +1,12 @@
 <template>
   <div>
     <div class="data-table" :style="{'height':height}">
+      <div class="highcharts-title text-center" data-z-index="4" style="color: rgb(51, 51, 51); font-size: 18px;">
+        <span>Keyword In Context View</span>
+      </div>
       <v-table :data="this.tableData.data" class="table table-sm"
         :currentPage.sync="currentPage"
-        :pageSize="10"
+        :pageSize="9"
         @totalPagesChanged="totalPages = $event"
       >
         <thead slot="head">

@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
+    <a class="navbar-brand col-sm-2 col-md-1 mr-0 text-center" href="#">corpsum</a>
     <tags-input element-id="queryTerms" class="w-100"
       v-model="queryTerms"
       :allow-duplicates="true"
@@ -173,7 +173,7 @@ export default {
 .navbar-brand {
   padding-top: .75rem;
   padding-bottom: .75rem;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 600;
 }
 

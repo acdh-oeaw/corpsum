@@ -94,10 +94,10 @@ export const mutations = {
     const absolute = { name: payload.term, data: [] };
     const relative = { name: payload.term, data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      if (items[i][0] !== '2013' && items[i][0] !== '2014' && items[i][0] !== '2015') {
+      //if (items[i][0] !== '2013' && items[i][0] !== '2014' && items[i][0] !== '2015') {
         absolute.data.push([Number(items[i][0]), items[i][2]]);
         relative.data.push([Number(items[i][0]), Math.round(items[i][1])]);
-      }
+      //}
     }
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
@@ -192,6 +192,9 @@ export const actions = {
       } else if (params.term === 'coche') {
         response = await axios.get('http://www.mocky.io/v2/5cd9913f300000b721c016f4');
         kwicResp = await axios.get('http://www.mocky.io/v2/5ce39b383100007800742726');
+      } else if (params.term === 'auto') {
+        response = await axios.get('http://www.mocky.io/v2/5ce3c8c031000062387428d4');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5ce3c8fe31000078007428d8');
       } else if (params.term === 'teléfono celular') {
         response = await axios.get('http://www.mocky.io/v2/5ce3a4603100005a00742780');
         kwicResp = await axios.get('http://www.mocky.io/v2/5ce3a5243100004c00742785');

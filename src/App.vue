@@ -41,7 +41,7 @@ export default {
  */
 body {
   font-size: .875rem;
-  background-color: #F1F1F1;
+  background-color: #e8e8e8;
 }
 
 .feather {

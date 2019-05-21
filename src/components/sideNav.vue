@@ -125,4 +125,8 @@ export default {
   width: calc(100% - 2rem);
 }
 
+.sidebar .nav-link {
+  font-size: 0.8rem;
+}
+
 </style>
