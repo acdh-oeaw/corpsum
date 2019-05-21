@@ -16,7 +16,8 @@
       <div class="home">
         <div class="row vis-wrapper">
           <stackedBarChart :chartProp="infoData.mostUsed" class="col-md-4 vis-component"></stackedBarChart>
-          <lineChart :chartProp="infoData.yearsData" class="col-md-4 vis-component"></lineChart>
+          <lineChart :chartProp="infoData.yearsData" class="col-md-8 vis-component"></lineChart>
+          <pieChart :chartProp="infoData.themesData" class="col-md-8 vis-component"></pieChart>
         </div>
       </div>
     </main>
@@ -29,11 +30,12 @@ import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
+import pieChart from '@/components/charts/pieChart.vue'
 
 export default {
   name: 'info',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, pieChart,
   },
   data() {
     return {

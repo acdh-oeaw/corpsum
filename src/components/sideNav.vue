@@ -1,5 +1,5 @@
 <template>
-  <nav class="col-md-1 d-none d-md-block bg-light sidebar">
+  <nav class="col-md-1 d-none d-md-block sidebar">
     <div class="sidebar-sticky">
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
         <span>Active Corpus:</span>
@@ -77,6 +77,7 @@ export default {
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  background-color: #bfebf5;
 }
 
 .sidebar-sticky {

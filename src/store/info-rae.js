@@ -14,7 +14,7 @@ export const state = {
     mostUsed: {
       title: 'Most Used Terms',
       type: 'bar',
-      height: 800,
+      height: 815,
       yAxisText: 'Occurences',
       stacking: 'normal',
       categories: [],
@@ -28,6 +28,11 @@ export const state = {
     yearsData: {
       title: 'Yearly Partition Sizes',
       yAxisText: 'Number of Documents',
+      height: 400,
+      data: [],
+    },
+    themesData: {
+      title: 'Themes of the Documents',
       height: 400,
       data: [],
     },
@@ -50,10 +55,19 @@ export const mutations = {
     state.infoData.yearsData.data = [];
     const items = payload.result.values;
     const yearlyDocs = { name: 'Documents', data: [] };
-    for (let i = 0; i < 14; i += 1) {
-      yearlyDocs.data.push([Number(items[i].id), items[i].count]);
+    for (let i = 0; i < items.length; i += 1) {
+      if (items[i].id !== '?') {
+        yearlyDocs.data.push([Number(items[i].id), items[i].count]);
+      }
     }
     state.infoData.yearsData.data.push(yearlyDocs);
+  },
+  processThemes(state, payload) {
+    state.infoData.themesData.data = [];
+    const items = payload.result.values;
+    for (let i = 0; i < items.length; i += 1) {
+      state.infoData.themesData.data.push([items[i].label, Number(items[i].count)]);
+    }
   },
 };
 
@@ -78,6 +92,7 @@ export const actions = {
     try {
       const response = await axios.get('http://www.mocky.io/v2/5ce2dfde34000056887737a0');
       commit('processYears', { result: response.data.facets[1] });
+      commit('processThemes', { result: response.data.facets[9] });
     } catch (error) {
       console.log(error);
     }

@@ -9,7 +9,12 @@ export default {
     return {
       mapOptions: {
         chart: {
-          map: 'myMapName'
+          map: 'myMapName',
+          events: {
+              load: function () {
+                this.mapZoom(0.25, 0, 0, -150, 0)
+              }
+          }
         },
         title: {
           text: 'Regions basic demo'

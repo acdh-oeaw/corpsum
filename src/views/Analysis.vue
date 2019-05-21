@@ -15,6 +15,7 @@
       </div>
       <div class="home">
         <div class="row vis-wrapper">
+          <sortableTable :tableData="tableData" class="col-md-12 vis-component"></sortableTable>
           <radarChart class="col-md-4 vis-component"></radarChart>
           <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
           <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
@@ -36,105 +37,17 @@ import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
+import sortableTable from '@/components/charts/sortableTable.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, sortableTable
   },
   data() {
     return {
       chartData: this.$store.getters.chartData,
-      freqTemporalLayout: {
-        title: 'Temporal distribution of absolute frequencies',
-        margin: {
-          r: 30, t: 30, b: 30, l: 30,
-        },
-        height: 300,
-      },
-      freqTemporalOptions: { displaylogo: false, responsive: true, displayModeBar: false },
-      relFreqTemporalLayout: {
-        title: 'Temporal distribution of relative frequencies',
-        margin: {
-          r: 30, t: 30, b: 30, l: 30,
-        },
-        height: 300,
-      },
-      relFreqTemporalOptions: { displaylogo: false, responsive: true, displayModeBar: false },
-      /*
-      regionalData: [{
-        type: 'choropleth',
-        locationmode: 'country names',
-        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
-        z: [150, 200, 90, 35, 40, 80, 130],
-        text: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
-        autocolorscale: true,
-        colorbar: {
-          x: -0.15999999999999992,
-          y: 0.5,
-          lenmode: 'fraction',
-          thickness: 15,
-          thicknessmode: 'pixels',
-          tickangle: 'auto',
-          tickmode: 'auto',
-          ticks: '',
-          title: { side: 'top' },
-          xanchor: 'left',
-          yanchor: 'middle',
-          ypad: 20,
-        },
-        showscale: false,
-      }],
-      */
-      regionalData: [{
-        type: 'choropleth',
-        locationmode: 'country names',
-        locations: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
-        z: [150, 200, 90, 35, 40, 80, 130],
-        text: ['Argentine', 'Spain', 'Colombia', 'Mexico', 'Chile', 'United States of America', 'Venezuela'],
-        autocolorscale: true,
-        colorbar: {
-          x: -0.15999999999999992,
-          y: 0.5,
-          lenmode: 'fraction',
-          thickness: 15,
-          thicknessmode: 'pixels',
-          tickangle: 'auto',
-          tickmode: 'auto',
-          ticks: '',
-          title: { side: 'top' },
-          xanchor: 'left',
-          yanchor: 'middle',
-          ypad: 20,
-        },
-        showscale: false,
-      }],
-      regionalLayout: {
-        title: 'Regional distribution of the results',
-        height: 200,
-        margin: {
-          r: 10, t: 30, b: 20, l: 10,
-        },
-        geo: {
-          center: {
-            lat: -5.1017044588664975,
-            lon: -29.237649476804474,
-          },
-          projection: {
-            scale: 1.7438683100062125,
-            type: 'equirectangular',
-          },
-        },
-      },
-      regionalOptions: { displaylogo: false, responsive: true, displayModeBar: false },
-      dispersionOptions: { displaylogo: false, responsive: true, displayModeBar: false },
-      heatmapLayout: {
-        title: 'Heatmap view of regions in relative frequencies',
-        margin: {
-          r: 60, t: 50, b: 100, l: 60,
-        },
-        height: 300,
-      },
+      tableData: [['jo',20],['jane',50],['james',30]]
     };
   },
   created() {

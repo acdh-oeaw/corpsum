@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">corpsum</a>
     <tags-input element-id="queryTerms" class="w-100"
       v-model="queryTerms"
@@ -165,13 +165,15 @@ export default {
 /*
  * Navbar
  */
+.navbar {
+  background-color: #34a8c3;
+}
 
 .navbar-brand {
   padding-top: .75rem;
   padding-bottom: .75rem;
-  font-size: 1rem;
-  background-color: rgba(0, 0, 0, .25);
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .navbar .form-control {
