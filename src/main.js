@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import store from '@/store/store';
 import axios from 'axios';
+import BootstrapVue from 'bootstrap-vue';
 import VoerroTagsInput from '@voerro/vue-tagsinput';
 import SmartTable from 'vuejs-smart-table'
 import HighchartsVue from 'highcharts-vue';
@@ -11,6 +12,8 @@ import moreModule from 'highcharts/highcharts-more';
 import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
+
+import './scss/bootstrap.scss';
 
 import router from './router';
 
@@ -57,6 +60,8 @@ Vue.use(HighchartsVue);
 
 Vue.prototype.Highcharts = Highcharts;
 
+Vue.use(BootstrapVue);
+
 // Axios properties
 Vue.prototype.$http = axios;
 Vue.prototype.axios = axios;
@@ -74,5 +79,4 @@ new Vue({
   render(h) { return h('router-view'); },
 }).$mount('#app');
 
-// CSS Files
-// require('../node_modules/@voerro/vue-tagsinput/dist/style.css');
+

@@ -1,5 +1,6 @@
 module.exports = {
   css: {
+    sourceMap: true,
     loaderOptions: {
       sass: {
         data: `
