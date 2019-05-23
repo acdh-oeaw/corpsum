@@ -63,4 +63,12 @@ body {
   }
 }
 
+.sidebar, .navbar-brand {
+  min-width: 180px;
+}
+
+main {
+  max-width: calc(100% - 180px) !important;
+}
+
 </style>

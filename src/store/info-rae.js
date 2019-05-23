@@ -33,8 +33,13 @@ export const state = {
     },
     themesData: {
       title: 'Themes of the Documents',
+      yAxisText: 'Number of Documents',
+      stacking: 'normal',
+      type: 'column',
       height: 400,
-      data: [],
+      categories: [],
+      series1D: [],
+      series2D: [],
     },
   },
 };
@@ -63,11 +68,17 @@ export const mutations = {
     state.infoData.yearsData.data.push(yearlyDocs);
   },
   processThemes(state, payload) {
-    state.infoData.themesData.data = [];
+    const series1D = {
+      name: 'Documents',
+      data: [],
+    };
+    state.infoData.themesData.categories = [];
     const items = payload.result.values;
     for (let i = 0; i < items.length; i += 1) {
-      state.infoData.themesData.data.push([items[i].label, Number(items[i].count)]);
+      state.infoData.themesData.categories.push(items[i].label);
+      series1D.data.push(Number(items[i].count));
     }
+    state.infoData.themesData.series1D = series1D;
   },
 };
 

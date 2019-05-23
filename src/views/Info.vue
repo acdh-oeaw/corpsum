@@ -17,7 +17,7 @@
         <div class="row vis-wrapper">
           <stackedBarChart :chartProp="infoData.mostUsed" class="col-md-4 vis-component"></stackedBarChart>
           <lineChart :chartProp="infoData.yearsData" class="col-md-8 vis-component"></lineChart>
-          <pieChart :chartProp="infoData.themesData" class="col-md-8 vis-component"></pieChart>
+          <genericChart :chartProp="infoData.themesData" class="col-md-8 vis-component"></genericChart>
         </div>
       </div>
     </main>
@@ -30,12 +30,12 @@ import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
-import pieChart from '@/components/charts/pieChart.vue'
+import genericChart from '@/components/charts/genericChart.vue'
 
 export default {
   name: 'info',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, pieChart,
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart,
   },
   data() {
     return {

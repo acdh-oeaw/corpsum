@@ -2,7 +2,7 @@
   <div>
     <select class="custom-select custom-select-sm chart-type-selector col-2" v-model="chartType" @change="changeChartType($event)">
       <option value="column">Column</option>
-      <option value="bar" selected>Bar</option>
+      <option value="bar">Bar</option>
       <option value="line">Line</option>
       <option value="area">Area</option>
       <option value="scatter">Scatter</option>
@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      chartType: 'bar',
+      chartType: this.chartProp.type,
       chartOptions: {
         chart: {
           type: this.chartProp.type,
@@ -40,11 +40,6 @@ export default {
           title: {
             text: this.chartProp.yAxisText
           }
-        },
-        colorAxis: {
-          min: 0,
-          minColor: "#FFFFFF",
-          maxColor: this.Highcharts.getOptions().colors[2]
         },
         tooltip: {
           pointFormat:
@@ -87,6 +82,11 @@ export default {
             color: "#000000"
           }
         };
+/*         colorAxis: {
+          min: 0,
+          minColor: "#FFFFFF",
+          maxColor: this.Highcharts.getOptions().colors[2]
+        }, */
       } else {
         this.chartOptions.series = this.chartProp.series1D;
       }
