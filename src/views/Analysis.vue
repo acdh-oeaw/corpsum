@@ -18,7 +18,7 @@
           <radarChart class="col-md-4 vis-component"></radarChart>
           <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
           <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
-          <sortableTable :tableData="chartData.kwic" class="col-md-12 vis-component"></sortableTable>
+          <interactiveTable :tableData="chartData.kwic" class="col-md-12 vis-component"></interactiveTable>
           <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
           <heatmapChart class="col-md-8 vis-component"></heatmapChart>
           <genericChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></genericChart>
@@ -37,13 +37,13 @@ import lineChart from '@/components/charts/lineChart.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
-import sortableTable from '@/components/charts/sortableTable.vue'
 import genericChart from '@/components/charts/genericChart.vue'
+import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, sortableTable, genericChart
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, interactiveTable
   },
   data() {
     return {

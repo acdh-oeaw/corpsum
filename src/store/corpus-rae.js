@@ -74,8 +74,16 @@ export const state = {
       ],
     },
     kwic: {
-      data: [],
-      height: 400,
+      items: [],
+      fields: [
+        { key: 'year', label: 'Year', sortable: true },
+        { key: 'doc', label: 'Document ID', sortable: true },
+        { key: 'country', label: 'Country', sortable: true },
+        { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
+        { key: 'term', label: 'Term', sortable: true, class: 'text-center' },
+        { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
+      ],
+      height: 600,
     },
   },
 };
@@ -157,15 +165,8 @@ export const mutations = {
   processKWIC(state, payload) {
     const items = payload.result.values;
     for (let i = 0; i < items.length; i += 1) {
-      state.chartData.kwic.data.push(
-        [
-          items[i].year,
-          items[i].doc,
-          items[i].country,
-          items[i].left,
-          items[i].center,
-          items[i].right,
-        ],
+      state.chartData.kwic.items.push(
+        { year: items[i].year, doc: items[i].doc, country: items[i].country, left: items[i].left, term: items[i].center, right: items[i].right }
       );
     }
   },
