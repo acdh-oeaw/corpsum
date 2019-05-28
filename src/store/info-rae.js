@@ -11,6 +11,10 @@ Vue.use(Vuex);
 export const state = {
   engineAPI: 'http://192.168.3.19:3010/corpus/',
   infoData: {
+    corpusDescription: {
+      corpusName: 'CORPES by Real Academia Española',
+      corpusLogo: 'https://img.pngio.com/rae-logo-png-png-image-rae-png-824_342.png',
+    },
     mostUsed: {
       title: 'Most Used Terms',
       type: 'bar',

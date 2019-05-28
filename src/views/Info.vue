@@ -15,6 +15,7 @@
       </div>
       <div class="home">
         <div class="row vis-wrapper">
+          <corpusDescription :chartProp="infoData.corpusDescription" class="col-md-12 vis-component"></corpusDescription>
           <stackedBarChart :chartProp="infoData.mostUsed" class="col-md-4 vis-component"></stackedBarChart>
           <lineChart :chartProp="infoData.yearsData" class="col-md-8 vis-component"></lineChart>
           <genericChart :chartProp="infoData.themesData" class="col-md-8 vis-component"></genericChart>
@@ -31,11 +32,12 @@ import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
 import genericChart from '@/components/charts/genericChart.vue'
+import corpusDescription from '@/components/ui-elements/corpusDescription.vue'
 
 export default {
   name: 'info',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart,
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, corpusDescription
   },
   data() {
     return {
