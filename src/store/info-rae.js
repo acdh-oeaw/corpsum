@@ -15,6 +15,20 @@ export const state = {
       corpusName: 'CORPES by Real Academia Española',
       corpusLogo: 'https://img.pngio.com/rae-logo-png-png-image-rae-png-824_342.png',
     },
+    basicStats: [
+      {
+        statName: 'Total Documents',
+        statValue: '52 Million',
+      },
+      {
+        statName: 'Total Words',
+        statValue: '12 Billion',
+      },
+      {
+        statName: 'Total Countries',
+        statValue: '23',
+      },
+    ],
     mostUsed: {
       title: 'Most Used Terms',
       type: 'bar',

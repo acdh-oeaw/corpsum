@@ -2,11 +2,11 @@
   <div>
     <b-container :style="{'height':height}" fluid>
       <!-- User Interface controls -->
-      <b-row>
+      <b-row class="py-3">
         <b-col md="6" class="my-1">
-          <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
+          <b-form-group class="mb-0">
             <b-input-group>
-              <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
+              <b-form-input v-model="filter" placeholder="Type to Filter"></b-form-input>
               <b-input-group-append>
                 <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
               </b-input-group-append>
@@ -15,6 +15,15 @@
         </b-col>
 
         <b-col md="6" class="my-1">
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            class="my-0"
+          ></b-pagination>
+        </b-col>
+
+<!--         <b-col md="6" class="my-1">
           <b-form-group label-cols-sm="3" label="Sort" class="mb-0">
             <b-input-group>
               <b-form-select v-model="sortBy" :options="sortOptions">
@@ -26,9 +35,9 @@
               </b-form-select>
             </b-input-group>
           </b-form-group>
-        </b-col>
+        </b-col> -->
 
-        <b-col md="6" class="my-1">
+<!--         <b-col md="6" class="my-1">
           <b-form-group label-cols-sm="3" label="Sort direction" class="mb-0">
             <b-input-group>
               <b-form-select v-model="sortDirection" slot="append">
@@ -38,13 +47,13 @@
               </b-form-select>
             </b-input-group>
           </b-form-group>
-        </b-col>
+        </b-col> -->
 
-        <b-col md="6" class="my-1">
+<!--         <b-col md="6" class="my-1">
           <b-form-group label-cols-sm="3" label="Per page" class="mb-0">
             <b-form-select v-model="perPage" :options="pageOptions"></b-form-select>
           </b-form-group>
-        </b-col>
+        </b-col> -->
       </b-row>
 
       <!-- Main table element -->
@@ -89,17 +98,6 @@
         </template>
       </b-table>
 
-      <b-row>
-        <b-col md="6" class="my-1">
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            class="my-0"
-          ></b-pagination>
-        </b-col>
-      </b-row>
-
       <!-- Info modal -->
       <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
         <pre>{{ infoModal.content }}</pre>
@@ -119,7 +117,7 @@
         fields: this.tableData.fields,
         height: this.tableData.height + 'px',
         currentPage: 1,
-        perPage: 10,
+        perPage: 15,
         pageOptions: [10, 15, 20],
         sortBy: null,
         sortDesc: false,
