@@ -22,8 +22,13 @@ export default {
   name: 'topNav',
   data() {
     return {
-      queryTerms: this.$store.getters.queryTerms,
     };
+  },
+  computed: {
+    queryTerms() {
+      return this.$store.getters.queryTerms;
+      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+    }
   },
   methods: {
     tagAdded(queryTerm) {

@@ -25,7 +25,7 @@ mapInit(Highcharts);
 Highcharts.maps.myMapName = worldmap;
 
 Highcharts.setOptions({
-  colors: ['#058DC7', '#50B432', '#DDDF00', '#ED561B', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+  colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#d95f02', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
 });
 
 Highcharts.setOptions({

@@ -1,7 +1,12 @@
 <template>
     <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Corpus Analysis Dashboard</h1>
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
+      <div>
+        <h6>Sample Queries: </h6>
+        <b-button class="mr-2" variant="primary" size="sm" @click="changeSampleQuery(1)">Car: coche / carro / auto</b-button>
+        <b-button class="mr-2" variant="secondary" size="sm" @click="changeSampleQuery(2)">Cellphone: teléfono celular / teléfono móvil</b-button>
+        <b-button class="mr-2" variant="success" size="sm" @click="changeSampleQuery(3)">Spelling Changes: Iraq / Irak</b-button>
+      </div>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -47,13 +52,17 @@ export default {
   },
   data() {
     return {
-      chartData: this.$store.getters.chartData,
+      initialChartDataState : [],
+      chartData : this.$store.getters.chartData,
     };
   },
   created() {
   },
   mounted() {
     console.log("mounted");
+
+    this.initialChartDataState = this.$store.getters.chartData;
+
     var pckry = new Packery( '.vis-wrapper', {
       itemSelector: '.vis-component',
       columnWidth: ".vis-component.col-md-4",
@@ -69,13 +78,37 @@ export default {
   watch: {
   },
   computed: {
-    /*
-    chartData () {
-      return this.$store.getters.chartData;
+    storeChartData () {
+      this.chartData = this.$store.getters.chartData;
+      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
     }
-    */
   },
   methods: {
+    changeSampleQuery(querySet) {
+      console.log(this.initialChartDataState)
+      if (querySet == 1) {
+        const queryTerms = ['coche','carro','auto'];
+        this.$store.commit('resetChartData', this.initialChartDataState);
+        this.$store.commit('resetQueryTerms', queryTerms);
+      } else if (querySet == 2) {
+        const queryTerms = ['teléfono celular', 'teléfono móvil'];
+        this.$store.commit('resetChartData', this.initialChartDataState);
+        this.$store.commit('resetQueryTerms', queryTerms);
+      } else if (querySet == 3) {
+        const queryTerms = ['Iraq', 'Irak'];
+        this.$store.commit('resetChartData', this.initialChartDataState);
+        this.$store.commit('resetQueryTerms', queryTerms);
+      }
+      //this.$store.dispatch('corpusQuery', queryTerm);
+      //store.replaceState(JSON.parse(JSON.stringify(initialStateCopy)))
+      /*
+      this.initialSearchQuery(this.chartData, queryTerm)
+        .then((response) => {
+          this.chartData = response;
+          this.$store.commit('chartDataUpdate', this.chartData);
+        });
+        */
+    },
     onQueryTermAdded(queryTerm) {
       console.log(queryTerm)
       /*

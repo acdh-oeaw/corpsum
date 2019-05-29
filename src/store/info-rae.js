@@ -18,11 +18,11 @@ export const state = {
     basicStats: [
       {
         statName: 'Total Documents',
-        statValue: '52 Million',
+        statValue: '285.000',
       },
       {
-        statName: 'Total Words',
-        statValue: '12 Billion',
+        statName: 'Total Tokens',
+        statValue: '286 Million',
       },
       {
         statName: 'Total Countries',
@@ -45,13 +45,13 @@ export const state = {
     },
     yearsData: {
       title: 'Yearly Partition Sizes',
-      yAxisText: 'Number of Documents',
+      yAxisText: 'Number of Tokens',
       height: 400,
       data: [],
     },
     themesData: {
-      title: 'Themes of the Documents',
-      yAxisText: 'Number of Documents',
+      title: 'Themes of the Corpus',
+      yAxisText: 'Number of Tokens',
       stacking: 'normal',
       type: 'column',
       height: 400,
@@ -77,7 +77,7 @@ export const mutations = {
   processYears(state, payload) {
     state.infoData.yearsData.data = [];
     const items = payload.result.values;
-    const yearlyDocs = { name: 'Documents', data: [] };
+    const yearlyDocs = { name: 'Tokens', data: [] };
     for (let i = 0; i < items.length; i += 1) {
       if (items[i].id !== '?') {
         yearlyDocs.data.push([Number(items[i].id), items[i].count]);

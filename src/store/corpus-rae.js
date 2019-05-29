@@ -29,8 +29,8 @@ export const state = {
       countries: {
         title: 'Countries',
         type: 'column',
+        stacking: 'percent',
         yAxisText: 'Relative Frequencies',
-        stacking: 'normal',
         categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
         series1D: [],
         series2D: [],
@@ -89,6 +89,14 @@ export const state = {
 };
 
 export const mutations = {
+  resetQueryTerms(state, payload) {
+    state.queryTerms = payload;
+    console.log(payload)
+  },
+  resetChartData(state, payload) {
+    state.chartData = payload;
+    console.log(payload)
+  },
   updateRawResults(state, payload) {
     state.rawResults.push(payload);
   },
@@ -222,6 +230,12 @@ export const actions = {
       } else if (params.term === 'Hugo') {
         response = await axios.get('http://www.mocky.io/v2/5ce3ab9031000078007427c5');
         kwicResp = await axios.get('http://www.mocky.io/v2/5ce3abc43100005a007427c7');
+      } else if (params.term === 'Iraq') {
+        response = await axios.get('http://www.mocky.io/v2/5cedb031320000165e0c13bf');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5cedb0b4320000165e0c13c0');
+      } else if (params.term === 'Irak') {
+        response = await axios.get('http://www.mocky.io/v2/5cedb27d3200005f000c13c5');
+        kwicResp = await axios.get('http://www.mocky.io/v2/5cedb2b0320000182b0c13c7');
       }
       commit('updateRawResults', { term: params.term, result: response.data });
       commit('processTemporal', { term: params.term, result: response.data[6] });

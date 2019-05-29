@@ -29,7 +29,7 @@ export default {
         colorAxis: {
           min: 0,
           minColor: "#FFFFFF",
-          maxColor: this.Highcharts.getOptions().colors[3]
+          maxColor: this.Highcharts.getOptions().colors[4]
         },
         legend: {
           align: "right",
