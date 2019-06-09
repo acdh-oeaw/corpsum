@@ -4,22 +4,19 @@
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
         <span>Active Corpus:</span>
       </h6>
-      <select class="custom-select custom-select-sm corpus-selector">
-        <option value="rae" selected>RAE: CORPES</option>
-        <option value="amc">AMC: amc3_demo</option>
-      </select>
+      <b-form-select v-model="selectedCorpus" :options="optionsCorpora" @change="changeCorpus" size="sm" class="corpus-selector"></b-form-select>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
         <span>Anaylsis:</span>
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <router-link :to="{ name: 'info' }" class="nav-link">
+          <router-link :to="{ name: 'info', params: { id: selectedCorpus } }" class="nav-link">
             <span data-feather="hard-drive"></span>
             Corpus Info
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'analysis' }" class="nav-link active">
+          <router-link :to="{ name: 'analysis', params: { id: selectedCorpus } }" class="nav-link active">
             <span data-feather="activity"></span>
             Corpus Analysis
           </router-link>
@@ -58,8 +55,22 @@ import feather from 'feather-icons';
 
 export default {
   name: 'sideNav',
+  data() {
+    return {
+      selectedCorpus: 'amc-demo',
+      optionsCorpora: [
+        { value: 'amc-demo', text: 'AMC3 (demo)' },
+        { value: 'corpes', text: 'CORPES by RAE' },
+      ]
+    }
+  },
   mounted() {
     feather.replace();
+  },
+  methods: {
+    changeCorpus(val) {
+      this.$router.push({ name: 'info', params: { id: val } })
+    }
   }
 };
 </script>
