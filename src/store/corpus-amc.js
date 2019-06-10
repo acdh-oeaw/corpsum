@@ -24,6 +24,11 @@ export const state = {
       chartProp: 'relative',
     },
     {
+      component: 'interactiveTable',
+      class: 'col-md-12 vis-component',
+      chartProp: 'kwic',
+    },
+    {
       component: 'scatterChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sources',
@@ -44,6 +49,7 @@ export const state = {
       title: 'Sources',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency',
+      plotLines: [],
       series: [],
     },
     countries: {
@@ -95,11 +101,12 @@ export const state = {
     kwic: {
       items: [],
       fields: [
-        { key: 'year', label: 'Year', sortable: true },
-        { key: 'doc', label: 'Document ID', sortable: true },
-        { key: 'country', label: 'Country', sortable: true },
+        { key: 'link', label: 'View', sortable: false },
+        { key: 'date', label: 'Date', sortable: true },
+        { key: 'source', label: 'Source', sortable: true },
+        { key: 'region', label: 'Region', sortable: true },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
-        { key: 'term', label: 'Term', sortable: true, class: 'text-center' },
+        { key: 'word', label: 'Word', sortable: true, class: 'text-center' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
       ],
       height: 600,
@@ -141,7 +148,7 @@ export const mutations = {
   },
   processSources(state, payload) {
     const items = payload.result;
-    const series = { name: payload.term, data: [] };
+    const series = { name: payload.term, symbol: 'circle', data: [] };
     for (let i = 0; i < items.length; i += 1) {
       series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
     }
@@ -201,12 +208,39 @@ export const mutations = {
     state.chartData.narrative.categories.push(payload.term);
   },
   processKWIC(state, payload) {
-    const items = payload.result.values;
+    const items = payload.result.Lines;
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.kwic.items.push(
-        { year: items[i].year, doc: items[i].doc, country: items[i].country, left: items[i].left, term: items[i].center, right: items[i].right }
+        {
+          link: 'Details',
+          date: items[i].Tbl_refs[1],
+          source: items[i].Tbl_refs[4],
+          region: items[i].Tbl_refs[2],
+          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+        },
       );
     }
+    // Use overall rel. freq. data for other charts
+    const overallRel = payload.result.Desc[0].rel;
+    state.chartData.sources.plotLines.push(
+      {
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: overallRel,
+        label: {
+          style: {
+            fontStyle: 'italic',
+          },
+          verticalAlign: 'middle',
+          textAlign: 'center',
+          text: `"${payload.term}" rel: ${overallRel}`,
+        },
+        zIndex: 3,
+      },
+    );
   },
 };
 
@@ -220,9 +254,13 @@ export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc3_demo;fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
+
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=amc3_demo&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
+
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
+      commit('processKWIC', { term: queryTerm, result: kwicResp.data });
     } catch (error) {
       console.log(error);
     }

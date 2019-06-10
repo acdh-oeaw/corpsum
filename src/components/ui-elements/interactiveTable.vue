@@ -109,13 +109,13 @@
 <script>
   export default {
     props: {
-      tableData: Object
+      chartProp: Object
     },
     data() {
       return {
-        items: this.tableData.items,
-        fields: this.tableData.fields,
-        height: this.tableData.height + 'px',
+        items: this.chartProp.items,
+        fields: this.chartProp.fields,
+        height: this.chartProp.height + 'px',
         currentPage: 1,
         perPage: 15,
         pageOptions: [10, 15, 20],
@@ -140,7 +140,7 @@
           })
       },
       totalRows() {
-        return this.tableData.items.length;
+        return this.chartProp.items.length;
         set: (value) => console.log(value) // this.$state.commit('someMutation', value )
       }
     },

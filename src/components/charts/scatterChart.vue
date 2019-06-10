@@ -28,38 +28,7 @@ export default {
           startOnTick: true,
           endOnTick: true,
           showLastLabel: true,
-          plotLines: [
-            {
-              color: 'blue',
-              dashStyle: 'dot',
-              width: 2,
-              value: 118.68,
-              label: {
-                  rotation: 0,
-                  y: 15,
-                  style: {
-                      fontStyle: 'italic'
-                  },
-                  text: 'Haus rel. freq.: 118.68'
-              },
-              zIndex: 3
-            },
-            {
-              color: 'red',
-              dashStyle: 'dot',
-              width: 2,
-              value: 42.90,
-              label: {
-                  rotation: 0,
-                  y: 30,
-                  style: {
-                      fontStyle: 'italic'
-                  },
-                  text: 'Ball rel. freq.: 42.90'
-              },
-              zIndex: 3
-            },
-          ]
+          plotLines: this.chartProp.plotLines
         },
         yAxis: {
           title: {
