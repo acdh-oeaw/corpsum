@@ -69,7 +69,7 @@ Vue.prototype.axios = axios;
 // Tags input package
 Vue.component('tags-input', VoerroTagsInput);
 
-Vue.use(SmartTable)
+Vue.use(SmartTable);
 
 Vue.config.productionTip = false;
 
@@ -78,5 +78,3 @@ new Vue({
   store,
   render(h) { return h('router-view'); },
 }).$mount('#app');
-
-

@@ -1,12 +1,12 @@
 <template>
     <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
-      <div>
+<!--       <div>
         <h6>Sample Queries: </h6>
         <b-button class="mr-2" variant="primary" size="sm" @click="changeSampleQuery(1)">Car: coche / carro / auto</b-button>
         <b-button class="mr-2" variant="secondary" size="sm" @click="changeSampleQuery(2)">Cellphone: teléfono celular / teléfono móvil</b-button>
         <b-button class="mr-2" variant="success" size="sm" @click="changeSampleQuery(3)">Spelling Changes: Iraq / Irak</b-button>
-      </div>
+      </div> -->
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -20,6 +20,7 @@
       </div>
       <div class="home">
         <div class="row vis-wrapper">
+          <component v-bind:is="componentName" :chartProp="chartData.temporal.absolute" class="col-md-12 vis-component"></component>
           <radarChart class="col-md-4 vis-component"></radarChart>
           <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
           <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
@@ -52,6 +53,7 @@ export default {
   },
   data() {
     return {
+      componentName: 'lineChart',
       initialChartDataState : [],
       chartData : this.$store.getters.chartData,
     };
@@ -78,10 +80,6 @@ export default {
   watch: {
   },
   computed: {
-    storeChartData () {
-      this.chartData = this.$store.getters.chartData;
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-    }
   },
   methods: {
     changeSampleQuery(querySet) {

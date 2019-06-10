@@ -57,9 +57,9 @@ export default {
   name: 'sideNav',
   data() {
     return {
-      selectedCorpus: 'amc-demo',
+      selectedCorpus: this.$route.params.id,
       optionsCorpora: [
-        { value: 'amc-demo', text: 'AMC3 (demo)' },
+        { value: 'amc3demo', text: 'AMC3 (demo)' },
         { value: 'corpes', text: 'CORPES by RAE' },
       ]
     }
