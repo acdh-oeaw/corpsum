@@ -23,17 +23,28 @@ export const state = {
       class: 'col-md-6 vis-component',
       chartProp: 'relative',
     },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'sources',
+    },
   ],
   chartData: {
     absolute: {
-      title: 'Yearly Absolute Frequencies',
+      title: 'Yearly Absolute Frequency',
       yAxisText: 'Number of Hits',
       data: [],
     },
     relative: {
-      title: 'Yearly Relative Frequencies',
+      title: 'Yearly Relative Frequency',
       yAxisText: 'Number of Hits per Million Words',
       data: [],
+    },
+    sources: {
+      title: 'Sources',
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Relative Frequency',
+      series: [],
     },
     countries: {
       title: 'Countries',
@@ -128,6 +139,14 @@ export const mutations = {
     state.chartData.absolute.data.push(absolute);
     state.chartData.relative.data.push(relative);
   },
+  processSources(state, payload) {
+    const items = payload.result;
+    const series = { name: payload.term, data: [] };
+    for (let i = 0; i < items.length; i += 1) {
+      series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
+    }
+    state.chartData.sources.series.push(series);
+  },
   processRegional(state, payload) {
     /* Update Countries Data */
     const series1D = {
@@ -200,9 +219,10 @@ export const getters = {
 export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
-      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc3_demo;fttattr=doc.year;fttattr=doc.docsrc_name;fttattr=doc.region;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
+      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc3_demo;fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
+      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
     } catch (error) {
       console.log(error);
     }

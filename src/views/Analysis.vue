@@ -52,12 +52,13 @@ import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
 import genericChart from '@/components/charts/genericChart.vue'
+import scatterChart from '@/components/charts/scatterChart.vue'
 import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, interactiveTable
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable
   },
   data() {
     return {

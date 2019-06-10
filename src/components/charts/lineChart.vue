@@ -21,6 +21,12 @@ export default {
         subtitle: {
           text: "Subtitle text extra information"
         },
+        xAxis: {
+          title: {
+            text: this.chartProp.xAxisText
+          },
+          allowDecimals: false,
+        },
         yAxis: {
           title: {
             text: this.chartProp.yAxisText
