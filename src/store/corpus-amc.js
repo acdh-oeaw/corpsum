@@ -12,6 +12,7 @@ export const state = {
   engineAPI: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
   queryTerms: [],
   rawResults: [],
+  modalTextContent: '',
   chartElements: [
     {
       component: 'lineChart',
@@ -24,7 +25,7 @@ export const state = {
       chartProp: 'relative',
     },
     {
-      component: 'interactiveTable',
+      component: 'kwicTable',
       class: 'col-md-12 vis-component',
       chartProp: 'kwic',
     },
@@ -101,7 +102,7 @@ export const state = {
     kwic: {
       items: [],
       fields: [
-        { key: 'link', label: 'View', sortable: false },
+        { key: 'actions', label: 'Actions', sortable: false },
         { key: 'date', label: 'Date', sortable: true },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'region', label: 'Region', sortable: true },
@@ -212,13 +213,15 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.kwic.items.push(
         {
-          link: 'Details',
           date: items[i].Tbl_refs[1],
           source: items[i].Tbl_refs[4],
           region: items[i].Tbl_refs[2],
           left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
           word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
           right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+          docid: items[i].Tbl_refs[0],
+          topic: items[i].Tbl_refs[3],
+          toknum: items[i].toknum,
         },
       );
     }
@@ -233,6 +236,7 @@ export const mutations = {
         label: {
           style: {
             fontStyle: 'italic',
+            fontSize: '10',
           },
           verticalAlign: 'middle',
           textAlign: 'center',
@@ -242,12 +246,21 @@ export const mutations = {
       },
     );
   },
+  updateModalTextContent(state, payload) {
+    const items = payload.result.content;
+    let content = '';
+    for (let i = 0; i < items.length; i += 1) {
+      content += items[i].str;
+    }
+    state.modalTextContent = content;
+  },
 };
 
 export const getters = {
   chartData: state => state.chartData,
   queryTerms: state => state.queryTerms,
   chartElements: state => state.chartElements,
+  modalTextContent: state => state.modalTextContent,
 };
 
 export const actions = {
@@ -261,6 +274,14 @@ export const actions = {
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async modalTextQuery({ state, commit, dispatch }, toknum) {
+    try {
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=amc3_demo;pos=${toknum};struct=doc&format=json`);
+      commit('updateModalTextContent', { result: response.data });
     } catch (error) {
       console.log(error);
     }

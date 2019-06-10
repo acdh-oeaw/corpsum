@@ -80,15 +80,13 @@
         <template slot="isActive" slot-scope="row">
           {{ row.value ? 'Yes :)' : 'No :(' }}
         </template>
+        -->
 
         <template slot="actions" slot-scope="row">
-          <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-            Info modal
-          </b-button>
-          <b-button size="sm" @click="row.toggleDetails">
-            {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-          </b-button>
-        </template>-->
+          <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
+            <external-link-icon></external-link-icon> View
+          </b-link>
+        </template>
 
         <template slot="row-details" slot-scope="row">
           <b-card>
@@ -101,6 +99,7 @@
 
       <!-- Info modal -->
       <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+        <p v-html="modalTextContent"></p>
         <pre>{{ infoModal.content }}</pre>
       </b-modal>
     </b-container>
@@ -108,9 +107,14 @@
 </template>
 
 <script>
+  import { ExternalLinkIcon } from 'vue-feather-icons'
+
   export default {
     props: {
       chartProp: Object
+    },
+    components: {
+      ExternalLinkIcon
     },
     data() {
       return {
@@ -143,13 +147,18 @@
       totalRows() {
         return this.chartProp.items.length;
         set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-      }
+      },
+      modalTextContent() {
+        return this.$store.getters.modalTextContent;
+      },
     },
     mounted() {
     },
     methods: {
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
+        this.modalTextContent = '';
+        this.$store.dispatch('modalTextQuery', item.toknum);
         this.infoModal.content = JSON.stringify(item, null, 2)
         this.$root.$emit('bv::show::modal', this.infoModal.id, button)
       },

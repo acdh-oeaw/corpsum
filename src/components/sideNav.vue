@@ -11,13 +11,13 @@
       <ul class="nav flex-column">
         <li class="nav-item">
           <router-link :to="{ name: 'info', params: { id: selectedCorpus } }" class="nav-link">
-            <span data-feather="hard-drive"></span>
+            <hard-drive-icon></hard-drive-icon>
             Corpus Info
           </router-link>
         </li>
         <li class="nav-item">
           <router-link :to="{ name: 'analysis', params: { id: selectedCorpus } }" class="nav-link active">
-            <span data-feather="activity"></span>
+            <activity-icon></activity-icon>
             Corpus Analysis
           </router-link>
         </li>
@@ -29,19 +29,19 @@
       <ul class="nav flex-column mb-2">
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <span data-feather="user"></span>
+            <user-icon></user-icon>
             Profile
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <span data-feather="settings"></span>
+            <settings-icon></settings-icon>
             Settings
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <span data-feather="rotate-ccw"></span>
+            <rotate-ccw-icon></rotate-ccw-icon>
             History
           </a>
         </li>
@@ -51,10 +51,13 @@
 </template>
 
 <script>
-import feather from 'feather-icons';
+import { HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon } from 'vue-feather-icons'
 
 export default {
   name: 'sideNav',
+  components: {
+    HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon
+  },
   data() {
     return {
       selectedCorpus: this.$route.params.id,
@@ -65,7 +68,6 @@ export default {
     }
   },
   mounted() {
-    feather.replace();
   },
   methods: {
     changeCorpus(val) {

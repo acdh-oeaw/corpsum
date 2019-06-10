@@ -54,11 +54,12 @@ import mapChart from '@/components/charts/mapChart.vue'
 import genericChart from '@/components/charts/genericChart.vue'
 import scatterChart from '@/components/charts/scatterChart.vue'
 import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
+import kwicTable from '@/components/ui-elements/kwicTable.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable
+    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable
   },
   data() {
     return {
