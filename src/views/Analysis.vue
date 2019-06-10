@@ -20,15 +20,23 @@
       </div>
       <div class="home">
         <div class="row vis-wrapper">
-          <component v-bind:is="componentName" :chartProp="chartData.temporal.absolute" class="col-md-12 vis-component"></component>
-          <radarChart class="col-md-4 vis-component"></radarChart>
+
+          <component
+            v-for="element in chartElements"
+            v-bind:key="element.key"
+            v-bind:is="element.component"
+            v-bind:chartProp="chartData[element.chartProp]"
+            v-bind:class="element.class"
+          />
+
+<!--           <radarChart class="col-md-4 vis-component"></radarChart>
           <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
           <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
           <interactiveTable :tableData="chartData.kwic" class="col-md-12 vis-component"></interactiveTable>
           <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
           <heatmapChart class="col-md-8 vis-component"></heatmapChart>
           <genericChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></genericChart>
-          <mapChart class="col-md-4 vis-component"></mapChart>
+          <mapChart class="col-md-4 vis-component"></mapChart> -->
         </div>
       </div>
     </main>
@@ -53,19 +61,18 @@ export default {
   },
   data() {
     return {
-      componentName: 'lineChart',
       initialChartDataState : [],
-      chartData : this.$store.getters.chartData,
     };
   },
   created() {
+    console.log("created");
   },
   mounted() {
     console.log("mounted");
 
     this.initialChartDataState = this.$store.getters.chartData;
 
-    var pckry = new Packery( '.vis-wrapper', {
+/*     var pckry = new Packery( '.vis-wrapper', {
       itemSelector: '.vis-component',
       columnWidth: ".vis-component.col-md-4",
       gutter: 0,
@@ -75,11 +82,17 @@ export default {
     pckry.getItemElements().forEach( function( itemElem ) {
       var draggie = new Draggabilly( itemElem, { handle: '.highcharts-title' } );
       pckry.bindDraggabillyEvents( draggie );
-    });
+    }); */
   },
   watch: {
   },
   computed: {
+    chartData() {
+      return this.$store.getters.chartData;
+    },
+    chartElements() {
+      return this.$store.getters.chartElements;
+    },
   },
   methods: {
     changeSampleQuery(querySet) {

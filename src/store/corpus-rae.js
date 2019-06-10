@@ -13,44 +13,40 @@ export const state = {
   queryTerms: [],
   rawResults: [],
   chartData: {
-    temporal: {
-      absolute: {
-        title: 'Yearly Absolute Frequencies',
-        yAxisText: 'Number of Hits',
-        data: [],
-      },
-      relative: {
-        title: 'Yearly Relative Frequencies',
-        yAxisText: 'Number of Hits per Million Words',
-        data: [],
-      },
+    absolute: {
+      title: 'Yearly Absolute Frequencies',
+      yAxisText: 'Number of Hits',
+      data: [],
     },
-    regional: {
-      countries: {
-        title: 'Countries',
-        type: 'column',
-        stacking: 'percent',
-        yAxisText: 'Relative Frequencies',
-        categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
-        series1D: [],
-        series2D: [],
-      },
-      regions: {
-        categoriesX: [
-          'Andina',
-          'Antillas',
-          'Caribe continental',
-          'Chilena',
-          'España',
-          'Estados Unidos',
-          'Filipinas',
-          'Guinea Ecuatorial',
-          'México y Centroamérica',
-          'Río de la Plata',
-        ],
-        categoriesY: [],
-        data: [],
-      },
+    relative: {
+      title: 'Yearly Relative Frequencies',
+      yAxisText: 'Number of Hits per Million Words',
+      data: [],
+    },
+    countries: {
+      title: 'Countries',
+      type: 'column',
+      stacking: 'percent',
+      yAxisText: 'Relative Frequencies',
+      categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
+      series1D: [],
+      series2D: [],
+    },
+    regions: {
+      categoriesX: [
+        'Andina',
+        'Antillas',
+        'Caribe continental',
+        'Chilena',
+        'España',
+        'Estados Unidos',
+        'Filipinas',
+        'Guinea Ecuatorial',
+        'México y Centroamérica',
+        'Río de la Plata',
+      ],
+      categoriesY: [],
+      data: [],
     },
     dispersion: {
       categories: ['Year', 'Country', 'Linguistic Region', 'Narrative Form', 'Medium', 'Theme'],

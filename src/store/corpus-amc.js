@@ -12,45 +12,53 @@ export const state = {
   engineAPI: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
   queryTerms: [],
   rawResults: [],
-  chartData: {
-    temporal: {
-      absolute: {
-        title: 'Yearly Absolute Frequencies',
-        yAxisText: 'Number of Hits',
-        data: [],
-      },
-      relative: {
-        title: 'Yearly Relative Frequencies',
-        yAxisText: 'Number of Hits per Million Words',
-        data: [],
-      },
+  chartElements: [
+    {
+      component: 'lineChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'absolute',
     },
-    regional: {
-      countries: {
-        title: 'Countries',
-        type: 'column',
-        stacking: 'percent',
-        yAxisText: 'Relative Frequencies',
-        categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
-        series1D: [],
-        series2D: [],
-      },
-      regions: {
-        categoriesX: [
-          'Andina',
-          'Antillas',
-          'Caribe continental',
-          'Chilena',
-          'España',
-          'Estados Unidos',
-          'Filipinas',
-          'Guinea Ecuatorial',
-          'México y Centroamérica',
-          'Río de la Plata',
-        ],
-        categoriesY: [],
-        data: [],
-      },
+    {
+      component: 'lineChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'relative',
+    },
+  ],
+  chartData: {
+    absolute: {
+      title: 'Yearly Absolute Frequencies',
+      yAxisText: 'Number of Hits',
+      data: [],
+    },
+    relative: {
+      title: 'Yearly Relative Frequencies',
+      yAxisText: 'Number of Hits per Million Words',
+      data: [],
+    },
+    countries: {
+      title: 'Countries',
+      type: 'column',
+      stacking: 'percent',
+      yAxisText: 'Relative Frequencies',
+      categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
+      series1D: [],
+      series2D: [],
+    },
+    regions: {
+      categoriesX: [
+        'Andina',
+        'Antillas',
+        'Caribe continental',
+        'Chilena',
+        'España',
+        'Estados Unidos',
+        'Filipinas',
+        'Guinea Ecuatorial',
+        'México y Centroamérica',
+        'Río de la Plata',
+      ],
+      categoriesY: [],
+      data: [],
     },
     dispersion: {
       categories: ['Year', 'Country', 'Linguistic Region', 'Narrative Form', 'Medium', 'Theme'],
@@ -117,8 +125,8 @@ export const mutations = {
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
     relative.data.sort((a, b) => a[0] - b[0]);
-    state.chartData.temporal.absolute.data.push(absolute);
-    state.chartData.temporal.relative.data.push(relative);
+    state.chartData.absolute.data.push(absolute);
+    state.chartData.relative.data.push(relative);
   },
   processRegional(state, payload) {
     /* Update Countries Data */
@@ -186,6 +194,7 @@ export const mutations = {
 export const getters = {
   chartData: state => state.chartData,
   queryTerms: state => state.queryTerms,
+  chartElements: state => state.chartElements,
 };
 
 export const actions = {
