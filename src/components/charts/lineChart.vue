@@ -26,11 +26,13 @@ export default {
             text: this.chartProp.xAxisText
           },
           allowDecimals: false,
+          plotLines: this.chartProp.plotLinesX
         },
         yAxis: {
           title: {
             text: this.chartProp.yAxisText
-          }
+          },
+          plotLines: this.chartProp.plotLinesY
         },
         legend: {
           layout: "vertical",

@@ -28,12 +28,13 @@ export default {
           startOnTick: true,
           endOnTick: true,
           showLastLabel: true,
-          plotLines: this.chartProp.plotLines
+          plotLines: this.chartProp.plotLinesX
         },
         yAxis: {
           title: {
             text: this.chartProp.yAxisText
-          }
+          },
+          plotLines: this.chartProp.plotLinesY
         },
         plotOptions: {
           scatter: {

@@ -9,7 +9,7 @@ Vue.prototype.axios = axios;
 Vue.use(Vuex);
 
 export const state = {
-  engineAPI: 'https://demo-amc3.acdh-dev.oeaw.ac.at/run.cgi/',
+  engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
@@ -45,12 +45,44 @@ export const state = {
       title: 'Yearly Relative Frequency',
       yAxisText: 'Number of Hits per Million Words',
       data: [],
+      plotLinesY: [{
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: 100,
+        label: {
+          rotation: 0,
+          x: 0,
+          style: {
+            fontStyle: 'italic',
+            fontSize: '10',
+          },
+          text: 'Baseline (100%)',
+        },
+        zIndex: 3,
+      }],
     },
     sources: {
       title: 'Sources',
       yAxisText: 'Absolute Frequency',
-      xAxisText: 'Relative Frequency',
-      plotLines: [],
+      xAxisText: 'Relative Frequency (%)',
+      plotLinesX: [{
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: 100,
+        label: {
+          rotation: 0,
+          y: -5,
+          style: {
+            fontStyle: 'italic',
+            fontSize: '10',
+          },
+          textAlign: 'center',
+          text: 'Baseline (100%)',
+        },
+        zIndex: 3,
+      }],
       series: [],
     },
     countries: {
@@ -226,25 +258,7 @@ export const mutations = {
       );
     }
     // Use overall rel. freq. data for other charts
-    const overallRel = payload.result.Desc[0].rel;
-    state.chartData.sources.plotLines.push(
-      {
-        color: 'red',
-        dashStyle: 'dot',
-        width: 2,
-        value: overallRel,
-        label: {
-          style: {
-            fontStyle: 'italic',
-            fontSize: '10',
-          },
-          verticalAlign: 'middle',
-          textAlign: 'center',
-          text: `"${payload.term}" rel: ${overallRel}`,
-        },
-        zIndex: 3,
-      },
-    );
+    // const overallRel = payload.result.Desc[0].rel;
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;
@@ -266,9 +280,9 @@ export const getters = {
 export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
-      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc3_demo;fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
+      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc_50M;fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=amc3_demo&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=amc_50M&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
@@ -280,7 +294,7 @@ export const actions = {
   },
   async modalTextQuery({ state, commit, dispatch }, toknum) {
     try {
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=amc3_demo;pos=${toknum};struct=doc&format=json`);
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=amc_50M;pos=${toknum};struct=doc&format=json`);
       commit('updateModalTextContent', { result: response.data });
     } catch (error) {
       console.log(error);
