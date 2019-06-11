@@ -156,7 +156,8 @@
     },
     methods: {
       info(item, index, button) {
-        this.infoModal.title = `Row index: ${index}`
+        // this.infoModal.title = `Row index: ${index}`
+        this.infoModal.title = item.source + ' - ' + item.date;
         this.modalTextContent = '';
         this.$store.dispatch('modalTextQuery', item.toknum);
         this.infoModal.content = JSON.stringify(item, null, 2)
