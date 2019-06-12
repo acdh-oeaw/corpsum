@@ -8,14 +8,7 @@
         <b-button class="mr-2" variant="success" size="sm" @click="changeSampleQuery(3)">Spelling Changes: Iraq / Irak</b-button>
       </div> -->
         <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            Dropdown
-          </button>
+          <b-button variant="danger" size="sm" @click="resetQuery">Reset Query</b-button>
         </div>
       </div>
       <div class="home">
@@ -63,7 +56,6 @@ export default {
   },
   data() {
     return {
-      initialChartDataState : [],
     };
   },
   created() {
@@ -71,8 +63,6 @@ export default {
   },
   mounted() {
     console.log("mounted");
-
-    this.initialChartDataState = this.$store.getters.chartData;
 
 /*     var pckry = new Packery( '.vis-wrapper', {
       itemSelector: '.vis-component',
@@ -90,13 +80,17 @@ export default {
   },
   computed: {
     chartData() {
-      return this.$store.getters.chartData;
+      return this.$store.getters.chartData
     },
     chartElements() {
-      return this.$store.getters.chartElements;
+      return this.$store.getters.chartElements
     },
   },
   methods: {
+    resetQuery() {
+      // this.$store.commit('resetState', 'Ball');
+      this.$store.dispatch('corpusQuery', 'Ball');
+    },
     changeSampleQuery(querySet) {
       console.log(this.initialChartDataState)
       if (querySet == 1) {

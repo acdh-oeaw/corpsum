@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M
+  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
@@ -39,12 +39,14 @@ export const state = {
   chartData: {
     absolute: {
       title: 'Yearly Absolute Frequency',
+      subtitle: 'Absolute number of occurences (hits) of a given query in years',
       yAxisText: 'Number of Hits',
       data: [],
     },
     relative: {
-      title: 'Yearly Relative Frequency',
-      yAxisText: 'Number of Hits per Million Words',
+      title: 'Yearly Relative Frequency (%)',
+      subtitle: 'Relative comparison to the baseline (100%) for the query in years',
+      yAxisText: 'Relative Frequency (%)',
       data: [],
       plotLinesY: [{
         color: 'red',
@@ -137,9 +139,9 @@ export const state = {
       fields: [
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
         { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
-        { key: 'date', label: 'Date', sortable: true },
-        { key: 'source', label: 'Source', sortable: true },
-        { key: 'region', label: 'Region', sortable: true },
+        { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
+        { key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' } },
+        { key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' } },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
@@ -148,6 +150,9 @@ export const state = {
     },
   },
 };
+
+// initial state
+const defaultState = JSON.parse(JSON.stringify(state));
 
 export const mutations = {
   resetQueryTerms(state, payload) {
@@ -162,7 +167,8 @@ export const mutations = {
     state.rawResults.push(payload);
   },
   queryTermAdded(state, queryTerm) {
-    state.queryTerms.push(queryTerm);
+    console.log(queryTerm);
+    // state.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
     state.queryTerms.filter(value => value !== queryTerm);
@@ -271,6 +277,15 @@ export const mutations = {
     }
     state.modalTextContent = content;
   },
+  changeSelectedCorpus(state, payload) {
+    state.corpusName = payload;
+  },
+  resetState(state, payload) {
+    // console.log(state.queryTerms)
+    // console.log(defaultState.queryTerms)
+    // state = JSON.parse(JSON.stringify(defaultState));
+    state.queryTerms.push(payload);
+  },
 };
 
 export const getters = {
@@ -278,6 +293,7 @@ export const getters = {
   queryTerms: state => state.queryTerms,
   chartElements: state => state.chartElements,
   modalTextContent: state => state.modalTextContent,
+  corpusName: state => state.corpusName,
 };
 
 export const actions = {
@@ -285,7 +301,7 @@ export const actions = {
     try {
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=50&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });

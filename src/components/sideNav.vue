@@ -2,6 +2,10 @@
   <nav class="col-md-1 d-none d-md-block sidebar">
     <div class="sidebar-sticky">
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Data Provider:</span>
+      </h6>
+      <b-form-select v-model="selectedProvider" :options="optionsProviders" @change="changeProvider" size="sm" class="corpus-selector"></b-form-select>
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-3 mb-1 text-muted">
         <span>Active Corpus:</span>
       </h6>
       <b-form-select v-model="selectedCorpus" :options="optionsCorpora" @change="changeCorpus" size="sm" class="corpus-selector"></b-form-select>
@@ -10,13 +14,13 @@
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <router-link :to="{ name: 'info', params: { id: selectedCorpus } }" class="nav-link">
+          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
             <hard-drive-icon></hard-drive-icon>
             Corpus Info
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'analysis', params: { id: selectedCorpus } }" class="nav-link active">
+          <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link active">
             <activity-icon></activity-icon>
             Corpus Analysis
           </router-link>
@@ -60,18 +64,31 @@ export default {
   },
   data() {
     return {
-      selectedCorpus: this.$route.params.id,
+      selectedProvider: this.$route.params.id,
+      optionsProviders: [
+        { value: 'acdh', text: 'ACDH - ÖAW' },
+        { value: 'rae', text: 'RAE Madrid' },
+      ],
       optionsCorpora: [
-        { value: 'amc3demo', text: 'AMC3 (demo)' },
-        { value: 'corpes', text: 'CORPES by RAE' },
-      ]
+        { value: 'amc3_demo', text: 'AMC3 (demo)' },
+        { value: 'amc_60M', text: 'AMC3 (60M)' },
+      ],
     }
   },
   mounted() {
+    console.log(this.selectedCorpus)
+  },
+  computed: {
+    selectedCorpus() {
+      return this.$store.getters.corpusName;
+    },
   },
   methods: {
-    changeCorpus(val) {
+    changeProvider(val) {
       this.$router.push({ name: 'info', params: { id: val } })
+    },
+    changeCorpus(val) {
+      this.$store.commit('changeSelectedCorpus', val);
     }
   }
 };

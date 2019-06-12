@@ -1,28 +1,32 @@
 <template>
   <div>
     <b-container :style="{'height':height}" fluid>
-      {{ selectedDocs }}
       <!-- User Interface controls -->
       <b-row class="py-3">
-        <b-col md="6" class="my-1">
+
+        <div class="my-1 ml-3">
+          <b-button @click="subcorpus($event.target)" variant="outline-primary" size="sm">Create Subcorpus with Selection</b-button>
+        </div>
+
+        <b-col md="3" class="mx-auto">
           <b-form-group class="mb-0">
-            <b-input-group>
+            <b-input-group size="sm">
               <b-form-input v-model="filter" placeholder="Type to Filter"></b-form-input>
               <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                <b-button variant="primary" :disabled="!filter" @click="filter = ''">Clear</b-button>
               </b-input-group-append>
             </b-input-group>
           </b-form-group>
         </b-col>
 
-        <b-col md="6" class="my-1">
+        <div class="my-1 mr-3">
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
             :per-page="perPage"
             class="my-0"
           ></b-pagination>
-        </b-col>
+        </div>
 
 <!--         <b-col md="6" class="my-1">
           <b-form-group label-cols-sm="3" label="Sort" class="mb-0">
@@ -90,13 +94,12 @@
         </template>
 
         <template slot="HEAD_selected" slot-scope="head">
-          <input type="checkbox"/>
-          {{ head.label }}
+          <input type="checkbox" @change="toggleSelectAllDocs($event.target.checked)"/>
         </template>
 
         <template slot="selected" slot-scope="row">
           <b-form-group class="mb-0">
-            <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item, row.index, $event.target)"/>
+            <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item)"/>
           </b-form-group>
         </template>
 
@@ -113,6 +116,11 @@
       <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
         <p v-html="modalTextContent"></p>
         <pre>{{ infoModal.content }}</pre>
+      </b-modal>
+
+      <!-- Create subcorpus modal -->
+      <b-modal :id="subcorpusModal.id" :title="subcorpusModal.title" ok-only>
+        {{ selectedDocs }}
       </b-modal>
     </b-container>
   </div>
@@ -143,6 +151,11 @@
         filter: null,
         infoModal: {
           id: 'info-modal',
+          title: '',
+          content: ''
+        },
+        subcorpusModal: {
+          id: 'create-subcorpus-modal',
           title: '',
           content: ''
         }
@@ -185,13 +198,47 @@
         this.totalRows = filteredItems.length
         this.currentPage = 1
       },
-      toggleSelectedDocs(item, index, button) {
-        // Loop all items and toggle other items with the same doc id
+      subcorpus(button) {
+        this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button)
+      },
+      toggleSelectAllDocs(checked) {
+        console.log(checked)
+        if(!checked) {
+          this.selectedDocs = [];
+          // Loop all items and deselect
+          for (let i = 0; i < this.items.length; i += 1) {
+            this.items[i].selected = false;
+          }
+        } else {
+          // Loop all items and add them to selectedDocs (ignore duplicates)
+          for (let i = 0; i < this.items.length; i += 1) {
+            if (!this.selectedDocs.includes(this.items[i].docid)) {
+              this.selectedDocs.push(this.items[i].docid)
+            }
+          }
+          // Loop all items and select
+          for (let i = 0; i < this.items.length; i += 1) {
+            this.items[i].selected = true;
+          }
+        }
+      },
+      toggleSelectedDocs(item) {
         // Add or remove docid from the selectedDocs array
         if (item.selected) {
           this.selectedDocs.push(item.docid)
+        } else {
+          for (let i = this.selectedDocs.length - 1; i >= 0; i--) {
+            if (this.selectedDocs[i] === item.docid) {
+              this.selectedDocs.splice(i, 1);
+            }
+          } 
         }
-        console.log(item, index, button);
+        // Loop all items and toggle other items with the same doc id
+        for (let i = 0; i < this.items.length; i += 1) {
+          if (this.items[i].docid == item.docid) {
+            this.items[i].selected = item.selected;
+          }
+        }
       },
     }
   }

@@ -12,14 +12,15 @@ export default {
     return {
       chartOptions: {
         chart: {
-            zoomType: 'x',
-            height: this.chartProp.height,
+          type: 'spline',
+          zoomType: 'x',
+          height: this.chartProp.height,
         },
         title: {
           text: this.chartProp.title
         },
         subtitle: {
-          text: "Subtitle text extra information"
+          text: this.chartProp.subtitle
         },
         xAxis: {
           title: {
@@ -44,6 +45,12 @@ export default {
             label: {
               connectorAllowed: false
             }
+          },
+          spline: {
+            dataLabels: {
+              // enabled: true
+            },
+            // enableMouseTracking: false
           }
         },
         series: this.chartProp.data,

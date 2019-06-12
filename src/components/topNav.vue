@@ -4,8 +4,6 @@
     <tags-input element-id="queryTerms" class="w-100"
       v-model="queryTerms"
       :allow-duplicates="true"
-      @tag-added="tagAdded"
-      @tag-removed="tagRemoved"
       placeholder="Type another term to query">
     </tags-input>
     <ul class="navbar-nav px-3">
@@ -22,15 +20,18 @@ export default {
   name: 'topNav',
   data() {
     return {
-      queryTerms: this.$store.getters.queryTerms,
     };
   },
   computed: {
+    queryTerms(val) {
+      return this.$store.getters.queryTerms;
+      set: console.log(val); this.$store.commit('queryTermAdded', val);
+    }
   },
   methods: {
     tagAdded(queryTerm) {
       //this.$store.commit('queryTermAdded', queryTerm);
-      this.$store.dispatch('corpusQuery', queryTerm);
+      // this.$store.dispatch('corpusQuery', queryTerm);
       //this.$emit('onQueryTermAdded', queryTerm);
     },
     tagRemoved(queryTerm) {

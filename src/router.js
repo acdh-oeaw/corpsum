@@ -12,8 +12,8 @@ export default new Router({
       path: '/',
       name: 'root',
       redirect: (to) => {
-        if (to.params.id !== 'corpes' || to.params.id !== 'amc3demo') {
-          return '/amc3demo/info';
+        if (to.params.id !== 'rae' || to.params.id !== 'acdh') {
+          return '/acdh/info';
         }
         return to.fullPath;
       },

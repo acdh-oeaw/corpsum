@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@highcharts/map-collection": "^1.1.2",
+    "@johmun/vue-tags-input": "^2.0.1",
     "@statnett/vue-plotly": "^0.2.0",
     "@voerro/vue-tagsinput": "^1.11.2",
     "axios": "^0.18.0",
