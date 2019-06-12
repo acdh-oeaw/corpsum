@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc_demo', // amc_demo, amc_50M
+  corpusName: 'amc3_demo', // amc3_demo, amc_50M
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
@@ -135,8 +135,8 @@ export const state = {
     kwic: {
       items: [],
       fields: [
-        { key: 'actions', label: 'Actions', sortable: false },
-        { key: 'selected', label: 'Selected', sortable: false },
+        { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
+        { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
         { key: 'date', label: 'Date', sortable: true },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'region', label: 'Region', sortable: true },

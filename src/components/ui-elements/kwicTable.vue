@@ -85,12 +85,17 @@
 
         <template slot="actions" slot-scope="row">
           <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
-            <external-link-icon></external-link-icon> View
+            <file-text-icon></file-text-icon>
           </b-link>
         </template>
 
+        <template slot="HEAD_selected" slot-scope="head">
+          <input type="checkbox"/>
+          {{ head.label }}
+        </template>
+
         <template slot="selected" slot-scope="row">
-          <b-form-group>
+          <b-form-group class="mb-0">
             <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item, row.index, $event.target)"/>
           </b-form-group>
         </template>
@@ -114,14 +119,14 @@
 </template>
 
 <script>
-  import { ExternalLinkIcon } from 'vue-feather-icons'
+  import { FileTextIcon } from 'vue-feather-icons'
 
   export default {
     props: {
       chartProp: Object
     },
     components: {
-      ExternalLinkIcon
+      FileTextIcon
     },
     data() {
       return {
