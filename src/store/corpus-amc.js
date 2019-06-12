@@ -10,6 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
+  corpusName: 'amc_demo', // amc_demo, amc_50M
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
@@ -135,6 +136,7 @@ export const state = {
       items: [],
       fields: [
         { key: 'actions', label: 'Actions', sortable: false },
+        { key: 'selected', label: 'Selected', sortable: false },
         { key: 'date', label: 'Date', sortable: true },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'region', label: 'Region', sortable: true },
@@ -254,6 +256,7 @@ export const mutations = {
           docid: items[i].Tbl_refs[0],
           topic: items[i].Tbl_refs[3],
           toknum: items[i].toknum,
+          selected: false,
         },
       );
     }
@@ -280,9 +283,9 @@ export const getters = {
 export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
-      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=amc_50M;fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
+      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=amc_50M&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=300&newctxsize=40&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
@@ -294,7 +297,7 @@ export const actions = {
   },
   async modalTextQuery({ state, commit, dispatch }, toknum) {
     try {
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=amc_50M;pos=${toknum};struct=doc&format=json`);
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${toknum};struct=doc&format=json`);
       commit('updateModalTextContent', { result: response.data });
     } catch (error) {
       console.log(error);

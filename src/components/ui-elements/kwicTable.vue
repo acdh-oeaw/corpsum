@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-container :style="{'height':height}" fluid>
+      {{ selectedDocs }}
       <!-- User Interface controls -->
       <b-row class="py-3">
         <b-col md="6" class="my-1">
@@ -88,6 +89,12 @@
           </b-link>
         </template>
 
+        <template slot="selected" slot-scope="row">
+          <b-form-group>
+            <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item, row.index, $event.target)"/>
+          </b-form-group>
+        </template>
+
         <template slot="row-details" slot-scope="row">
           <b-card>
             <ul>
@@ -118,6 +125,7 @@
     },
     data() {
       return {
+        selectedDocs: [],
         items: this.chartProp.items,
         fields: this.chartProp.fields,
         height: this.chartProp.height + 'px',
@@ -171,7 +179,15 @@
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      }
+      },
+      toggleSelectedDocs(item, index, button) {
+        // Loop all items and toggle other items with the same doc id
+        // Add or remove docid from the selectedDocs array
+        if (item.selected) {
+          this.selectedDocs.push(item.docid)
+        }
+        console.log(item, index, button);
+      },
     }
   }
 </script>
