@@ -4,14 +4,9 @@
     <vue-tags-input element-id="queryTerms" class="w-100"
       v-model="tag"
       :tags="tags"
+      placeholder="Type your query and hit enter"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
-
-<!--     <tags-input element-id="queryTerms" class="w-100"
-      v-model="queryTerms"
-      :allow-duplicates="true"
-      placeholder="Type another term to query">
-    </tags-input> -->
   
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
@@ -56,126 +51,42 @@ export default {
 
 <style lang="scss">
 /*
- * Tagsinput CSS
+ * Tagsinput Styles
  */
 
- /* The input */
-.tags-input {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+.vue-tags-input {
+  max-width: initial !important;
+  background: #ffffff;
+  border-radius: 0.25rem;
 }
 
-.tags-input input {
-  flex: 1;
-  background: transparent;
-  border: none;
+.ti-input {
+  border: 0 !important;
+  padding: 0.25rem 0.5rem !important;
 }
 
-.tags-input input:focus {
-  outline: none;
+.ti-new-tag-input-wrapper {
+  font-size: 1rem !important;
 }
 
-.tags-input input[type="text"] {
-  color: #495057;
-}
-
-.tags-input-wrapper-default {
-  padding: .5rem .25rem;
-
-  background: #fff;
-
-  border: 1px solid transparent;
-  border-radius: .25rem;
-  border-color: #dbdbdb;
-}
-
-/* The tag badges & the remove icon */
-.tags-input span {
-  margin-right: 0.3rem;
-}
-
-.tags-input-remove {
-  cursor: pointer;
-  position: relative;
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  overflow: hidden;
-}
-
-.tags-input-remove:before, .tags-input-remove:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  top: 50%;
-  left: 0;
-  background: #5dc282;
-
-  height: 2px;
-  margin-top: -1px;
-}
-
-.tags-input-remove:before {
-  transform: rotate(45deg);
-}
-.tags-input-remove:after {
-  transform: rotate(-45deg);
-}
-
-/* Tag badge styles */
-.tags-input-badge {
-  display: inline-block;
-  padding: 0.25em 0.4em;
-  font-size: 75%;
+.ti-tag {
+  font-size: 1rem !important;
+  background-color: #eff2f5 !important;
+  -webkit-box-shadow: 1px 1px 0px 0px #afafafba;
+  box-shadow: 1px 1px 0px 0px #afafafba;
+  padding: 0.5rem 0.5rem !important;
+  margin: 0 0.4rem 0 0 !important;
+  border-radius: 0.25rem !important;
+  color: inherit !important;
   font-weight: 700;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 0.25rem;
 }
 
-.tags-input-badge-pill {
-  padding-right: 0.6em;
-  padding-left: 0.6em;
-  border-radius: 10rem;
-}
-
-.tags-input-badge-selected-default {
-  color: #212529;
-  background-color: #f0f1f2;
-}
-
-/* Typeahead - badges */
-.typeahead-badges > span {
-  cursor: pointer;
-  margin-right: 0.3rem;
-}
-
-/* Typeahead - dropdown */
-.typeahead-dropdown {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  width: 100%;
-}
-
-.typeahead-dropdown li {
-  padding: .25rem 1rem;
-  cursor: pointer;
-}
-
-/* Typeahead elements style/theme */
-.tags-input-typeahead-item-default {
-  color: #fff;
-  background-color: #343a40;
-}
-
-.tags-input-typeahead-item-highlighted-default {
-  color: #fff;
-  background-color: #007bff;
+.ti-icon-close:before {
+  color: #e04949 !important;
 }
 
 /*
@@ -186,61 +97,27 @@ export default {
 }
 
 .navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   font-size: 1.4rem;
   font-weight: 600;
 }
 
 .navbar .form-control {
-  padding: .75rem 1rem;
+  padding: 0.75rem 1rem;
   border-width: 0;
   border-radius: 0;
 }
 
 .form-control-dark {
   color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .form-control-dark:focus {
   border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-}
-
-
-/* App Styles * /
-
-/* Tags input overwrites */
-.tags-input-badge {
-  font-size: 100%;
-}
-
-.tags-input-badge-pill {
-  padding: 0.5rem 0.5rem;
-  border-radius: .25rem;
-}
-
-.tags-input-wrapper-default {
-  border: 0;
-  background: #ffffff;
-  padding: .25rem .5rem;
-}
-
-.tags-input span {
-  margin-right: 0.4rem;
-}
-
-.tags-input-badge-selected-default {
-  background-color: #eff2f5;
-  box-shadow: 1px 1px 0px 0px #afafafba;
-}
-
-.tags-input-remove {
-  width: 0.75rem;
-  height: 0.75rem;
-  vertical-align: middle;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
 </style>

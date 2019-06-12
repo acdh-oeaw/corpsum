@@ -2,7 +2,6 @@ import Vue from 'vue';
 import store from '@/store/store';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue';
-import VoerroTagsInput from '@voerro/vue-tagsinput';
 import SmartTable from 'vuejs-smart-table'
 import HighchartsVue from 'highcharts-vue';
 import Highcharts from 'highcharts';
@@ -65,9 +64,6 @@ Vue.use(BootstrapVue);
 // Axios properties
 Vue.prototype.$http = axios;
 Vue.prototype.axios = axios;
-
-// Tags input package
-Vue.component('tags-input', VoerroTagsInput);
 
 Vue.use(SmartTable);
 
