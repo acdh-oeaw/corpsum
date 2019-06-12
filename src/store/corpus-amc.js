@@ -167,11 +167,23 @@ export const mutations = {
     state.rawResults.push(payload);
   },
   queryTermAdded(state, queryTerm) {
-    console.log(queryTerm);
-    // state.queryTerms.push(queryTerm);
+    state.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
-    state.queryTerms.filter(value => value !== queryTerm);
+    for (let i = state.queryTerms.length - 1; i >= 0; i--) {
+      if (state.queryTerms[i].text === queryTerm.text) {
+        state.queryTerms.splice(i, 1);
+        state.chartData.absolute.data.splice(i, 1);
+        state.chartData.relative.data.splice(i, 1);
+        state.chartData.sources.series.splice(i, 1);
+        for (let j = state.chartData.kwic.items.length - 1; j >= 0; j--) {
+          if (state.chartData.kwic.items[j].queryTerm === queryTerm.text) {
+            state.chartData.kwic.items.splice(j, 1);
+          }
+        }
+        break;
+      }
+    }
   },
   processTemporal(state, payload) {
     const items = payload.result;
@@ -263,6 +275,7 @@ export const mutations = {
           topic: items[i].Tbl_refs[3],
           toknum: items[i].toknum,
           selected: false,
+          queryTerm: payload.term,
         },
       );
     }
