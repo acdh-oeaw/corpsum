@@ -3,10 +3,11 @@
 </template>
 
 <script>
-import store from "@/store/store";
 
 export default {
-  store,
+  props: {
+    chartProp: Object,
+  },
   data() {
     return {
       chartOptions: {
@@ -20,10 +21,10 @@ export default {
           text: "Linguistic Regions"
         },
         xAxis: {
-          categories: this.$store.getters.chartData.regional.regions.categoriesX
+          categories: this.chartProp.categoriesX
         },
         yAxis: {
-          categories: this.$store.getters.chartData.regional.regions.categoriesY,
+          categories: this.chartProp.categoriesY,
           title: null
         },
         colorAxis: {
@@ -46,7 +47,7 @@ export default {
               this.series.yAxis.categories[this.point.y] +
               "</b> appears <br><b>" +
               this.point.value +
-              "</b> times in every 1 million words in <br><b>" +
+              "</b> % times often in <br><b>" +
               this.series.xAxis.categories[this.point.x] +
               "</b>"
             );
@@ -56,7 +57,7 @@ export default {
           {
             name: "Relative frequencies per linguistic region",
             borderWidth: 1,
-            data: this.$store.getters.chartData.regional.regions.data,
+            data: this.chartProp.data,
             dataLabels: {
               enabled: true,
               color: "#000000"

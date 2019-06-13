@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M
+  corpusName: 'amc_60M', // amc3_demo, amc_50M, amc_60M
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
@@ -34,6 +34,11 @@ export const state = {
       component: 'scatterChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sources',
+    },
+    {
+      component: 'heatmapChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'regions',
     },
   ],
   chartData: {
@@ -99,16 +104,11 @@ export const state = {
     },
     regions: {
       categoriesX: [
-        'Andina',
-        'Antillas',
-        'Caribe continental',
-        'Chilena',
-        'España',
-        'Estados Unidos',
-        'Filipinas',
-        'Guinea Ecuatorial',
-        'México y Centroamérica',
-        'Río de la Plata',
+        'agesamt',
+        'asuedost',
+        'awest',
+        'amitte',
+        'aost',
       ],
       categoriesY: [],
       data: [],
@@ -208,8 +208,20 @@ export const mutations = {
     state.chartData.sources.series.push(series);
   },
   processRegional(state, payload) {
+    const regions = state.chartData.regions;
+    regions.categoriesY.push(payload.term);
+    const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
+    const itemsRegions = payload.result;
+    for (let i = 0; i < itemsRegions.length; i += 1) {
+      const regionName = itemsRegions[i].Word[0].n;
+      const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
+      if (categoriesXKey) {
+        regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i].rel)]);
+      }
+    }
+
     /* Update Countries Data */
-    const series1D = {
+/*     const series1D = {
       name: payload.term,
       data: [],
     };
@@ -225,10 +237,10 @@ export const mutations = {
       series2D.data[categoriesKey] = [itemsCountries[i][1], itemsCountries[i][2]];
     }
     state.chartData.regional.countries.series1D.push(series1D);
-    state.chartData.regional.countries.series2D.push(series2D);
+    state.chartData.regional.countries.series2D.push(series2D); */
 
     /* Update Linguistic Regions Data */
-    const regions = state.chartData.regional.regions;
+/*     const regions = state.chartData.regional.regions;
     regions.categoriesY.push(payload.term);
     const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
     const itemsRegions = payload.result[7].data;
@@ -238,7 +250,7 @@ export const mutations = {
       if (categoriesXKey) {
         regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i][1])]);
       }
-    }
+    } */
   },
   processDispersion(state, payload) {
     const data = payload.result;
@@ -314,11 +326,12 @@ export const actions = {
     try {
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=50&format=json`);
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
+      commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
     } catch (error) {
       console.log(error);
