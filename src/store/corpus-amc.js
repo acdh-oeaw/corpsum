@@ -10,11 +10,26 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc_60M', // amc3_demo, amc_50M, amc_60M
+  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M
   queryTerms: [],
   rawResults: [],
   modalTextContent: '',
   chartElements: [
+    {
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorQuery',
+    },
+    {
+      component: 'barChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'querySummary',
+    },
+    {
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorYearly',
+    },
     {
       component: 'lineChart',
       class: 'col-md-6 vis-component',
@@ -42,6 +57,19 @@ export const state = {
     },
   ],
   chartData: {
+    separatorQuery: {
+      title: 'Query Summary',
+    },
+    separatorYearly: {
+      title: 'Diachronic Analysis',
+    },
+    querySummary: {
+      title: 'Total Absolute Frequency',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      yAxisText: 'Number of Hits',
+      xAxisType: 'category',
+      series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
+    },
     absolute: {
       title: 'Yearly Absolute Frequency',
       subtitle: 'Absolute number of occurences (hits) of a given query in years',
@@ -184,6 +212,9 @@ export const mutations = {
         break;
       }
     }
+  },
+  processSum(state, payload) {
+    state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.result });
   },
   processTemporal(state, payload) {
     const items = payload.result;
@@ -329,6 +360,7 @@ export const actions = {
       const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
+      commit('processSum', { term: queryTerm, result: response.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
