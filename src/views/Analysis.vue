@@ -42,6 +42,7 @@
 import radarChart from '@/components/charts/radarChart.vue'
 import lineChart from '@/components/charts/lineChart.vue'
 import barChart from '@/components/charts/barChart.vue'
+import queryBuilder from '@/components/ui-elements/queryBuilder.vue'
 import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 import heatmapChart from '@/components/charts/heatmapChart.vue'
 import mapChart from '@/components/charts/mapChart.vue'
@@ -50,11 +51,12 @@ import scatterChart from '@/components/charts/scatterChart.vue'
 import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 import kwicTable from '@/components/ui-elements/kwicTable.vue'
 import visSeparator from '@/components/ui-elements/visSeparator.vue'
+import choroplethMap from '@/components/charts/choroplethMap.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator
+    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, choroplethMap
   },
   data() {
     return {

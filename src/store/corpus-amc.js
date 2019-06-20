@@ -11,34 +11,43 @@ Vue.use(Vuex);
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M
-  queryTerms: [],
   rawResults: [],
   modalTextContent: '',
   chartElements: [
     {
       component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
+      class: 'col-md-4 vis-separator',
       chartProp: 'separatorQuery',
     },
     {
-      component: 'barChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'querySummary',
-    },
-    {
       component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
+      class: 'col-md-8 vis-separator',
       chartProp: 'separatorYearly',
     },
     {
+      component: 'queryBuilder',
+      class: 'col-md-2 vis-component',
+      chartProp: 'queryTerms',
+    },
+    {
+      component: 'barChart',
+      class: 'col-md-2 vis-component',
+      chartProp: 'querySummary',
+    },
+    {
       component: 'lineChart',
-      class: 'col-md-6 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'absolute',
     },
     {
       component: 'lineChart',
-      class: 'col-md-6 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'relative',
+    },
+    {
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorKWIC',
     },
     {
       component: 'kwicTable',
@@ -46,28 +55,64 @@ export const state = {
       chartProp: 'kwic',
     },
     {
-      component: 'scatterChart',
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorRegional',
+    },
+    {
+      component: 'choroplethMap',
       class: 'col-md-6 vis-component',
-      chartProp: 'sources',
+      chartProp: 'regions',
     },
     {
       component: 'heatmapChart',
       class: 'col-md-6 vis-component',
       chartProp: 'regions',
     },
+    {
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorDiscourse',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'sources',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'sources',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-12 vis-component',
+      chartProp: 'sources',
+    },
   ],
   chartData: {
+    queryTerms: [],
     separatorQuery: {
       title: 'Query Summary',
     },
     separatorYearly: {
       title: 'Diachronic Analysis',
     },
+    separatorKWIC: {
+      title: 'Keyword in Context (KWIC)',
+    },
+    separatorRegional: {
+      title: 'Regional Analysis',
+    },
+    separatorDiscourse: {
+      title: 'Discourse Analysis',
+    },
     querySummary: {
       title: 'Total Absolute Frequency',
       subtitle: 'Total absolute number of occurences (hits) of a given query',
       yAxisText: 'Number of Hits',
       xAxisType: 'category',
+      legendEnabled: false,
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
     },
     absolute: {
@@ -184,7 +229,7 @@ const defaultState = JSON.parse(JSON.stringify(state));
 
 export const mutations = {
   resetQueryTerms(state, payload) {
-    state.queryTerms = payload;
+    state.chartData.queryTerms = payload;
     console.log(payload)
   },
   resetChartData(state, payload) {
@@ -195,12 +240,12 @@ export const mutations = {
     state.rawResults.push(payload);
   },
   queryTermAdded(state, queryTerm) {
-    state.queryTerms.push(queryTerm);
+    state.chartData.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
-    for (let i = state.queryTerms.length - 1; i >= 0; i--) {
-      if (state.queryTerms[i].text === queryTerm.text) {
-        state.queryTerms.splice(i, 1);
+    for (let i = state.chartData.queryTerms.length - 1; i >= 0; i--) {
+      if (state.chartData.queryTerms[i].text === queryTerm.text) {
+        state.chartData.queryTerms.splice(i, 1);
         state.chartData.absolute.data.splice(i, 1);
         state.chartData.relative.data.splice(i, 1);
         state.chartData.sources.series.splice(i, 1);
@@ -340,13 +385,13 @@ export const mutations = {
     // console.log(state.queryTerms)
     // console.log(defaultState.queryTerms)
     // state = JSON.parse(JSON.stringify(defaultState));
-    state.queryTerms.push(payload);
+    state.chartData.queryTerms.push(payload);
   },
 };
 
 export const getters = {
   chartData: state => state.chartData,
-  queryTerms: state => state.queryTerms,
+  queryTerms: state => state.chartData.queryTerms,
   chartElements: state => state.chartElements,
   modalTextContent: state => state.modalTextContent,
   corpusName: state => state.corpusName,

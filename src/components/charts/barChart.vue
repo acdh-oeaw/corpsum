@@ -26,6 +26,9 @@ export default {
             text: this.chartProp.yAxisText
           }
         },
+        legend: {
+            enabled: this.chartProp.legendEnabled
+        },
         tooltip: {
           pointFormat:
             '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',

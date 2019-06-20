@@ -7,10 +7,12 @@ import HighchartsVue from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingModule from 'highcharts/modules/exporting';
 import exportDataModule from 'highcharts/modules/export-data';
+import dataModule from 'highcharts/modules/data';
 import moreModule from 'highcharts/highcharts-more';
 import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
+import mapAustria from './mapAustria';
 
 import './scss/bootstrap.scss';
 
@@ -18,10 +20,14 @@ import router from './router';
 
 exportingModule(Highcharts);
 exportDataModule(Highcharts);
+dataModule(Highcharts);
 moreModule(Highcharts);
 highcharts3d(Highcharts);
 mapInit(Highcharts);
+
 Highcharts.maps.myMapName = worldmap;
+Highcharts.maps.geoJSONAustria = mapAustria;
+
 
 Highcharts.setOptions({
   colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#d95f02', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],

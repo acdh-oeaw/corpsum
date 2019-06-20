@@ -12,7 +12,7 @@ export default {
     return {
       chartOptions: {
         chart: {
-          type: 'spline',
+          type: 'line',
           zoomType: 'x',
           height: this.chartProp.height,
         },
