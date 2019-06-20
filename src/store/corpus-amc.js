@@ -60,7 +60,7 @@ export const state = {
       chartProp: 'separatorRegional',
     },
     {
-      component: 'choroplethMap',
+      component: 'multiMap',
       class: 'col-md-6 vis-component',
       chartProp: 'regions',
     },
@@ -185,6 +185,8 @@ export const state = {
       ],
       categoriesY: [],
       data: [],
+      maps: [],
+      maxRelVal: [0],
     },
     dispersion: {
       categories: ['Year', 'Country', 'Linguistic Region', 'Narrative Form', 'Medium', 'Theme'],
@@ -293,6 +295,47 @@ export const mutations = {
       const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
       if (categoriesXKey) {
         regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i].rel)]);
+      }
+    }
+
+    // Process data for the map charts
+    const map = {
+      mapData: {
+        data: [],
+        maxRelVal: [0],
+      },
+    };
+    for (let i = 0; i < itemsRegions.length; i += 1) {
+      const regionName = itemsRegions[i].Word[0].n;
+      let regionPrettyName;
+      switch (regionName) {
+        case 'aost':
+          regionPrettyName = 'AT-Ost';
+          break;
+        case 'asuedost':
+          regionPrettyName = 'AT-Südost';
+          break;
+        case 'amitte':
+          regionPrettyName = 'AT-Mitte';
+          break;
+        case 'awest':
+          regionPrettyName = 'AT-West';
+          break;
+        default:
+          regionPrettyName = '';
+      }
+      map.mapData.data.push([regionPrettyName, itemsRegions[i].rel]);
+      if (itemsRegions[i].rel > state.chartData.regions.maxRelVal[0]) {
+        state.chartData.regions.maxRelVal.splice(0, 1);
+        state.chartData.regions.maxRelVal.push(itemsRegions[i].rel);
+      }
+      map.mapData.maxRelVal = state.chartData.regions.maxRelVal;
+    }
+    state.chartData.regions.maps.push(map);
+    for (let i = 0; i < state.chartData.regions.maps.length; i += 1) {
+      if (state.chartData.regions.maps[i].mapData.maxRelVal[0] < state.chartData.regions.maxRelVal) {
+        state.chartData.regions.maps[i].mapData.maxRelVal.splice(0, 1);
+        state.chartData.regions.maps[i].mapData.maxRelVal.push(state.chartData.regions.maxRelVal);
       }
     }
 

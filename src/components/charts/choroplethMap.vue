@@ -5,31 +5,40 @@
 <script>
 
 export default {
+  props: {
+    chartProp: Object,
+  },
   data () {
     return {
       chartOptions: {
         chart: {
-          map: 'geoJSONAustria'
+          map: 'geoJSONAustria',
+          height: 175,
         },
-        title: {
-          text: 'GeoJSON in Highmaps'
-        },
+        title: false,
         mapNavigation: {
-          enabled: true,
-          buttonOptions: {
-            verticalAlign: 'bottom'
-          }
+          enabled: false,
+        },
+        legend: {
+          title: {
+              text: 'Word<br/><span style="font-size: 9px; color: #666; font-weight: normal">Relevative Frequency (%)</span>',
+              style: {
+                  fontStyle: 'italic'
+              }
+          },
+          layout: 'horizontal',
+          verticalAlign: 'top',
+          align: 'left',
+          floating: true,
         },
         colorAxis: {
-          tickPixelInterval: 100
+          min: 0,
+          max: this.chartProp.maxRelVal,
+          minColor: "#FFFFFF",
+          maxColor: this.Highcharts.getOptions().colors[4]
         },
         series: [{
-          data: [
-            ['AT-West', 100],
-            ['AT-Mitte', 222],
-            ['AT-Sudost', 333],
-            ['AT-Ost', 444],
-          ],
+          data: this.chartProp.data,
           keys: ['name', 'value'],
           joinBy: 'name',
           name: 'Relative Frequency (%)',
@@ -38,6 +47,7 @@ export default {
               color: '#a4edba'
             }
           },
+          borderWidth: 1,
           dataLabels: {
             enabled: true,
             format: '{point.properties.name}'
@@ -45,11 +55,11 @@ export default {
         }]
       }
     }
-  }
+  },
 }
 </script>
  <style scoped>
 .map {
-  min-height: 500px;
+  /* min-height: 500px; */
 }
  </style>

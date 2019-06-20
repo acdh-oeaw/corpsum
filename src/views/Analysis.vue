@@ -51,12 +51,12 @@ import scatterChart from '@/components/charts/scatterChart.vue'
 import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 import kwicTable from '@/components/ui-elements/kwicTable.vue'
 import visSeparator from '@/components/ui-elements/visSeparator.vue'
-import choroplethMap from '@/components/charts/choroplethMap.vue'
+import multiMap from '@/components/charts/multiMap.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, choroplethMap
+    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap
   },
   data() {
     return {
