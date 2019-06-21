@@ -77,12 +77,12 @@ export const state = {
     {
       component: 'scatterChart',
       class: 'col-md-6 vis-component',
-      chartProp: 'sources',
+      chartProp: 'sections',
     },
     {
-      component: 'scatterChart',
-      class: 'col-md-12 vis-component',
-      chartProp: 'sources',
+      component: 'multiWordcloud',
+      class: 'col-md-12 vis-component d-flex',
+      chartProp: 'collocations',
     },
   ],
   chartData: {
@@ -160,6 +160,32 @@ export const state = {
         zIndex: 3,
       }],
       series: [],
+    },
+    sections: {
+      title: 'Newspaper Sections',
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Relative Frequency (%)',
+      plotLinesX: [{
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: 100,
+        label: {
+          rotation: 0,
+          y: -5,
+          style: {
+            fontStyle: 'italic',
+            fontSize: '10',
+          },
+          textAlign: 'center',
+          text: 'Baseline (100%)',
+        },
+        zIndex: 3,
+      }],
+      series: [],
+    },
+    collocations: {
+      clouds: [],
     },
     regions: {
       title: 'Total Absolute Frequency',
@@ -270,6 +296,24 @@ export const mutations = {
       series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
     }
     state.chartData.sources.series.push(series);
+  },
+  processSections(state, payload) {
+    const items = payload.result;
+    const series = { name: payload.term, symbol: 'circle', data: [] };
+    for (let i = 0; i < items.length; i += 1) {
+      series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
+    }
+    state.chartData.sections.series.push(series);
+  },
+  processCollocations(state, payload) {
+    const items = payload.result.Items;
+    const data = [];
+    for (let i = 0; i < items.length; i += 1) {
+      if (items[i].str.length > 1) {
+        data.push({ name: items[i].str, weight: items[i].Stats[0].s });
+      }
+    }
+    state.chartData.collocations.clouds.push({ cloudData: { data } });
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
@@ -402,12 +446,16 @@ export const actions = {
 
       const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
-      commit('updateRawResults', { term: queryTerm, result: response.data });
+      const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
+
       commit('processSum', { term: queryTerm, result: response.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
-      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
+      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
+      commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items });
+      commit('processCollocations', { term: queryTerm, result: collxResp.data });
+      commit('updateRawResults', { term: queryTerm, result: response.data });
     } catch (error) {
       console.log(error);
     }

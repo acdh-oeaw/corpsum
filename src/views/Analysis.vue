@@ -52,11 +52,12 @@ import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 import kwicTable from '@/components/ui-elements/kwicTable.vue'
 import visSeparator from '@/components/ui-elements/visSeparator.vue'
 import multiMap from '@/components/charts/multiMap.vue'
+import multiWordcloud from '@/components/charts/multiWordcloud.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap
+    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud
   },
   data() {
     return {

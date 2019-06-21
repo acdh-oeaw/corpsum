@@ -9,6 +9,7 @@ import exportingModule from 'highcharts/modules/exporting';
 import exportDataModule from 'highcharts/modules/export-data';
 import dataModule from 'highcharts/modules/data';
 import moreModule from 'highcharts/highcharts-more';
+import wordcloud from 'highcharts/modules/wordcloud';
 import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
@@ -22,6 +23,7 @@ exportingModule(Highcharts);
 exportDataModule(Highcharts);
 dataModule(Highcharts);
 moreModule(Highcharts);
+wordcloud(Highcharts);
 highcharts3d(Highcharts);
 mapInit(Highcharts);
 
