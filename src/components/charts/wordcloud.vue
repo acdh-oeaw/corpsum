@@ -1,5 +1,5 @@
 <template>
-  <highcharts :class="`col-md-${elWidth} vis-component`" :options="chartOptions"></highcharts>
+  <highcharts :class="`col vis-component`" :options="chartOptions"></highcharts>
 </template>
 
 <script>
@@ -7,7 +7,6 @@ export default {
   props: {
     chartProp: Object,
     elKey: Number,
-    elWidth: Number,
   },
   data() {
     return {
@@ -28,8 +27,8 @@ export default {
           name: 'logDice Score',
           rotation: {
             from: 0,
-            to: 0,
-            orientations: 1,
+            to: 90,
+            orientations: 2,
           },
           spiral: 'square',
           placementStrategy: 'center',

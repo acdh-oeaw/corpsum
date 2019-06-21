@@ -5,7 +5,6 @@
       v-bind:key="element.id"
       v-bind:chartProp="element.cloudData"
       v-bind:elKey="index"
-      v-bind:elWidth="12/clouds.length"
     />
   </div>
 </template>
@@ -24,7 +23,6 @@ export default {
     return {
       componentKey: 0,
       clouds: this.chartProp.clouds,
-      class: 'col-md-'+12 / this.chartProp.clouds.length+' vis-component',
     };
   },
   created() {

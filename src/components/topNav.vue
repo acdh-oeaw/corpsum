@@ -7,12 +7,18 @@
       placeholder="Type your query and hit enter"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
-  
+    
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
         <a class="nav-link" href="#">Sign out</a>
       </li>
     </ul>
+
+    <div class="topnav-spinner text-center" v-show="loadingStatus">
+      <span>Querying the corpus, please wait.</span>
+      <b-spinner variant="primary" label="Text Centered"></b-spinner>
+    </div>
+
   </nav>
 </template>
 
@@ -28,14 +34,12 @@ export default {
     return {
       tag: '',
       tags: this.$store.getters.queryTerms,
+      toggleSpinner: false,
     };
   },
   computed: {
   },
   methods: {
-    tagChanged(val) {
-      console.log(val);
-    },
     tagAdded(val) {
       this.tag = '',
       this.$store.commit('queryTermAdded', val.tag);
@@ -46,6 +50,14 @@ export default {
       this.$store.commit('queryTermRemoved', val.tag);
     }
   },
+  computed: {
+    loadingStatus() {
+      return this.$store.getters.loadingStatus;
+      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+    },
+  },
+  watch: {
+  },
 };
 </script>
 
@@ -53,7 +65,6 @@ export default {
 /*
  * Tagsinput Styles
  */
-
 .vue-tags-input {
   max-width: initial !important;
   background: #ffffff;
@@ -120,4 +131,18 @@ export default {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
+.topnav-spinner {
+  position: absolute;
+  width: 100%;
+  background-color: #ffffffad;
+  height: 100%;
+  top: 0;
+  padding: 13px;
+}
+
+.topnav-spinner > span {
+  vertical-align: middle;
+  padding: 0 10px;
+  font-weight: 500;
+}
 </style>

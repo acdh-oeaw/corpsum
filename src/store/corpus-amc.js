@@ -13,6 +13,7 @@ export const state = {
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
   rawResults: [],
   modalTextContent: '',
+  loadingStatus: false,
   chartElements: [
     {
       component: 'visSeparator',
@@ -272,6 +273,9 @@ export const mutations = {
       }
     }
   },
+  changeLoadingStatus(state, payload) {
+    state.loadingStatus = payload.status;
+  },
   processSum(state, payload) {
     state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.result });
   },
@@ -435,6 +439,7 @@ export const getters = {
   chartElements: state => state.chartElements,
   modalTextContent: state => state.modalTextContent,
   corpusName: state => state.corpusName,
+  loadingStatus: state => state.loadingStatus,
 };
 
 export const actions = {
@@ -443,6 +448,8 @@ export const actions = {
       /*
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
       */
+      commit('changeLoadingStatus', { status: true });
+
       if (queryTerm.charAt(0) !== '[' && queryTerm.charAt(0) !== '(') {
         queryTerm = `[word="${queryTerm}"]`;
       }
@@ -453,6 +460,7 @@ export const actions = {
 
       const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
 
+      commit('changeLoadingStatus', { status: false });
       commit('processSum', { term: queryTerm, result: response.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
