@@ -438,7 +438,7 @@ export const actions = {
       /*
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
       */
-      if (queryTerm.charAt(0) !== '[') {
+      if (queryTerm.charAt(0) !== '[' && queryTerm.charAt(0) !== '(') {
         queryTerm = `[word="${queryTerm}"]`;
       }
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
