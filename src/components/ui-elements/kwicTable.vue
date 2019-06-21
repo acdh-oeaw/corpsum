@@ -176,6 +176,7 @@
       },
       modalTextContent() {
         return this.$store.getters.modalTextContent;
+        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
       },
     },
     mounted() {
@@ -185,7 +186,7 @@
         // this.infoModal.title = `Row index: ${index}`
         this.infoModal.title = item.source + ' - ' + item.date;
         this.modalTextContent = '';
-        this.$store.dispatch('modalTextQuery', item.toknum);
+        this.$store.dispatch('modalTextQuery', item);
         this.infoModal.content = JSON.stringify(item, null, 2)
         this.$root.$emit('bv::show::modal', this.infoModal.id, button)
       },
@@ -243,3 +244,24 @@
     }
   }
 </script>
+
+<style lang="scss">
+.kw-highlight {
+  background-color: #ffd600;
+  padding: 2px 1px;
+  border-radius: 3px;
+}
+.kwic-word {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #de0d0d;
+}
+.modal-body p {
+  font-size: 1rem;
+}
+@media (min-width: 992px) {
+  .modal-dialog {
+    max-width: 750px;
+  }
+}
+</style>

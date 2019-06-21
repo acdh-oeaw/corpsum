@@ -14,10 +14,13 @@ import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
 import { worldmap } from './worldmap';
 import mapAustria from './mapAustria';
+import TextHighlight from 'vue-text-highlight';
 
 import './scss/bootstrap.scss';
 
 import router from './router';
+
+Vue.component('text-highlight', TextHighlight);
 
 exportingModule(Highcharts);
 exportDataModule(Highcharts);

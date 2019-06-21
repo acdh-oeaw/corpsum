@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M
+  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
   rawResults: [],
   modalTextContent: '',
   chartElements: [
@@ -230,7 +230,7 @@ export const state = {
         { key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' } },
         { key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' } },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
-        { key: 'word', label: 'Word', sortable: true, class: 'text-center' },
+        { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
       ],
       height: 600,
@@ -407,10 +407,15 @@ export const mutations = {
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;
+    console.log(items);
     let content = '';
     for (let i = 0; i < items.length; i += 1) {
+      if (items[i].class === 'coll') {
+        items[i].str = ` ${items[i].str} `;
+      }
       content += items[i].str;
     }
+    content = content.replace(payload.term.trim(), `<span class="kw-highlight">${payload.term.trim()}</span>`);
     state.modalTextContent = content;
   },
   changeSelectedCorpus(state, payload) {
@@ -460,10 +465,10 @@ export const actions = {
       console.log(error);
     }
   },
-  async modalTextQuery({ state, commit, dispatch }, toknum) {
+  async modalTextQuery({ state, commit, dispatch }, item) {
     try {
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${toknum};struct=doc&format=json`);
-      commit('updateModalTextContent', { result: response.data });
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc&format=json`);
+      commit('updateModalTextContent', { term: item.word, result: response.data });
     } catch (error) {
       console.log(error);
     }
