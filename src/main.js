@@ -30,7 +30,7 @@ Highcharts.maps.geoJSONAustria = mapAustria;
 
 
 Highcharts.setOptions({
-  colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#d95f02', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+  colors: ['#4e79a7', '#edc948', '#e15759', '#76b7b2', '#f28e2b', '#ff9da7', '#FF9655', '#FFF263', '#6AF9C4'],
 });
 
 Highcharts.setOptions({

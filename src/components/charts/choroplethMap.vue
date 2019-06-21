@@ -1,5 +1,5 @@
 <template>
-  <highcharts :constructor-type="'mapChart'" :options="chartOptions" class="map"></highcharts>
+  <highcharts :constructor-type="'mapChart'" :options="chartOptions" :updateArgs="updateArgs"></highcharts>
 </template>
 
 <script>
@@ -7,13 +7,16 @@
 export default {
   props: {
     chartProp: Object,
+    elKey: Number,
+    elHeight: Number,
   },
   data () {
     return {
+      updateArgs: [true, true, true, true, true, true],
       chartOptions: {
         chart: {
           map: 'geoJSONAustria',
-          height: 175,
+          height: this.elHeight,
         },
         title: false,
         mapNavigation: {
@@ -21,7 +24,7 @@ export default {
         },
         legend: {
           title: {
-              text: 'Word<br/><span style="font-size: 9px; color: #666; font-weight: normal">Relevative Frequency (%)</span>',
+              text: this.chartProp.queryTerm + '<br/><span style="font-size: 9px; color: #666; font-weight: normal">Relevative Frequency (%)</span>',
               style: {
                   fontStyle: 'italic'
               }
@@ -33,9 +36,8 @@ export default {
         },
         colorAxis: {
           min: 0,
-          max: this.chartProp.maxRelVal,
           minColor: "#FFFFFF",
-          maxColor: this.Highcharts.getOptions().colors[4]
+          maxColor: this.Highcharts.getOptions().colors[this.elKey]
         },
         series: [{
           data: this.chartProp.data,
@@ -57,9 +59,7 @@ export default {
     }
   },
 }
+
 </script>
  <style scoped>
-.map {
-  /* min-height: 500px; */
-}
  </style>

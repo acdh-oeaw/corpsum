@@ -12,13 +12,17 @@ export default {
       chartOptions: {
         chart: {
           type: 'column',
+          height: this.chartProp.height
         },
         title: {
           text: this.chartProp.title
         },
+        subtitle: {
+          text: this.chartProp.subtitle
+        },
         xAxis: {
           type: this.chartProp.xAxisType,
-          categories: this.chartProp.categories
+          categories: this.chartProp.categoriesX
         },
         yAxis: {
           min: 0,
@@ -31,7 +35,7 @@ export default {
         },
         tooltip: {
           pointFormat:
-            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
           shared: true
         },
         plotOptions: {

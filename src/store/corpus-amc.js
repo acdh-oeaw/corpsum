@@ -25,13 +25,8 @@ export const state = {
       chartProp: 'separatorYearly',
     },
     {
-      component: 'queryBuilder',
-      class: 'col-md-2 vis-component',
-      chartProp: 'queryTerms',
-    },
-    {
       component: 'barChart',
-      class: 'col-md-2 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'querySummary',
     },
     {
@@ -47,16 +42,6 @@ export const state = {
     {
       component: 'visSeparator',
       class: 'col-md-12 vis-separator',
-      chartProp: 'separatorKWIC',
-    },
-    {
-      component: 'kwicTable',
-      class: 'col-md-12 vis-component',
-      chartProp: 'kwic',
-    },
-    {
-      component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
       chartProp: 'separatorRegional',
     },
     {
@@ -65,9 +50,19 @@ export const state = {
       chartProp: 'regions',
     },
     {
-      component: 'heatmapChart',
+      component: 'barChart',
       class: 'col-md-6 vis-component',
       chartProp: 'regions',
+    },
+    {
+      component: 'visSeparator',
+      class: 'col-md-12 vis-separator',
+      chartProp: 'separatorKWIC',
+    },
+    {
+      component: 'kwicTable',
+      class: 'col-md-12 vis-component',
+      chartProp: 'kwic',
     },
     {
       component: 'visSeparator',
@@ -166,31 +161,22 @@ export const state = {
       }],
       series: [],
     },
-    countries: {
-      title: 'Countries',
-      type: 'column',
-      stacking: 'percent',
-      yAxisText: 'Relative Frequencies',
-      categories: ['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Estados Unidos', 'Filipinas', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'],
-      series1D: [],
-      series2D: [],
-    },
     regions: {
+      title: 'Total Absolute Frequency',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      yAxisText: 'Number of Hits',
+      height: 480,
+      legendEnabled: true,
       categoriesX: [
-        'agesamt',
-        'asuedost',
-        'awest',
-        'amitte',
-        'aost',
+        'AT-Nationwide',
+        'AT-Ost',
+        'AT-Südost',
+        'AT-Mitte',
+        'AT-West',
+        'Specific',
       ],
-      categoriesY: [],
-      data: [],
-      maps: [],
-      maxRelVal: [0],
-    },
-    dispersion: {
-      categories: ['Year', 'Country', 'Linguistic Region', 'Narrative Form', 'Medium', 'Theme'],
       series: [],
+      maps: [],
     },
     narrative: {
       title: 'Narrative Forms',
@@ -286,24 +272,16 @@ export const mutations = {
     state.chartData.sources.series.push(series);
   },
   processRegional(state, payload) {
-    const regions = state.chartData.regions;
-    regions.categoriesY.push(payload.term);
-    const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
     const itemsRegions = payload.result;
-    for (let i = 0; i < itemsRegions.length; i += 1) {
-      const regionName = itemsRegions[i].Word[0].n;
-      const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
-      if (categoriesXKey) {
-        regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i].rel)]);
-      }
-    }
-
-    // Process data for the map charts
     const map = {
       mapData: {
+        queryTerm: payload.term,
         data: [],
-        maxRelVal: [0],
       },
+    };
+    const seriesData = {
+      name: payload.term,
+      data: [0, 0, 0, 0, 0, 0],
     };
     for (let i = 0; i < itemsRegions.length; i += 1) {
       const regionName = itemsRegions[i].Word[0].n;
@@ -311,65 +289,35 @@ export const mutations = {
       switch (regionName) {
         case 'aost':
           regionPrettyName = 'AT-Ost';
+          seriesData.data[1] = itemsRegions[i].freq;
           break;
         case 'asuedost':
           regionPrettyName = 'AT-Südost';
+          seriesData.data[2] = itemsRegions[i].freq;
           break;
         case 'amitte':
           regionPrettyName = 'AT-Mitte';
+          seriesData.data[3] = itemsRegions[i].freq;
           break;
         case 'awest':
           regionPrettyName = 'AT-West';
+          seriesData.data[4] = itemsRegions[i].freq;
+          break;
+        case 'agesamt':
+          regionPrettyName = 'AT-Nationwide';
+          seriesData.data[0] = itemsRegions[i].freq;
+          break;
+        case 'spezifisch':
+          regionPrettyName = 'Specific';
+          seriesData.data[5] = itemsRegions[i].freq;
           break;
         default:
           regionPrettyName = '';
       }
       map.mapData.data.push([regionPrettyName, itemsRegions[i].rel]);
-      if (itemsRegions[i].rel > state.chartData.regions.maxRelVal[0]) {
-        state.chartData.regions.maxRelVal.splice(0, 1);
-        state.chartData.regions.maxRelVal.push(itemsRegions[i].rel);
-      }
-      map.mapData.maxRelVal = state.chartData.regions.maxRelVal;
     }
     state.chartData.regions.maps.push(map);
-    for (let i = 0; i < state.chartData.regions.maps.length; i += 1) {
-      if (state.chartData.regions.maps[i].mapData.maxRelVal[0] < state.chartData.regions.maxRelVal) {
-        state.chartData.regions.maps[i].mapData.maxRelVal.splice(0, 1);
-        state.chartData.regions.maps[i].mapData.maxRelVal.push(state.chartData.regions.maxRelVal);
-      }
-    }
-
-    /* Update Countries Data */
-/*     const series1D = {
-      name: payload.term,
-      data: [],
-    };
-    const series2D = {
-      name: payload.term,
-      data: [],
-    };
-    const countries = state.chartData.regional.countries;
-    const itemsCountries = payload.result[1].data;
-    for (let i = 0; i < itemsCountries.length; i += 1) {
-      const categoriesKey = Object.keys(countries.categories).find(key => countries.categories[key] === itemsCountries[i][0]);
-      series1D.data[categoriesKey] = itemsCountries[i][1];
-      series2D.data[categoriesKey] = [itemsCountries[i][1], itemsCountries[i][2]];
-    }
-    state.chartData.regional.countries.series1D.push(series1D);
-    state.chartData.regional.countries.series2D.push(series2D); */
-
-    /* Update Linguistic Regions Data */
-/*     const regions = state.chartData.regional.regions;
-    regions.categoriesY.push(payload.term);
-    const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
-    const itemsRegions = payload.result[7].data;
-    for (let i = 0; i < itemsRegions.length; i += 1) {
-      const regionName = itemsRegions[i][0];
-      const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
-      if (categoriesXKey) {
-        regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i][1])]);
-      }
-    } */
+    state.chartData.regions.series.push(seriesData);
   },
   processDispersion(state, payload) {
     const data = payload.result;
@@ -443,9 +391,16 @@ export const getters = {
 export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
+      /*
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
+      */
+      if (queryTerm.charAt(0) !== '[') {
+        queryTerm = `[word="${queryTerm}"]`;
+      }
+      const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
+      const response = await axios.get(`${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=aword,[word="${queryTerm}"]&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
+      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
       commit('updateRawResults', { term: queryTerm, result: response.data });
       commit('processSum', { term: queryTerm, result: response.data.fullsize });
