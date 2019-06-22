@@ -104,7 +104,7 @@ export const state = {
       title: 'Discourse Analysis',
     },
     querySummary: {
-      title: 'Total Absolute Frequency',
+      title: 'Total Frequency',
       subtitle: 'Total absolute number of occurences (hits) of a given query',
       yAxisText: 'Number of Hits',
       xAxisType: 'category',

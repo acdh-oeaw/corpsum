@@ -6,6 +6,7 @@ import SmartTable from 'vuejs-smart-table'
 import HighchartsVue from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingModule from 'highcharts/modules/exporting';
+import offlineExportingModule from 'highcharts/modules/offline-exporting';
 import exportDataModule from 'highcharts/modules/export-data';
 import dataModule from 'highcharts/modules/data';
 import moreModule from 'highcharts/highcharts-more';
@@ -23,6 +24,7 @@ import router from './router';
 Vue.component('text-highlight', TextHighlight);
 
 exportingModule(Highcharts);
+offlineExportingModule(Highcharts);
 exportDataModule(Highcharts);
 dataModule(Highcharts);
 moreModule(Highcharts);

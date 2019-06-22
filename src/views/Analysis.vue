@@ -144,12 +144,26 @@ export default {
 </script>
 
 <style lang="scss">
-.vis-component > div {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+.vis-component {
+  padding: .5rem !important;
+
+  .vis-component-inner {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px 1px rgba(212, 212, 218, 0.32);
+    overflow: hidden;
+  }
+
+  .head {
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.5rem;
+    background-color: #f0f7fd;
+  }
+
 }
 
-.vis-component, .vis-separator {
-  padding: .5rem!important;
+.vis-separator {
+  padding: .5rem !important;
 }
 </style>
