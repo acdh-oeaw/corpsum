@@ -2,22 +2,29 @@
   <div>
     <div class="vis-component-inner">
       <div class="head d-flex">
+        <b-link @click="info($event.target)" class="mr-1">
+          <info-icon></info-icon>
+        </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
         <div class="actions ml-auto">
           <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
-          <b-button variant="info" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
-            <list-icon @click="showChart"></list-icon>
+          <b-button variant="info" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
+            <bar-chart-2-icon></bar-chart-2-icon>
           </b-button>
-          <b-button variant="info" v-b-tooltip.hover title="Export data as CSV">
-            <download-icon @click="exportCSV"></download-icon>
+          <b-button variant="info" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
+            <download-icon></download-icon>
           </b-button>
-          <b-button variant="info" v-b-tooltip.hover title="Export image as PNG">
-            <image-icon @click="exportImage"></image-icon>
+          <b-button variant="info" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
+            <image-icon></image-icon>
           </b-button>
         </div>
       </div>
+      <!-- Info modal -->
+      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only>
+        {{ infoModal.content }}
+      </b-modal>
       <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>
     </div>
   </div>
@@ -27,10 +34,12 @@
 import { DownloadIcon } from 'vue-feather-icons'
 import { ImageIcon } from 'vue-feather-icons'
 import { ListIcon } from 'vue-feather-icons'
+import { BarChart2Icon } from 'vue-feather-icons'
+import { InfoIcon } from 'vue-feather-icons'
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
   },
   props: {
     chartProp: Object
@@ -40,6 +49,11 @@ export default {
       showTableIcon: true,
       showChartIcon: false,
       showChartElement: true,
+      infoModal: {
+        id: 'vis-info-modal',
+        title: '',
+        content: 'Content'
+      },
       chartOptions: {
         chart: {
           type: 'column',
@@ -77,9 +91,7 @@ export default {
   },
   methods: {
     exportImage() {
-      this.$refs.chart.chart.exportChartLocal({
-        type: 'image/png'
-      });
+      this.$refs.chart.chart.downloadSVG();
     },
     exportCSV() {
       this.$refs.chart.chart.downloadCSV();
@@ -98,15 +110,12 @@ export default {
       this.showChartElement = true;
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
     },
+    info(button) {
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    },
   },
 };
 </script>
 
 <style lang="scss">
-.actions {
-  button {
-    padding: 0 0.25rem;
-    margin-left: 0.5rem;
-  }
-}
 </style>

@@ -148,17 +148,35 @@ export default {
   padding: .5rem !important;
 
   .vis-component-inner {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 0.5rem;
     background-color: #fff;
-    box-shadow: 0 1px 3px 1px rgba(212, 212, 218, 0.32);
+    box-shadow: 0 0 0 0 rgba(90, 113, 207, 0.11), 0 4px 15px 0 rgba(167, 175, 182, 0.31);
+    border: solid 1px #dde4ea;
     overflow: hidden;
+
+    .actions {
+      button {
+        padding: 0 0.25rem;
+        margin-left: 0.5rem;
+      }
+    }
+
+    .highcharts-table-caption {
+      display: none;
+    }
+
   }
 
   .head {
     border-bottom: 1px solid #dee2e6;
     padding: 0.5rem;
     background-color: #f0f7fd;
+    align-items: center;
+
+    .vis-title {
+      font-weight: 500;
+    }
+
   }
 
 }
