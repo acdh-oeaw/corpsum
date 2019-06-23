@@ -56,7 +56,11 @@ export default {
         },
         chart: {
           type: 'column',
-          height: this.chartProp.height
+          height: this.chartProp.height,
+          spacingBottom: 20,
+          spacingTop: 20,
+          spacingLeft: 10,
+          spacingRight: 20,
         },
         title: false,
         xAxis: {
@@ -67,6 +71,10 @@ export default {
           min: 0,
           title: {
             text: this.chartProp.yAxisText
+          },
+          labels: {
+              // align: 'left',
+              // x: 0,
           }
         },
         legend: {
