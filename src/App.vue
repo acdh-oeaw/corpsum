@@ -39,8 +39,19 @@ export default {
 /*
  * Dashboard CSS
  */
+@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Asap&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Cabin&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Barlow&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Assistant&display=swap');
+
+
 body {
   font-size: .875rem;
+  font-family: 'Barlow', sans-serif;
   background-color: #f5f6f9;
 }
 
@@ -48,6 +59,24 @@ body {
   width: 16px;
   height: 16px;
   vertical-align: text-bottom;
+}
+
+.highcharts-root {
+  font-family: 'Barlow', sans-serif !important;
+
+  .highcharts-point {
+    opacity: 0.85;
+  }
+
+  .highcharts-tooltip-box {
+    stroke-opacity: 0.5;
+    fill: #f5f6f9;
+  }
+
+  .highcharts-shadow {
+    display: none;
+  }
+
 }
 
 /*
