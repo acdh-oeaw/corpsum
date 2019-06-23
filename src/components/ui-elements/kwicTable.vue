@@ -113,13 +113,13 @@
       </b-table>
 
       <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+      <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" ok-only scrollable @hide="resetInfoModal">
         <p v-html="modalTextContent"></p>
         <pre>{{ infoModal.content }}</pre>
       </b-modal>
 
       <!-- Create subcorpus modal -->
-      <b-modal :id="subcorpusModal.id" :title="subcorpusModal.title" ok-only>
+      <b-modal :id="subcorpusModal.id" :title="subcorpusModal.title" size="lg" ok-only scrollable>
         {{ selectedDocs }}
       </b-modal>
     </b-container>
@@ -258,10 +258,5 @@
 }
 .modal-body p {
   font-size: 1rem;
-}
-@media (min-width: 992px) {
-  .modal-dialog {
-    max-width: 750px;
-  }
 }
 </style>

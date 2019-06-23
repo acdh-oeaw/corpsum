@@ -15,11 +15,12 @@
         <div class="row vis-wrapper">
 
           <component
-            v-for="element in chartElements"
+            v-for="(element, index) in chartElements"
             v-bind:key="element.key"
             v-bind:is="element.component"
             v-bind:chartProp="chartData[element.chartProp]"
             v-bind:class="element.class"
+            v-bind:elKey="index"
           />
 
 <!--           <radarChart class="col-md-4 vis-component"></radarChart>

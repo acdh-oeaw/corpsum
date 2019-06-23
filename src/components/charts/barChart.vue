@@ -2,7 +2,7 @@
   <div>
     <div class="vis-component-inner">
       <div class="head d-flex">
-        <b-link @click="info($event.target)" class="mr-1">
+        <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
           <info-icon></info-icon>
         </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
@@ -21,10 +21,7 @@
           </b-button>
         </div>
       </div>
-      <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only>
-        {{ infoModal.content }}
-      </b-modal>
+      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
       <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>
     </div>
   </div>
@@ -42,19 +39,21 @@ export default {
     DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
   },
   props: {
-    chartProp: Object
+    chartProp: Object,
+    elKey: Number,
   },
   data() {
     return {
       showTableIcon: true,
       showChartIcon: false,
       showChartElement: true,
-      infoModal: {
-        id: 'vis-info-modal',
-        title: '',
-        content: 'Content'
+      chartInfoModal: {
+        id: 'chart-info-modal-'+this.elKey,
       },
       chartOptions: {
+        exporting: {
+          enabled: false,
+        },
         chart: {
           type: 'column',
           height: this.chartProp.height
@@ -83,9 +82,6 @@ export default {
           },
         },
         series: this.chartProp.series,
-        exporting: {
-          // enabled: false,
-        },
       }
     };
   },
@@ -109,9 +105,6 @@ export default {
       this.showChartIcon = false;
       this.showChartElement = true;
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
-    },
-    info(button) {
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
   },
 };
