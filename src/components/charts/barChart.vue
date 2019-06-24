@@ -87,6 +87,13 @@ export default {
         },
         plotOptions: {
           column: {
+            dataLabels: {
+              enabled: true,
+              inside: true,
+              align: 'center',
+              verticalAlign: 'top',
+              format: '{point.y}'
+            },
           },
         },
         series: this.chartProp.series,

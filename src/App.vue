@@ -65,7 +65,7 @@ body {
   font-family: 'Barlow', sans-serif !important;
 
   .highcharts-point {
-    opacity: 0.85;
+    opacity: 0.87;
   }
 
   .highcharts-tooltip-box {
