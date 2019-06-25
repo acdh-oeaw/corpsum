@@ -238,9 +238,14 @@ export const mutations = {
     for (let i = state.chartData.queryTerms.length - 1; i >= 0; i--) {
       if (state.chartData.queryTerms[i].text === queryTerm.text) {
         state.chartData.queryTerms.splice(i, 1);
+        state.chartData.querySummary.series[0].data.splice(i, 1);
         state.chartData.absolute.data.splice(i, 1);
         state.chartData.relative.data.splice(i, 1);
+        state.chartData.regions.maps.splice(i, 1);
+        state.chartData.regions.series.splice(i, 1);
         state.chartData.sources.series.splice(i, 1);
+        state.chartData.sections.series.splice(i, 1);
+        state.chartData.collocations.clouds.splice(i, 1);
         for (let j = state.chartData.kwic.items.length - 1; j >= 0; j--) {
           if (state.chartData.kwic.items[j].queryTerm === queryTerm.text) {
             state.chartData.kwic.items.splice(j, 1);
