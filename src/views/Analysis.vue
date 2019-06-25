@@ -23,7 +23,7 @@
                   <br/>
                   You can start by typing your query in the above search bar or clicking the below button for some examples.
                 </template>
-                <b-button variant="success" href="#">Try Example Query</b-button>
+                <b-button variant="success" @click="exampleQuery()">Try Example Query</b-button>
               </b-jumbotron>
             </div>
           </div>
@@ -110,6 +110,13 @@ export default {
     resetQuery() {
       // this.$store.commit('resetState', 'Ball');
       this.$store.dispatch('corpusQuery', 'Ball');
+    },
+    exampleQuery() {
+      const queryTerms = [{"text":"Haus","tiClasses":["ti-valid"]},{"text":"Wohnung","tiClasses":["ti-valid"]}];
+      for (let i = 0; i < queryTerms.length; i += 1) {
+        this.$store.commit('queryTermAdded', queryTerms[i]);
+        this.$store.dispatch('corpusQuery', queryTerms[i].text);
+      }
     },
     changeSampleQuery(querySet) {
       console.log(this.initialChartDataState)
