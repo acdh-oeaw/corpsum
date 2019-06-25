@@ -16,16 +16,6 @@ export const state = {
   loadingStatus: false,
   chartElements: [
     {
-      component: 'visSeparator',
-      class: 'col-md-4 vis-separator',
-      chartProp: 'separatorQuery',
-    },
-    {
-      component: 'visSeparator',
-      class: 'col-md-8 vis-separator',
-      chartProp: 'separatorYearly',
-    },
-    {
       component: 'barChart',
       class: 'col-md-4 vis-component',
       chartProp: 'querySummary',
@@ -41,11 +31,6 @@ export const state = {
       chartProp: 'relative',
     },
     {
-      component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
-      chartProp: 'separatorRegional',
-    },
-    {
       component: 'multiMap',
       class: 'col-md-6 vis-component',
       chartProp: 'regions',
@@ -56,19 +41,9 @@ export const state = {
       chartProp: 'regions',
     },
     {
-      component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
-      chartProp: 'separatorKWIC',
-    },
-    {
       component: 'kwicTable',
       class: 'col-md-12 vis-component',
       chartProp: 'kwic',
-    },
-    {
-      component: 'visSeparator',
-      class: 'col-md-12 vis-separator',
-      chartProp: 'separatorDiscourse',
     },
     {
       component: 'scatterChart',
@@ -323,6 +298,7 @@ export const mutations = {
     const itemsRegions = payload.result;
     const map = {
       mapData: {
+        title: 'Regional Relative Frequency (%)',
         queryTerm: payload.term,
         data: [],
       },
@@ -362,7 +338,7 @@ export const mutations = {
         default:
           regionPrettyName = '';
       }
-      map.mapData.data.push([regionPrettyName, itemsRegions[i].rel]);
+      map.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].rel });
     }
     state.chartData.regions.maps.push(map);
     state.chartData.regions.series.push(seriesData);

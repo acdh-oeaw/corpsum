@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container :style="{'height':height}" fluid>
+    <b-container :style="{'height':height}" fluid class="vis-component-inner">
       <!-- User Interface controls -->
       <b-row class="py-3">
 

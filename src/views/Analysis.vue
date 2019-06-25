@@ -69,18 +69,16 @@ export default {
   },
   mounted() {
     console.log("mounted");
-
-/*     var pckry = new Packery( '.vis-wrapper', {
+     var pckry = new Packery( '.vis-wrapper', {
       itemSelector: '.vis-component',
       columnWidth: ".vis-component.col-md-4",
       gutter: 0,
       percentPosition: true
     });
-
     pckry.getItemElements().forEach( function( itemElem ) {
       var draggie = new Draggabilly( itemElem, { handle: '.highcharts-title' } );
       pckry.bindDraggabillyEvents( draggie );
-    }); */
+    });
   },
   watch: {
   },
@@ -147,6 +145,10 @@ export default {
 <style lang="scss">
 .vis-component {
   padding: .5rem !important;
+
+  .multi-map-child:nth-child(n+2) {
+    margin-top: 15px;
+  }
 
   .vis-component-inner {
     border-radius: 0.5rem;

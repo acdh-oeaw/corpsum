@@ -75,12 +75,4 @@ export default {
 </script>
 
 <style lang="scss">
-.vis-component > div {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-}
-
-.vis-component {
-  padding: .5rem!important;
-}
 </style>
