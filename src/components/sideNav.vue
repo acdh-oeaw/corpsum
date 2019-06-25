@@ -1,15 +1,15 @@
 <template>
   <nav class="col-md-1 d-none d-md-block sidebar">
     <div class="sidebar-sticky">
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1 text-muted">
         <span>Data Provider:</span>
       </h6>
       <b-form-select v-model="selectedProvider" :options="optionsProviders" @change="changeProvider" size="sm" class="corpus-selector"></b-form-select>
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-3 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1 text-muted">
         <span>Active Corpus:</span>
       </h6>
       <b-form-select v-model="selectedCorpus" :options="optionsCorpora" @change="changeCorpus" size="sm" class="corpus-selector"></b-form-select>
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1 text-muted">
         <span>Anaylsis:</span>
       </h6>
       <ul class="nav flex-column">
@@ -33,7 +33,7 @@
         </li>
       </ul>
 
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1 text-muted">
         <span>Settings</span>
       </h6>
       <ul class="nav flex-column mb-2">
@@ -73,7 +73,7 @@ export default {
       selectedProvider: this.$route.params.id,
       optionsProviders: [
         { value: 'acdh', text: 'ACDH - ÖAW' },
-        { value: 'rae', text: 'RAE Madrid', disabled: true },
+        { value: 'rae', text: 'R.A.Espańola', disabled: true },
       ],
       optionsCorpora: [
         { value: 'amc3_demo', text: 'AMC3 (demo)' },
@@ -139,7 +139,7 @@ export default {
 }
 
 .sidebar .nav-link .feather {
-  margin-right: 4px;
+  margin-right: 2px;
   color: #999;
 }
 
@@ -155,15 +155,20 @@ export default {
 .sidebar-heading {
   font-size: .75rem;
   text-transform: uppercase;
+  padding-left: 0.75rem;
+  padding-right: 0.25rem;
 }
 
 .corpus-selector {
-  margin: 0 1rem;
-  width: calc(100% - 2rem);
+  margin: 0 0.55rem 0 0.65rem;
+  width: calc(100% - 1.2rem);
+  padding-left: 0.3rem;
+  padding-right: 0.15rem;
 }
 
 .sidebar .nav-link {
   font-size: 0.8rem;
+  padding: 0.4rem 0.25rem 0.4rem 0.75rem;
 }
 
 </style>

@@ -235,6 +235,9 @@ export const mutations = {
     state.chartData.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
+    if (queryTerm.charAt(0) !== '[' && queryTerm.charAt(0) !== '(') {
+      queryTerm = `[word="${queryTerm}"]`;
+    }
     for (let i = state.chartData.queryTerms.length - 1; i >= 0; i--) {
       if (state.chartData.queryTerms[i].text === queryTerm.text) {
         state.chartData.queryTerms.splice(i, 1);

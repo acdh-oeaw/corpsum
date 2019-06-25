@@ -39,15 +39,8 @@ export default {
 /*
  * Dashboard CSS
  */
-@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Asap&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Cabin&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Barlow&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Assistant&display=swap');
-
+@import url('https://fonts.googleapis.com/css?family=Signika&display=swap');
 
 body {
   font-size: .875rem;
@@ -93,11 +86,11 @@ body {
 }
 
 .sidebar, .navbar-brand {
-  min-width: 180px;
+  min-width: 135px;
 }
 
 main {
-  max-width: calc(100% - 180px) !important;
+  max-width: calc(100% - 135px) !important;
 }
 
 </style>

@@ -108,10 +108,10 @@ export default {
 }
 
 .navbar-brand {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  font-size: 1.4rem;
-  font-weight: 600;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 1.6rem;
+  font-family: 'Signika', sans-serif;
 }
 
 .navbar .form-control {
