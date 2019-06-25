@@ -57,7 +57,7 @@ export const state = {
     },
     {
       component: 'multiWordcloud',
-      class: 'col-md-12 vis-component d-flex',
+      class: 'container-fluid p-0 d-flex',
       chartProp: 'collocations',
     },
   ],

@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     exportImage() {
-      this.$refs.chart.chart.downloadSVG();
+      this.$refs.chart.chart.exportChartLocal({ type: 'image/svg+xml' });
     },
     exportCSV() {
       this.$refs.chart.chart.downloadCSV();
