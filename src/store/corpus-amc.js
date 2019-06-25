@@ -14,6 +14,8 @@ export const state = {
   rawResults: [],
   modalTextContent: '',
   loadingStatus: false,
+  toggleIntroSection: true,
+  toggleVisSection: false,
   chartElements: [
     {
       component: 'barChart',
@@ -247,9 +249,17 @@ export const mutations = {
         break;
       }
     }
+    if (state.chartData.queryTerms.length === 0) {
+      state.toggleIntroSection = true;
+      state.toggleVisSection = false;
+    }
   },
   changeLoadingStatus(state, payload) {
     state.loadingStatus = payload.status;
+    if (payload.status === false) {
+      state.toggleIntroSection = false;
+      state.toggleVisSection = true;
+    }
   },
   processSum(state, payload) {
     state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.result });
@@ -416,6 +426,8 @@ export const getters = {
   modalTextContent: state => state.modalTextContent,
   corpusName: state => state.corpusName,
   loadingStatus: state => state.loadingStatus,
+  toggleIntroSection: state => state.toggleIntroSection,
+  toggleVisSection: state => state.toggleVisSection,
 };
 
 export const actions = {

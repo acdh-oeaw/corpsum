@@ -1,19 +1,35 @@
 <template>
     <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
-<!--       <div>
+<!--       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
+      <div>
         <h6>Sample Queries: </h6>
         <b-button class="mr-2" variant="primary" size="sm" @click="changeSampleQuery(1)">Car: coche / carro / auto</b-button>
         <b-button class="mr-2" variant="secondary" size="sm" @click="changeSampleQuery(2)">Cellphone: teléfono celular / teléfono móvil</b-button>
         <b-button class="mr-2" variant="success" size="sm" @click="changeSampleQuery(3)">Spelling Changes: Iraq / Irak</b-button>
-      </div> -->
+      </div>
         <div class="btn-toolbar mb-2 mb-md-0">
           <b-button variant="danger" size="sm" @click="resetQuery">Reset Query</b-button>
         </div>
-      </div>
-      <div class="home">
-        <div class="row vis-wrapper">
+      </div> -->
+      <div class="home pt-3">
 
+        <div class="row vis-intro-wrapper" v-show="toggleIntroSection">
+          <div class="col-md-12 vis-component">
+            <div class="vis-component-inner">
+              <b-jumbotron bg-variant="white" header-level="4" class="py-3 mb-3">
+                <template slot="header">Corpus Analysis</template>
+                <template slot="lead">
+                  This dashboard allows you to analyze the results of your corpus queries in multiple dimensions and with visualization components.
+                  <br/>
+                  You can start by typing your query in the above search bar or clicking the below button for some examples.
+                </template>
+                <b-button variant="success" href="#">Try Example Query</b-button>
+              </b-jumbotron>
+            </div>
+          </div>
+        </div>
+
+        <div class="row vis-wrapper" v-show="toggleVisSection">
           <component
             v-for="(element, index) in chartElements"
             v-bind:key="element.key"
@@ -22,15 +38,6 @@
             v-bind:class="element.class"
             v-bind:elKey="index"
           />
-
-<!--           <radarChart class="col-md-4 vis-component"></radarChart>
-          <lineChart :chartProp="chartData.temporal.absolute" class="col-md-4 vis-component"></lineChart>
-          <lineChart :chartProp="chartData.temporal.relative" class="col-md-4 vis-component"></lineChart>
-          <interactiveTable :tableData="chartData.kwic" class="col-md-12 vis-component"></interactiveTable>
-          <stackedBarChart :chartProp="chartData.narrative" class="col-md-4 vis-component"></stackedBarChart>
-          <heatmapChart class="col-md-8 vis-component"></heatmapChart>
-          <genericChart :chartProp="chartData.regional.countries" class="col-md-8 vis-component"></genericChart>
-          <mapChart class="col-md-4 vis-component"></mapChart> -->
         </div>
       </div>
     </main>
@@ -89,6 +96,14 @@ export default {
     },
     chartElements() {
       return this.$store.getters.chartElements
+    },
+    toggleIntroSection() {
+      return this.$store.getters.toggleIntroSection;
+      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+    },
+    toggleVisSection() {
+      return this.$store.getters.toggleVisSection;
+      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
     },
   },
   methods: {
@@ -190,6 +205,14 @@ export default {
       font-weight: 500;
     }
 
+  }
+
+}
+
+.vis-intro-wrapper {
+
+  .vis-component-inner {
+    min-height: auto !important;
   }
 
 }

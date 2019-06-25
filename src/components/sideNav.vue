@@ -14,10 +14,16 @@
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
+          <!--
           <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
             <hard-drive-icon></hard-drive-icon>
             Corpus Info
           </router-link>
+          -->
+          <b-link class="nav-link" href="" disabled>
+            <hard-drive-icon></hard-drive-icon>
+            Corpus Info
+          </b-link>
         </li>
         <li class="nav-item">
           <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link active">
@@ -32,22 +38,22 @@
       </h6>
       <ul class="nav flex-column mb-2">
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <b-link class="nav-link" href="" disabled>
             <user-icon></user-icon>
             Profile
-          </a>
+          </b-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <b-link class="nav-link" href="" disabled>
             <settings-icon></settings-icon>
             Settings
-          </a>
+          </b-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <b-link class="nav-link" href="" disabled>
             <rotate-ccw-icon></rotate-ccw-icon>
             History
-          </a>
+          </b-link>
         </li>
       </ul>
     </div>
@@ -67,7 +73,7 @@ export default {
       selectedProvider: this.$route.params.id,
       optionsProviders: [
         { value: 'acdh', text: 'ACDH - ÖAW' },
-        { value: 'rae', text: 'RAE Madrid' },
+        { value: 'rae', text: 'RAE Madrid', disabled: true },
       ],
       optionsCorpora: [
         { value: 'amc3_demo', text: 'AMC3 (demo)' },

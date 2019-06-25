@@ -13,7 +13,7 @@ export default new Router({
       name: 'root',
       redirect: (to) => {
         if (to.params.id !== 'rae' || to.params.id !== 'acdh') {
-          return '/acdh/info';
+          return '/acdh/analysis';
         }
         return to.fullPath;
       },
@@ -41,7 +41,7 @@ export default new Router({
     },
     {
       path: '',
-      redirect: { name: 'info' },
+      redirect: { name: 'analysis' },
     },
   ],
 });
