@@ -40,6 +40,7 @@ export default {
   },
   props: {
     chartProp: Object,
+    parentKey: Number,
     elKey: Number,
   },
   data() {
@@ -48,7 +49,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: 'chart-info-modal-'+this.parentKey+'-'+this.elKey,
       },
       chartOptions: {
         exporting: {
@@ -57,12 +58,7 @@ export default {
         chart: {
           height: this.chartProp.height
         },
-        title: {
-          text: this.chartProp.title
-        },
-        subtitle: {
-          text: this.chartProp.subtitle
-        },
+        title: false,
         series: [{
           type: 'wordcloud',
           data: this.chartProp.data,
@@ -96,7 +92,7 @@ export default {
     },
     showTable() {
       this.$refs.chart.chart.viewData();
-      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
       this.showChartIcon = true;

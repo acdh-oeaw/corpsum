@@ -292,7 +292,7 @@ export const mutations = {
         data.push({ name: items[i].str, weight: items[i].Stats[0].s });
       }
     }
-    state.chartData.collocations.clouds.push({ cloudData: { data } });
+    state.chartData.collocations.clouds.push({ cloudData: { data, title: `Collocations Wordcloud: ${payload.term}`, subtitle: 'Content' } });
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;

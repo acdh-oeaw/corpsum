@@ -119,7 +119,7 @@ export default {
     },
     showTable() {
       this.$refs.chart.chart.viewData();
-      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
       this.showChartIcon = true;

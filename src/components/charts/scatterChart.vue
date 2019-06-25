@@ -56,14 +56,13 @@ export default {
         },
         chart: {
           type: "scatter",
-          zoomType: "xy"
+          zoomType: "xy",
+          spacingBottom: 20,
+          spacingTop: 20,
+          spacingLeft: 10,
+          spacingRight: 20,
         },
-        title: {
-          text: this.chartProp.title
-        },
-        subtitle: {
-          text: this.chartProp.subitle
-        },
+        title: false,
         xAxis: {
           title: {
             enabled: true,
@@ -79,6 +78,13 @@ export default {
             text: this.chartProp.yAxisText
           },
           plotLines: this.chartProp.plotLinesY
+        },
+        legend: {
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'top',
+          y: -15,
+          margin: 15,
         },
         plotOptions: {
           scatter: {
@@ -122,7 +128,7 @@ export default {
     },
     showTable() {
       this.$refs.chart.chart.viewData();
-      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
       this.showChartIcon = true;

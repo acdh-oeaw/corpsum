@@ -4,6 +4,7 @@
       v-for="(element, index) in clouds"
       v-bind:key="element.id"
       v-bind:chartProp="element.cloudData"
+      v-bind:parentKey="elKey"
       v-bind:elKey="index"
     />
   </div>
@@ -14,7 +15,8 @@ import wordcloud from '@/components/charts/wordcloud.vue'
 
 export default {
   props: {
-    chartProp: Object
+    chartProp: Object,
+    elKey: Number
   },
   components: {
     wordcloud

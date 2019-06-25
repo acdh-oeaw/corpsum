@@ -156,6 +156,7 @@ export default {
     background-color: #fff;
     box-shadow: 0 0 0 0 rgba(90, 113, 207, 0.11), 0 4px 15px 0 rgba(167, 175, 182, 0.31);
     border: solid 1px #dde4ea;
+    min-height: 445px;
     overflow: hidden;
 
     .actions {
@@ -163,11 +164,14 @@ export default {
         padding: 0 0.25rem;
         margin-left: 0.5rem;
       }
-
       &.move-component-btn {
         cursor: grab !important;
       }
+    }
 
+    .highcharts-data-table {
+      max-height: 400px;
+      overflow-y: auto;
     }
 
     .highcharts-table-caption {
