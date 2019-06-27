@@ -1,6 +1,6 @@
 <template>
-  <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-2 col-md-1 mr-0 text-center" href="#">corpsum</a>
+  <nav class="navbar navbar-dark fixed-top flex-md-nowrap shadow ml-auto px-2">
+    <search-icon class="topnav-search-icon"></search-icon>
     <vue-tags-input element-id="queryTerms" class="w-100"
       v-model="tag"
       :tags="tags"
@@ -24,11 +24,12 @@
 
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
+import { SearchIcon } from 'vue-feather-icons'
 
 export default {
   name: 'topNav',
   components: {
-    VueTagsInput,
+    VueTagsInput, SearchIcon
   },
   data() {
     return {
@@ -73,7 +74,7 @@ export default {
 
 .ti-input {
   border: 0 !important;
-  padding: 0.25rem 0.5rem !important;
+  padding: 0 0.5rem 0 0.5rem !important;
 }
 
 .ti-new-tag-input-wrapper {
@@ -104,20 +105,20 @@ export default {
  * Navbar
  */
 .navbar {
-  background-color: #34a8c3;
-}
-
-.navbar-brand {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-size: 1.6rem;
-  font-family: 'Signika', sans-serif;
+  background-color: #fff;
 }
 
 .navbar .form-control {
   padding: 0.75rem 1rem;
   border-width: 0;
   border-radius: 0;
+}
+
+.topnav-search-icon.feather {
+  margin-left: 0.75rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #17a2b8;
 }
 
 .form-control-dark {

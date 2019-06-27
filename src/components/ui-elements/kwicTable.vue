@@ -61,56 +61,60 @@
         </b-col> -->
       </b-row>
 
-      <!-- Main table element -->
-      <b-table
-        show-empty
-        small
-        striped
-        bordered
-        stacked="md"
-        :items="items"
-        :fields="fields"
-        :current-page="currentPage"
-        :per-page="perPage"
-        :filter="filter"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :sort-direction="sortDirection"
-        @filtered="onFiltered"
-      >
-        <!--       <template slot="name" slot-scope="row">
-          {{ row.value.first }} {{ row.value.last }}
-        </template>
+      <div class="kwic-table">
 
-        <template slot="isActive" slot-scope="row">
-          {{ row.value ? 'Yes :)' : 'No :(' }}
-        </template>
-        -->
+        <!-- Main table element -->
+        <b-table
+          show-empty
+          small
+          striped
+          bordered
+          stacked="md"
+          :items="items"
+          :fields="fields"
+          :current-page="currentPage"
+          :per-page="perPage"
+          :filter="filter"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          @filtered="onFiltered"
+        >
+          <!--       <template slot="name" slot-scope="row">
+            {{ row.value.first }} {{ row.value.last }}
+          </template>
 
-        <template slot="actions" slot-scope="row">
-          <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
-            <file-text-icon></file-text-icon>
-          </b-link>
-        </template>
+          <template slot="isActive" slot-scope="row">
+            {{ row.value ? 'Yes :)' : 'No :(' }}
+          </template>
+          -->
 
-        <template slot="HEAD_selected" slot-scope="head">
-          <input type="checkbox" @change="toggleSelectAllDocs($event.target.checked)"/>
-        </template>
+          <template slot="actions" slot-scope="row">
+            <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
+              <file-text-icon></file-text-icon>
+            </b-link>
+          </template>
 
-        <template slot="selected" slot-scope="row">
-          <b-form-group class="mb-0">
-            <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item)"/>
-          </b-form-group>
-        </template>
+          <template slot="HEAD_selected" slot-scope="head">
+            <input type="checkbox" @change="toggleSelectAllDocs($event.target.checked)"/>
+          </template>
 
-        <template slot="row-details" slot-scope="row">
-          <b-card>
-            <ul>
-              <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-            </ul>
-          </b-card>
-        </template>
-      </b-table>
+          <template slot="selected" slot-scope="row">
+            <b-form-group class="mb-0">
+              <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item)"/>
+            </b-form-group>
+          </template>
+
+          <template slot="row-details" slot-scope="row">
+            <b-card>
+              <ul>
+                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+              </ul>
+            </b-card>
+          </template>
+        </b-table>
+
+      </div>
 
       <!-- Info modal -->
       <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" ok-only scrollable @hide="resetInfoModal">
@@ -246,6 +250,10 @@
 </script>
 
 <style lang="scss">
+.kwic-table {
+  overflow-y: auto;
+  max-height: 500px;
+}
 .kw-highlight {
   background-color: #ffd600;
   padding: 2px 1px;

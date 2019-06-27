@@ -1,15 +1,16 @@
 <template>
-  <nav class="col-md-1 d-none d-md-block sidebar">
+  <nav class="d-none d-md-block sidebar">
     <div class="sidebar-sticky">
-       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1 text-muted">
+      <a class="navbar-brand text-center m-0" href="#">corpsum</a>
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1">
         <span>Data Provider:</span>
       </h6>
       <b-form-select v-model="selectedProvider" :options="optionsProviders" @change="changeProvider" size="sm" class="corpus-selector"></b-form-select>
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
         <span>Active Corpus:</span>
       </h6>
       <b-form-select v-model="selectedCorpus" :options="optionsCorpora" @change="changeCorpus" size="sm" class="corpus-selector"></b-form-select>
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1">
         <span>Anaylsis:</span>
       </h6>
       <ul class="nav flex-column">
@@ -33,7 +34,7 @@
         </li>
       </ul>
 
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1 text-muted">
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
         <span>Settings</span>
       </h6>
       <ul class="nav flex-column mb-2">
@@ -111,30 +112,67 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-  background-color: #bfebf5;
+  z-index: 100;
+  padding: 0;
+  -webkit-box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to top, #3187b6, #17a2b8);
+  width: 145px !important;
+
+  .navbar-brand {
+    width: 100%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.6rem;
+    font-family: 'Signika', sans-serif;
+    color: #fff;
+  }
+
+  .sidebar-heading {
+    font-size: .75rem;
+    text-transform: uppercase;
+    padding-left: 0.75rem;
+    padding-right: 0.25rem;
+    color: #ffffffb8;
+  }
+
+  .corpus-selector {
+    margin: 0 1rem 0 1rem;
+    width: calc(100% - 2rem);
+    padding-right: 0.3rem;
+    background-color: transparent;
+    color: #fff;
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid #ffffff38;
+    padding-left: 0;
+    background-image: linear-gradient(45deg, transparent 50%, white 60%), linear-gradient(135deg, white 40%, transparent 50%) !important;
+    background-position: calc(100% - 18px) 12px, calc(100% - 10px) 12px, 100% 0;
+    background-size: 8px 8px, 8px 8px;
+    background-repeat: no-repeat;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
 
   .nav {
 
     .nav-item {
-      border-bottom: 1px solid #abd3dc;
+      border-bottom: 1px solid #ffffff38;
 
       &:first-child {
-        border-top: 1px solid #abd3dc;
+        border-top: 1px solid #ffffff38;
       }
 
       .nav-link {
         font-size: 0.8rem;
         padding: 0.4rem 0.25rem 0.4rem 0.75rem;
         font-weight: 500;
-        color: #333;
-        background-color: #f3fdff82;
+        color: #fff;
+        background-color: #ffffff1a;
 
         &.router-link-active {
-          background-color: #413584;
-          color: #fff;
+          background-color: #f4f5f8;
+          color: #2a37da;
         }
 
         &:hover .feather, &.router-link-active .feather {
@@ -143,7 +181,7 @@ export default {
 
         .feather {
           margin-right: 2px;
-          color: #999;
+          color: #fff;
         }
 
       }
@@ -168,20 +206,6 @@ export default {
     position: -webkit-sticky;
     position: sticky;
   }
-}
-
-.sidebar-heading {
-  font-size: .75rem;
-  text-transform: uppercase;
-  padding-left: 0.75rem;
-  padding-right: 0.25rem;
-}
-
-.corpus-selector {
-  margin: 0 0.55rem 0 0.65rem;
-  width: calc(100% - 1.2rem);
-  padding-left: 0.3rem;
-  padding-right: 0.15rem;
 }
 
 </style>

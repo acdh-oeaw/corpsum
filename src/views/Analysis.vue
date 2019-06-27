@@ -1,5 +1,5 @@
 <template>
-    <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
+    <main role="main" class="ml-auto px-4">
 <!--       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
       <div>
         <h6>Sample Queries: </h6>
@@ -166,6 +166,14 @@ export default {
 </script>
 
 <style lang="scss">
+main {
+  padding-top: 54px;
+}
+
+main, .navbar {
+  width: calc(100% - 145px) !important;
+}
+
 .vis-component {
   padding: .5rem !important;
 
