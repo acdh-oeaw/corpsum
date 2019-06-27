@@ -14,7 +14,7 @@
       placeholder="Query attribute"
     >
       <template slot="option" slot-scope="{ option }">
-        <strong>{{ option.name }}</strong> <span class="ml-auto">{{ option.desc }}</span>
+        {{ option.name }} <span class="ml-auto">{{ option.desc }}</span>
       </template>
     </multiselect>
 
@@ -71,7 +71,7 @@ export default {
         { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
         { name: '[lemma="keyword"]', value: 'lemma', desc: 'A lemma, case sensitive' },
         { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve', },
-        { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword w/ compositions, case insensitve', },
+        { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve', },
       ],
     };
   },
