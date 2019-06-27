@@ -8,9 +8,11 @@
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
     
-    <ul class="navbar-nav px-3">
+    <ul class="navbar-nav px-3 topbar-rightnav">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Sign out</a>
+        <b-link href="https://github.com/asilcetin/corpsum">
+          <github-icon></github-icon>
+        </b-link>
       </li>
     </ul>
 
@@ -25,11 +27,12 @@
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import { SearchIcon } from 'vue-feather-icons'
+import { GithubIcon } from 'vue-feather-icons'
 
 export default {
   name: 'topNav',
   components: {
-    VueTagsInput, SearchIcon
+    VueTagsInput, SearchIcon, GithubIcon
   },
   data() {
     return {
@@ -70,11 +73,15 @@ export default {
   max-width: initial !important;
   background: #ffffff;
   border-radius: 0.25rem;
+  min-height: 37px;
+  align-content: center;
+  display: flex;
 }
 
 .ti-input {
   border: 0 !important;
   padding: 0 0.5rem 0 0.5rem !important;
+  flex-basis: 100%;
 }
 
 .ti-new-tag-input-wrapper {
@@ -90,7 +97,7 @@ export default {
   margin: 0 0.4rem 0 0 !important;
   border-radius: 0.25rem !important;
   color: inherit !important;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
@@ -118,6 +125,12 @@ export default {
   margin-left: 0.75rem;
   height: 1.25rem;
   width: 1.25rem;
+  color: #17a2b8;
+}
+
+.topbar-rightnav .feather {
+  width: 1.25rem;
+  height: 1.25rem;
   color: #17a2b8;
 }
 

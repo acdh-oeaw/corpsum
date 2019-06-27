@@ -1,6 +1,6 @@
 <template>
   <nav class="d-none d-md-block sidebar">
-    <div class="sidebar-sticky">
+    <div class="sidebar-sticky p-0">
       <a class="navbar-brand text-center m-0" href="#">corpsum</a>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1">
         <span>Data Provider:</span>
@@ -35,7 +35,7 @@
       </ul>
 
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
-        <span>Settings</span>
+        <span>Settings:</span>
       </h6>
       <ul class="nav flex-column mb-2">
         <li class="nav-item">
@@ -157,10 +157,10 @@ export default {
   .nav {
 
     .nav-item {
-      border-bottom: 1px solid #ffffff38;
+      border-bottom: 1px solid #fff3;
 
       &:first-child {
-        border-top: 1px solid #ffffff38;
+        border-top: 1px solid #fff3;
       }
 
       .nav-link {
@@ -168,7 +168,11 @@ export default {
         padding: 0.4rem 0.25rem 0.4rem 0.75rem;
         font-weight: 500;
         color: #fff;
-        background-color: #ffffff1a;
+        background-color: #ffffff17;
+
+        &:hover {
+          background-color: #ffffff3b;
+        }
 
         &.router-link-active {
           background-color: #f4f5f8;
