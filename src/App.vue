@@ -55,7 +55,11 @@ body {
 }
 
 .highcharts-root {
-  font-family: 'Barlow', sans-serif !important;
+
+  * {
+    font-family: 'Barlow', sans-serif !important;
+    font-weight: 400 !important;
+  }
 
   .highcharts-point {
     opacity: 0.95;

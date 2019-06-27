@@ -1,25 +1,27 @@
 <template>
   <nav class="navbar navbar-dark fixed-top flex-md-nowrap shadow ml-auto px-2">
-    <search-icon class="topnav-search-icon"></search-icon>
+    <search-icon class="topnav-search-icon" @click="$bvModal.show(chartInfoModal.id)" v-b-tooltip.hover title="See query examples"></search-icon>
     <vue-tags-input element-id="queryTerms" class="w-100"
       v-model="tag"
       :tags="tags"
-      placeholder="Type your query and hit enter"
+      placeholder="Type a word or query and hit enter"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
     
-    <ul class="navbar-nav px-3 topbar-rightnav">
+<!--     <ul class="navbar-nav px-3 topbar-rightnav">
       <li class="nav-item text-nowrap">
         <b-link href="https://github.com/asilcetin/corpsum">
           <github-icon></github-icon>
         </b-link>
       </li>
-    </ul>
+    </ul> -->
 
     <div class="topnav-spinner text-center" v-show="loadingStatus">
       <span>Querying the corpus, please wait.</span>
       <b-spinner variant="primary" label="Text Centered"></b-spinner>
     </div>
+
+    <b-modal :id="chartInfoModal.id" :title="chartInfoModal.title" size="lg" ok-only scrollable>{{chartInfoModal.content}}</b-modal>
 
   </nav>
 </template>
@@ -39,6 +41,11 @@ export default {
       tag: '',
       tags: this.$store.getters.queryTerms,
       toggleSpinner: false,
+      chartInfoModal: {
+        id: 'info-modal-query-examples',
+        title: 'Query Examples',
+        content: 'Here are some examples',
+      },
     };
   },
   computed: {
@@ -52,7 +59,7 @@ export default {
     tagRemoved(val) {
       this.tag = '',
       this.$store.commit('queryTermRemoved', val.tag);
-    }
+    },
   },
   computed: {
     loadingStatus() {
@@ -97,7 +104,6 @@ export default {
   margin: 0 0.4rem 0 0 !important;
   border-radius: 0.25rem !important;
   color: inherit !important;
-  font-weight: 600;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
@@ -126,6 +132,7 @@ export default {
   height: 1.25rem;
   width: 1.25rem;
   color: #17a2b8;
+  cursor: pointer;
 }
 
 .topbar-rightnav .feather {

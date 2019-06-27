@@ -11,6 +11,7 @@ Vue.use(Vuex);
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
+  subcorpusName: 'none',
   rawResults: [],
   modalTextContent: '',
   loadingStatus: false,
@@ -419,6 +420,9 @@ export const mutations = {
   changeSelectedCorpus(state, payload) {
     state.corpusName = payload;
   },
+  changeSelectedSubcorpus(state, payload) {
+    state.subcorpusName = payload;
+  },
   resetState(state, payload) {
     // console.log(state.queryTerms)
     // console.log(defaultState.queryTerms)
@@ -433,6 +437,7 @@ export const getters = {
   chartElements: state => state.chartElements,
   modalTextContent: state => state.modalTextContent,
   corpusName: state => state.corpusName,
+  subcorpusName: state => state.subcorpusName,
   loadingStatus: state => state.loadingStatus,
   toggleIntroSection: state => state.toggleIntroSection,
   toggleVisSection: state => state.toggleVisSection,

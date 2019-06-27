@@ -10,21 +10,19 @@
         <span>Active Corpus:</span>
       </h6>
       <b-form-select v-model="selectedCorpus" :options="optionsCorpora" @change="changeCorpus" size="sm" class="corpus-selector"></b-form-select>
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
+        <span>Subcorpus:</span>
+      </h6>
+      <b-form-select v-model="selectedSubcorpus" :options="optionsSubcorpora" @change="changeSubcorpus" size="sm" class="corpus-selector"></b-form-select>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1">
         <span>Anaylsis:</span>
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <!--
           <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
             <hard-drive-icon></hard-drive-icon>
             Corpus Info
           </router-link>
-          -->
-          <b-link class="nav-link" href="" disabled>
-            <hard-drive-icon></hard-drive-icon>
-            Corpus Info
-          </b-link>
         </li>
         <li class="nav-item">
           <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link active">
@@ -81,14 +79,19 @@ export default {
         { value: 'amc_60M', text: 'AMC3 (60M)' },
         { value: 'amc_3.1', text: 'AMC3 (Full)' },
       ],
+      optionsSubcorpora: [
+        { value: 'none', text: 'None' },
+      ],
     }
   },
   mounted() {
-    console.log(this.selectedCorpus)
   },
   computed: {
     selectedCorpus() {
       return this.$store.getters.corpusName;
+    },
+    selectedSubcorpus() {
+      return this.$store.getters.subcorpusName;
     },
   },
   methods: {
@@ -97,6 +100,9 @@ export default {
     },
     changeCorpus(val) {
       this.$store.commit('changeSelectedCorpus', val);
+    },
+    changeSubcorpus(val) {
+      this.$store.commit('changeSelectedSubcorpus', val);
     }
   }
 };
@@ -121,11 +127,11 @@ export default {
 
   .navbar-brand {
     width: 100%;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     font-size: 1.6rem;
     font-family: 'Signika', sans-serif;
     color: #fff;
+    padding: 8px 0 8px 0;
+    background-color: #0000002e;
   }
 
   .sidebar-heading {
@@ -165,13 +171,13 @@ export default {
 
       .nav-link {
         font-size: 0.8rem;
-        padding: 0.4rem 0.25rem 0.4rem 0.75rem;
+        padding: 0.5rem 0.25rem 0.5rem 0.75rem;
         font-weight: 500;
         color: #fff;
         background-color: #ffffff17;
 
         &:hover {
-          background-color: #ffffff3b;
+          background-color: #00000024;
         }
 
         &.router-link-active {
