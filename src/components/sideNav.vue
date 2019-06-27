@@ -115,6 +115,43 @@ export default {
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
   background-color: #bfebf5;
+
+  .nav {
+
+    .nav-item {
+      border-bottom: 1px solid #abd3dc;
+
+      &:first-child {
+        border-top: 1px solid #abd3dc;
+      }
+
+      .nav-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.25rem 0.4rem 0.75rem;
+        font-weight: 500;
+        color: #333;
+        background-color: #f3fdff82;
+
+        &.router-link-active {
+          background-color: #413584;
+          color: #fff;
+        }
+
+        &:hover .feather, &.router-link-active .feather {
+          color: inherit;
+        }
+
+        .feather {
+          margin-right: 2px;
+          color: #999;
+        }
+
+      }
+
+    }
+
+  }
+
 }
 
 .sidebar-sticky {
@@ -133,25 +170,6 @@ export default {
   }
 }
 
-.sidebar .nav-link {
-  font-weight: 500;
-  color: #333;
-}
-
-.sidebar .nav-link .feather {
-  margin-right: 2px;
-  color: #999;
-}
-
-.sidebar .nav-link.router-link-active {
-  color: #007bff;
-}
-
-.sidebar .nav-link:hover .feather,
-.sidebar .nav-link.router-link-active .feather {
-  color: inherit;
-}
-
 .sidebar-heading {
   font-size: .75rem;
   text-transform: uppercase;
@@ -164,11 +182,6 @@ export default {
   width: calc(100% - 1.2rem);
   padding-left: 0.3rem;
   padding-right: 0.15rem;
-}
-
-.sidebar .nav-link {
-  font-size: 0.8rem;
-  padding: 0.4rem 0.25rem 0.4rem 0.75rem;
 }
 
 </style>
