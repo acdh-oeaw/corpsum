@@ -107,6 +107,10 @@ export default {
           }
         },
         series: this.chartProp.data,
+        tooltip: {
+          pointFormat: this.chartProp.pointFormat,
+          shared: true
+        },
       }
     };
   },

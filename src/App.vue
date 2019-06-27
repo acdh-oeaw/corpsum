@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <sideNav/>
-        <topNav/>
+        <topNav v-bind:tags="tags"/>
         <router-view name="Content"></router-view>
       </div>
     </div>
@@ -28,12 +28,19 @@ export default {
   },
   mounted() {
   },
+  computed: {
+    tags() {
+      return this.$store.getters.queryTerms;
+    },
+  },
   watch: {
   },
   methods: {
   },
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style lang="scss">
 /*

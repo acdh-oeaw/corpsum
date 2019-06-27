@@ -19,15 +19,15 @@
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
-            <hard-drive-icon></hard-drive-icon>
-            Corpus Info
-          </router-link>
-        </li>
-        <li class="nav-item">
           <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link active">
             <activity-icon></activity-icon>
             Corpus Analysis
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
+            <hard-drive-icon></hard-drive-icon>
+            Corpus Info
           </router-link>
         </li>
       </ul>
@@ -112,7 +112,6 @@ export default {
 /*
  * Sidebar
  */
-
 .sidebar {
   position: fixed;
   top: 0;
@@ -205,7 +204,7 @@ export default {
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 48px);
+  height: 100vh;
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */

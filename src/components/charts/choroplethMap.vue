@@ -56,7 +56,12 @@ export default {
             enabled: true,
             format: '{point.properties.name}'
           }
-        }]
+        }],
+        tooltip: {
+          pointFormat:
+            '<span>{point.name}</span>: <b>{point.value}%</b><br/>',
+          shared: true
+        },
       }
     }
   },

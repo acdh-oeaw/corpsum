@@ -112,7 +112,7 @@ export default {
       this.$store.dispatch('corpusQuery', 'Ball');
     },
     exampleQuery() {
-      const queryTerms = [{"text":"Haus","tiClasses":["ti-valid"]},{"text":"Wohnung","tiClasses":["ti-valid"]}];
+      const queryTerms = [{"text":'[lc=".*leben.*"]',"tiClasses":["ti-valid"]},{"text":'[lc=".*arbeit.*"]',"tiClasses":["ti-valid"]}];
       for (let i = 0; i < queryTerms.length; i += 1) {
         this.$store.commit('queryTermAdded', queryTerms[i]);
         this.$store.dispatch('corpusQuery', queryTerms[i].text);

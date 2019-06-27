@@ -13,14 +13,16 @@ import moreModule from 'highcharts/highcharts-more';
 import wordcloud from 'highcharts/modules/wordcloud';
 import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
-import { worldmap } from './worldmap';
-import mapAustria from './mapAustria';
 import TextHighlight from 'vue-text-highlight';
+import Multiselect from 'vue-multiselect';
+import mapAustria from './mapAustria';
 
 import './scss/bootstrap.scss';
 
 import router from './router';
 
+// register globally
+Vue.component('multiselect', Multiselect);
 Vue.component('text-highlight', TextHighlight);
 
 exportingModule(Highcharts);
@@ -32,7 +34,6 @@ wordcloud(Highcharts);
 highcharts3d(Highcharts);
 mapInit(Highcharts);
 
-Highcharts.maps.myMapName = worldmap;
 Highcharts.maps.geoJSONAustria = mapAustria;
 
 

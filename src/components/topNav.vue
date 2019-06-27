@@ -1,10 +1,27 @@
 <template>
   <nav class="navbar navbar-dark fixed-top flex-md-nowrap shadow ml-auto px-2">
     <search-icon class="topnav-search-icon" @click="$bvModal.show(chartInfoModal.id)" v-b-tooltip.hover title="See query examples"></search-icon>
+    <multiselect
+      class="ml-2"
+      v-model="queryAttribute"
+      :options="queryAttributeOptions"
+      :searchable="true"
+      :close-on-select="true"
+      :show-labels="false"
+      :allow-empty="false"
+      track-by="name"
+      label="name" 
+      placeholder="Query attribute"
+    >
+      <template slot="option" slot-scope="{ option }">
+        <strong>{{ option.name }}</strong> <span class="ml-auto">{{ option.desc }}</span>
+      </template>
+    </multiselect>
+
     <vue-tags-input element-id="queryTerms" class="w-100"
       v-model="tag"
       :tags="tags"
-      placeholder="Type a word or query and hit enter"
+      placeholder="Type a keyword or query and hit enter"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
     
@@ -33,31 +50,66 @@ import { GithubIcon } from 'vue-feather-icons'
 
 export default {
   name: 'topNav',
+  props: {
+    tags: Array
+  },
   components: {
     VueTagsInput, SearchIcon, GithubIcon
   },
   data() {
     return {
       tag: '',
-      tags: this.$store.getters.queryTerms,
       toggleSpinner: false,
       chartInfoModal: {
         id: 'info-modal-query-examples',
         title: 'Query Examples',
         content: 'Here are some examples',
       },
+      queryAttribute: { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
+      queryAttributeOptions: [
+        { name: 'Custom query', value: 'custom', desc: 'Write your own query in CQL' },
+        { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
+        { name: '[lemma="keyword"]', value: 'lemma', desc: 'A lemma, case sensitive' },
+        { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve', },
+        { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword w/ compositions, case insensitve', },
+      ],
     };
   },
   computed: {
   },
   methods: {
     tagAdded(val) {
-      this.tag = '',
+      this.tag = '';
+      switch (this.queryAttribute.value) {
+        case 'word':
+          val.tag.text = `[word="${val.tag.text}"]`;
+          break;
+        case 'lemma':
+          val.tag.text = `[lemma="${val.tag.text}"]`;
+          break;
+        case 'lc':
+          val.tag.text = `[lc="${val.tag.text.toLowerCase()}"]`;
+          break;
+        case 'lc-comp':
+          val.tag.text = `[lc=".*${val.tag.text.toLowerCase()}.*"]`;
+          break;
+        case 'custom':
+          val.tag.text = val.tag.text;
+          break;
+        default:
+          val.tag.text = `[word="${val.tag.text}"]`;
+      }
+      if (this.$router.currentRoute.name !== 'analysis') {
+        this.$router.push({ name: 'analysis' });
+      }
       this.$store.commit('queryTermAdded', val.tag);
       this.$store.dispatch('corpusQuery', val.tag.text);
     },
     tagRemoved(val) {
-      this.tag = '',
+      this.tag = '';
+      if (this.$router.currentRoute.name !== 'analysis') {
+        this.$router.push({ name: 'analysis' });
+      }
       this.$store.commit('queryTermRemoved', val.tag);
     },
   },
@@ -119,6 +171,39 @@ export default {
  */
 .navbar {
   background-color: #fff;
+
+  .multiselect {
+    flex-basis: 150px;
+
+    .multiselect__select {
+      padding: 4px 8px 4px 6px;
+      width: auto;
+    }
+
+    .multiselect__tags {
+      min-height: auto;
+      padding: 8px 22px 0 4px;
+      margin-top: 2px;
+    }
+
+    .multiselect__input, .multiselect__single, .multiselect__element {
+      font-size: 0.9rem;
+    }
+
+    .multiselect__content-wrapper {
+      width: 450px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .multiselect__option {
+      min-height: auto;
+      padding: 8px 6px;
+      display: flex;
+    }
+
+  }
+
 }
 
 .navbar .form-control {

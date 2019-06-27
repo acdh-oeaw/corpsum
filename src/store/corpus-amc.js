@@ -94,12 +94,14 @@ export const state = {
       subtitle: 'Absolute number of occurences (hits) of a given query in years',
       yAxisText: 'Number of Hits',
       data: [],
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
     },
     relative: {
       title: 'Yearly Relative Frequency (%)',
       subtitle: 'Relative comparison to the baseline (100%) for the query in years',
       yAxisText: 'Relative Frequency (%)',
       data: [],
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
       plotLinesY: [{
         color: 'red',
         dashStyle: 'dot',
@@ -236,9 +238,6 @@ export const mutations = {
     state.chartData.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
-    if (queryTerm.charAt(0) !== '[' && queryTerm.charAt(0) !== '(') {
-      queryTerm = `[word="${queryTerm}"]`;
-    }
     for (let i = state.chartData.queryTerms.length - 1; i >= 0; i--) {
       if (state.chartData.queryTerms[i].text === queryTerm.text) {
         state.chartData.queryTerms.splice(i, 1);
@@ -261,6 +260,13 @@ export const mutations = {
     if (state.chartData.queryTerms.length === 0) {
       state.toggleIntroSection = true;
       state.toggleVisSection = false;
+    }
+  },
+  reorderQueryTermsList(state) {
+    const items = state.chartData.querySummary.series[0].data;
+    state.chartData.queryTerms = [];
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.queryTerms.push({ text: items[i].name, tiClasses: ['ti-valid'] });
     }
   },
   changeLoadingStatus(state, payload) {
@@ -450,10 +456,6 @@ export const actions = {
       const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
       */
       commit('changeLoadingStatus', { status: true });
-
-      if (queryTerm.charAt(0) !== '[' && queryTerm.charAt(0) !== '(') {
-        queryTerm = `[word="${queryTerm}"]`;
-      }
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       const response = await axios.get(`${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
@@ -470,6 +472,7 @@ export const actions = {
       commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items });
       commit('processCollocations', { term: queryTerm, result: collxResp.data });
       commit('updateRawResults', { term: queryTerm, result: response.data });
+      commit('reorderQueryTermsList');
     } catch (error) {
       console.log(error);
     }
