@@ -17,6 +17,10 @@ export const state = {
   loadingStatus: false,
   toggleIntroSection: true,
   toggleVisSection: false,
+  corpusInfo: {
+    docsrcSizes: [],
+    ressortSizes: [],
+  },
   chartElements: [
     /*
     {
@@ -60,12 +64,12 @@ export const state = {
       chartProp: 'kwic',
     },
     {
-      component: 'scatterChart',
+      component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sources',
     },
     {
-      component: 'scatterChart',
+      component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sections',
     },
@@ -354,17 +358,29 @@ export const mutations = {
   },
   processSources(state, payload) {
     const items = payload.result;
+    const docsrcSizeItems = payload.docsrcSize.Items;
     const series = { name: payload.term, symbol: 'circle', data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
+      for (let j = 0; j < docsrcSizeItems.length; j += 1) {
+        if (docsrcSizeItems[j].str === items[i].Word[0].n) {
+          series.data.push({ x: items[i].rel, y: items[i].freq, z: docsrcSizeItems[j].freq, source: items[i].Word[0].n });
+          break;
+        }
+      }
     }
     state.chartData.sources.series.push(series);
   },
   processSections(state, payload) {
     const items = payload.result;
+    const ressortSizeItems = payload.ressortSize.Items;
     const series = { name: payload.term, symbol: 'circle', data: [] };
     for (let i = 0; i < items.length; i += 1) {
-      series.data.push({ x: items[i].rel, y: items[i].freq, source: items[i].Word[0].n });
+      for (let j = 0; j < ressortSizeItems.length; j += 1) {
+        if (ressortSizeItems[j].str === items[i].Word[0].n) {
+          series.data.push({ x: items[i].rel, y: items[i].freq, z: ressortSizeItems[j].freq, source: items[i].Word[0].n });
+          break;
+        }
+      }
     }
     state.chartData.sections.series.push(series);
   },
@@ -521,6 +537,11 @@ export const actions = {
 
       const wordFormFreqresponse = await axios.get(`${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};fcrit=word/e 0~0>0;flimit=0;format=json`);
 
+
+      const docsrcSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
+
+      const ressortSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
+
       const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
       const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
@@ -531,8 +552,8 @@ export const actions = {
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
-      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items });
-      commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items });
+      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items, docsrcSize: docsrcSizeResponse.data });
+      commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items, ressortSize: ressortSizeResponse.data });
       commit('processCollocations', { term: queryTerm, result: collxResp.data });
       commit('updateRawResults', { term: queryTerm, result: response.data });
     } catch (error) {
