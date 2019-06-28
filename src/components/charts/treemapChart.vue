@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="componentKey">
     <div class="vis-component-inner">
       <div class="head d-flex">
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
@@ -44,6 +44,8 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
+      seriesData: this.chartProp.data,
       showTableIcon: true,
       showChartIcon: false,
       showChartElement: true,
@@ -54,69 +56,37 @@ export default {
         exporting: {
           enabled: false,
         },
-        chart: {
-          type: "bubble",
-          zoomType: "xy",
-          spacingBottom: 20,
-          spacingTop: 20,
-          spacingLeft: 10,
-          spacingRight: 20,
-        },
         title: false,
-        xAxis: {
-          title: {
-            enabled: true,
-            text: this.chartProp.xAxisText
-          },
-          startOnTick: true,
-          endOnTick: true,
-          showLastLabel: true,
-          plotLines: this.chartProp.plotLinesX
-        },
-        yAxis: {
-          title: {
-            text: this.chartProp.yAxisText
-          },
-          plotLines: this.chartProp.plotLinesY
-        },
-        legend: {
-          layout: 'horizontal',
-          align: 'center',
-          verticalAlign: 'top',
-          y: -15,
-          margin: 15,
-        },
         plotOptions: {
-          scatter: {
+          treemap: {
             dataLabels: {
-              format: "{point.source}",
+              enabled: true,
+              inside: true,
+              align: 'center',
+              verticalAlign: 'middle',
+              format: '<span style="text-align:center;">{point.name}:<br/>{point.value}</span>'
+            },
+          },
+        },
+        series: [{
+          type: 'treemap',
+          layoutAlgorithm: 'squarified',
+          alternateStartingDirection: true,
+          allowDrillToNode: true,
+          animationLimit: 1000,
+          dataLabels: {
+            enabled: false
+          },
+          levelIsConstant: false,
+          levels: [{
+            level: 1,
+            dataLabels: {
               enabled: true
             },
-            marker: {
-              radius: 8,
-              fillOpacity:0.3,
-              states: {
-                hover: {
-                  enabled: true,
-                  lineColor: "rgb(100,100,100)"
-                }
-              }
-            },
-            states: {
-              hover: {
-                marker: {
-                  enabled: false
-                }
-              }
-            },
-          }
-        },
-        tooltip: {
-          pointFormat:
-            '<span><b>{point.source}</b></span>: {point.x}, {point.y}<br/>',
-          shared: true
-        },
-        series: this.chartProp.series,
+            borderWidth: 3
+          }],
+          data: this.chartProp.data,
+        }],
       }
     };
   },
@@ -141,6 +111,17 @@ export default {
       this.showChartElement = true;
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
     },
+    forceRerender() {
+      this.componentKey += 1;  
+    },
+  },
+  watch: {
+    seriesData(val) {
+      this.forceRerender();
+    }
   },
 };
 </script>
+
+<style lang="scss">
+</style>

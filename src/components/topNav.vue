@@ -5,7 +5,7 @@
       class="ml-2"
       v-model="queryAttribute"
       :options="queryAttributeOptions"
-      :searchable="true"
+      :searchable="false"
       :close-on-select="true"
       :show-labels="false"
       :allow-empty="false"

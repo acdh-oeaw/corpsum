@@ -18,10 +18,16 @@ export const state = {
   toggleIntroSection: true,
   toggleVisSection: false,
   chartElements: [
+    /*
     {
       component: 'barChart',
       class: 'col-md-4 vis-component',
       chartProp: 'querySummary',
+    },*/
+    {
+      component: 'treemapChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'wordFreqSummary',
     },
     {
       component: 'lineChart',
@@ -88,6 +94,11 @@ export const state = {
       xAxisType: 'category',
       legendEnabled: false,
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
+    },
+    wordFreqSummary: {
+      title: 'Total Frequency',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      data: [],
     },
     absolute: {
       title: 'Yearly Absolute Frequency',
@@ -262,13 +273,14 @@ export const mutations = {
       state.toggleVisSection = false;
     }
   },
+  /*
   reorderQueryTermsList(state) {
     const items = state.chartData.querySummary.series[0].data;
     state.chartData.queryTerms = [];
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.queryTerms.push({ text: items[i].name, tiClasses: ['ti-valid'] });
     }
-  },
+  },*/
   changeLoadingStatus(state, payload) {
     state.loadingStatus = payload.status;
     if (payload.status === false) {
@@ -276,8 +288,42 @@ export const mutations = {
       state.toggleVisSection = true;
     }
   },
+  /*
   processSum(state, payload) {
     state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.result });
+  },*/
+  processWordFreqSum(state, payload) {
+    // processSum
+    state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.processSumResp });
+    // reorderQueryTermsList
+    let items = state.chartData.querySummary.series[0].data;
+    state.chartData.queryTerms = [];
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.queryTerms.push({ text: items[i].name, tiClasses: ['ti-valid'] });
+    }
+    // processWordFreqSum
+    const colors = ['#4e79a7', '#edc948', '#e15759', '#76b7b2', '#f28e2b', '#ff9da7', '#FF9655', '#FFF263', '#6AF9C4'];
+    let queryTermKey;
+    for (let i = 0; i < state.chartData.queryTerms.length; i += 1) {
+      if (state.chartData.queryTerms[i].text === payload.term) {
+        queryTermKey = i;
+        break;
+      }
+    }
+    items = payload.result.Blocks[0].Items;
+    state.chartData.wordFreqSummary.data.push({
+      id: payload.term,
+      name: payload.term,
+      color: colors[queryTermKey],
+      sortIndex: queryTermKey,
+    });
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.wordFreqSummary.data.push({
+        name: items[i].Word[0].n,
+        parent: payload.term,
+        value: items[i].freq,
+      });
+    }
   },
   processTemporal(state, payload) {
     const items = payload.result;
@@ -459,12 +505,15 @@ export const actions = {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       const response = await axios.get(`${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
+      const wordFormFreqresponse = await axios.get(`${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};fcrit=word/e 0~0>0;flimit=0;format=json`);
+
       const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
 
       const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
 
       commit('changeLoadingStatus', { status: false });
-      commit('processSum', { term: queryTerm, result: response.data.fullsize });
+      // commit('processSum', { term: queryTerm, result: response.data.fullsize });
+      commit('processWordFreqSum', { term: queryTerm, result: wordFormFreqresponse.data, processSumResp: response.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
@@ -472,7 +521,6 @@ export const actions = {
       commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items });
       commit('processCollocations', { term: queryTerm, result: collxResp.data });
       commit('updateRawResults', { term: queryTerm, result: response.data });
-      commit('reorderQueryTermsList');
     } catch (error) {
       console.log(error);
     }

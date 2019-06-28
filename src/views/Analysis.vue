@@ -61,11 +61,12 @@ import kwicTable from '@/components/ui-elements/kwicTable.vue'
 import visSeparator from '@/components/ui-elements/visSeparator.vue'
 import multiMap from '@/components/charts/multiMap.vue'
 import multiWordcloud from '@/components/charts/multiWordcloud.vue'
+import treemapChart from '@/components/charts/treemapChart.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud
+    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud, treemapChart
   },
   data() {
     return {
