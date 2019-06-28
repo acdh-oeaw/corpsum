@@ -25,18 +25,23 @@ export const state = {
       chartProp: 'querySummary',
     },*/
     {
-      component: 'treemapChart',
+      component: 'barChart',
       class: 'col-md-4 vis-component',
+      chartProp: 'queryRelSummary',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-8 vis-component',
       chartProp: 'wordFreqSummary',
     },
     {
       component: 'lineChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'absolute',
     },
     {
       component: 'lineChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'relative',
     },
     {
@@ -94,6 +99,14 @@ export const state = {
       xAxisType: 'category',
       legendEnabled: false,
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
+    },
+    queryRelSummary: {
+      title: 'Total Relative Frequency',
+      subtitle: 'Total normalised frequency (per million tokens) of a given query',
+      yAxisText: 'Per million tokens',
+      xAxisType: 'category',
+      legendEnabled: false,
+      series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
     },
     wordFreqSummary: {
       title: 'Total Frequency',
@@ -454,7 +467,8 @@ export const mutations = {
       );
     }
     // Use overall rel. freq. data for other charts
-    // const overallRel = payload.result.Desc[0].rel;
+    const overallRel = payload.result.Desc[0].rel;
+    state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;

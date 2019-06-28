@@ -64,7 +64,7 @@ export default {
               inside: true,
               align: 'center',
               verticalAlign: 'middle',
-              format: '<span style="text-align:center;">{point.name}:<br/>{point.value}</span>'
+              format: '<span>{point.name}</span>: {point.value}'
             },
           },
         },
