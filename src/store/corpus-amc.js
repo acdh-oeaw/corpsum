@@ -8,6 +8,11 @@ Vue.prototype.axios = axios;
 
 Vue.use(Vuex);
 
+function getObjectKey(object, value, property) {
+  if (property) return Object.keys(object).find(key => object[key][property] === value);
+  return Object.keys(object).find(key => object[key] === value);
+}
+
 export const state = {
   engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
@@ -28,6 +33,11 @@ export const state = {
       class: 'col-md-4 vis-component',
       chartProp: 'querySummary',
     },*/
+    {
+      component: 'sankeyChart',
+      class: 'col-md-12 vis-component',
+      chartProp: 'wordTree',
+    },
     {
       component: 'barChart',
       class: 'col-md-4 vis-component',
@@ -116,6 +126,12 @@ export const state = {
       title: 'Total Frequency',
       subtitle: 'Total absolute number of occurences (hits) of a given query',
       data: [],
+    },
+    wordTree: {
+      title: 'Total Frequency',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      data: [],
+      nodes: [],
     },
     absolute: {
       title: 'Yearly Absolute Frequency',
@@ -486,6 +502,46 @@ export const mutations = {
     const overallRel = payload.result.Desc[0].rel;
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
   },
+  processWordTree(state, payload) {
+    const items = payload.result.Blocks[0].Items;
+    let max;
+    if (items.length < 10) {
+      max = items.length;
+    } else {
+      max = 10;
+    }
+    let nodeID = 0;
+    for (let i = 0; i < max; i += 1) {
+      // let nodeKey = getObjectKey(state.chartData.wordTree.nodes, items[i].Word[0].n, 'name');
+      state.chartData.wordTree.nodes.push({
+        id: nodeID,
+        name: items[i].Word[0].n,
+        pos: 0,
+      });
+      let centerNodeID = getObjectKey(state.chartData.wordTree.nodes, items[i].Word[1].n, 'name') || nodeID + 1
+      state.chartData.wordTree.nodes.push({
+        id: centerNodeID,
+        name: items[i].Word[1].n,
+        pos: 1,
+      });
+      state.chartData.wordTree.nodes.push({
+        id: nodeID + 2,
+        name: items[i].Word[2].n,
+        pos: 2,
+      });
+      state.chartData.wordTree.data.push({
+        from: nodeID,
+        to: centerNodeID,
+        weight: items[i].freq,
+      });
+      state.chartData.wordTree.data.push({
+        from: centerNodeID,
+        to: nodeID + 2,
+        weight: items[i].freq,
+      });
+      nodeID += 3;
+    }
+  },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;
     console.log(items);
@@ -537,12 +593,13 @@ export const actions = {
 
       const wordFormFreqresponse = await axios.get(`${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};fcrit=word/e 0~0>0;flimit=0;format=json`);
 
-
       const docsrcSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
 
       const ressortSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
 
       const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
+
+      const wordTreeResp = await axios.get(`${state.engineAPI}freqml?q=${queryTermEncoded}&corpname=${state.corpusName}&attrs=word&ctxattrs=word&pagesize=1000&gdexcnt=0&ml=1&flimit=0&ml1attr=word&ml1ctx=-1<0&ml2attr=word&ml2ctx=0~0>0&freqlevel=3&ml3attr=word&ml3ctx=1>0&format=json`);
 
       const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
 
@@ -552,6 +609,7 @@ export const actions = {
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
       commit('processKWIC', { term: queryTerm, result: kwicResp.data });
+      commit('processWordTree', { term: queryTerm, result: wordTreeResp.data });
       commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items, docsrcSize: docsrcSizeResponse.data });
       commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items, ressortSize: ressortSizeResponse.data });
       commit('processCollocations', { term: queryTerm, result: collxResp.data });

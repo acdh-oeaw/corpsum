@@ -12,6 +12,7 @@ import dataModule from 'highcharts/modules/data';
 import moreModule from 'highcharts/highcharts-more';
 import wordcloud from 'highcharts/modules/wordcloud';
 import treemap from 'highcharts/modules/treemap';
+import sankey from 'highcharts/modules/sankey';
 import highcharts3d from 'highcharts/highcharts-3d';
 import mapInit from 'highcharts/modules/map';
 import TextHighlight from 'vue-text-highlight';
@@ -33,6 +34,7 @@ dataModule(Highcharts);
 moreModule(Highcharts);
 wordcloud(Highcharts);
 treemap(Highcharts);
+sankey(Highcharts);
 highcharts3d(Highcharts);
 mapInit(Highcharts);
 
