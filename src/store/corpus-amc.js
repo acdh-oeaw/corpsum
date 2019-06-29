@@ -34,8 +34,8 @@ export const state = {
       chartProp: 'querySummary',
     },*/
     {
-      component: 'sankeyChart',
-      class: 'col-md-12 vis-component',
+      component: 'multiSankey',
+      class: 'container-fluid p-0 d-flex',
       chartProp: 'wordTree',
     },
     {
@@ -130,8 +130,7 @@ export const state = {
     wordTree: {
       title: 'Total Frequency',
       subtitle: 'Total absolute number of occurences (hits) of a given query',
-      data: [],
-      nodes: [],
+      charts: [],
     },
     absolute: {
       title: 'Yearly Absolute Frequency',
@@ -503,6 +502,12 @@ export const mutations = {
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
   },
   processWordTree(state, payload) {
+    const chart = {
+      chartData: {
+        data: [],
+        nodes: [],
+      },
+    };
     const items = payload.result.Blocks[0].Items;
     let max;
     if (items.length < 10) {
@@ -512,35 +517,35 @@ export const mutations = {
     }
     let nodeID = 0;
     for (let i = 0; i < max; i += 1) {
-      // let nodeKey = getObjectKey(state.chartData.wordTree.nodes, items[i].Word[0].n, 'name');
-      state.chartData.wordTree.nodes.push({
+      chart.chartData.nodes.push({
         id: nodeID,
         name: items[i].Word[0].n,
         pos: 0,
       });
-      let centerNodeID = getObjectKey(state.chartData.wordTree.nodes, items[i].Word[1].n, 'name') || nodeID + 1
-      state.chartData.wordTree.nodes.push({
+      const centerNodeID = getObjectKey(chart.chartData.nodes, items[i].Word[1].n, 'name') || nodeID + 1;
+      chart.chartData.nodes.push({
         id: centerNodeID,
         name: items[i].Word[1].n,
         pos: 1,
       });
-      state.chartData.wordTree.nodes.push({
+      chart.chartData.nodes.push({
         id: nodeID + 2,
         name: items[i].Word[2].n,
         pos: 2,
       });
-      state.chartData.wordTree.data.push({
+      chart.chartData.data.push({
         from: nodeID,
         to: centerNodeID,
         weight: items[i].freq,
       });
-      state.chartData.wordTree.data.push({
+      chart.chartData.data.push({
         from: centerNodeID,
         to: nodeID + 2,
         weight: items[i].freq,
       });
       nodeID += 3;
     }
+    state.chartData.wordTree.charts.push(chart);
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;

@@ -1,5 +1,5 @@
 <template>
-  <div :key="componentKey">
+  <div :class="`col vis-component`">
     <div class="vis-component-inner">
       <div class="head d-flex">
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
@@ -40,6 +40,7 @@ export default {
   },
   props: {
     chartProp: Object,
+    parentKey: Number,
     elKey: Number,
   },
   data() {
@@ -50,7 +51,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: 'chart-info-modal-'+this.parentKey+'-'+this.elKey,
       },
       chartOptions: {
         exporting: {
@@ -60,7 +61,7 @@ export default {
         series: [{
           type: 'sankey',
           keys: ['from', 'to', 'weight'],
-          colors: ["#4e79a7"],
+          colors: [this.Highcharts.getOptions().colors[this.elKey]],
           data: this.chartProp.data,
           nodes: this.chartProp.nodes,
         }],
@@ -88,14 +89,6 @@ export default {
       this.showChartElement = true;
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
     },
-    forceRerender() {
-      this.componentKey += 1;  
-    },
-  },
-  watch: {
-    seriesData(val) {
-      this.forceRerender();
-    }
   },
 };
 </script>

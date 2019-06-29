@@ -63,12 +63,12 @@ import multiMap from '@/components/charts/multiMap.vue'
 import multiWordcloud from '@/components/charts/multiWordcloud.vue'
 import treemapChart from '@/components/charts/treemapChart.vue'
 import bubbleChart from '@/components/charts/bubbleChart.vue'
-import sankeyChart from '@/components/charts/sankeyChart.vue'
+import multiSankey from '@/components/charts/multiSankey.vue'
 
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud, treemapChart, bubbleChart, sankeyChart
+    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey
   },
   data() {
     return {
