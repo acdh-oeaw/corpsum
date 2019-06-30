@@ -589,36 +589,59 @@ export const getters = {
 export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
-      /*
-      const response = await axios.get(`${state.engineAPI}freqtt?q=aword,[word="${queryTerm}"];corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
-      */
       commit('changeLoadingStatus', { status: true });
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
-      const response = await axios.get(`${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`);
 
-      const wordFormFreqresponse = await axios.get(`${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};fcrit=word/e 0~0>0;flimit=0;format=json`);
+      const requestURIs = {};
 
-      const docsrcSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
+      requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
 
-      const ressortSizeResponse = await axios.get(`${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`);
+      requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};fcrit=word/e 0~0>0;flimit=0;format=json`;
 
-      const kwicResp = await axios.get(`${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`);
+      requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
 
-      const wordTreeResp = await axios.get(`${state.engineAPI}freqml?q=${queryTermEncoded}&corpname=${state.corpusName}&attrs=word&ctxattrs=word&pagesize=1000&gdexcnt=0&ml=1&flimit=0&ml1attr=word&ml1ctx=-1<0&ml2attr=word&ml2ctx=0~0>0&freqlevel=3&ml3attr=word&ml3ctx=1>0&format=json`);
+      requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
 
-      const collxResp = await axios.get(`${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`);
+      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded}&corpname=${state.corpusName}&viewmode=kwic&attrs=word&ctxattrs=word&setattrs=word&allpos=kw&setrefs==doc.id&setrefs==doc.datum&setrefs==doc.region&setrefs==doc.ressort2&setrefs==doc.docsrc_name&pagesize=1000&newctxsize=30&format=json`;
+
+      requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded}&corpname=${state.corpusName}&attrs=word&ctxattrs=word&pagesize=1000&gdexcnt=0&ml=1&flimit=0&ml1attr=word&ml1ctx=-1<0&ml2attr=word&ml2ctx=0~0>0&freqlevel=3&ml3attr=word&ml3ctx=1>0&format=json`;
+
+      requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
+
+      const responses = {};
+
+      const checkCache = await axios.get('http://localhost:3000/api/corpusQuery', { params: { queryTerm: JSON.stringify(queryTermEncoded), corpus: state.corpusName, subcorpus: state.subcorpusName } });
+      if (checkCache.data !== 'Error') {
+        responses.freqttURI = checkCache.data.freqttURI;
+        responses.freqsURI = checkCache.data.freqsURI;
+        responses.wordlistDocsrcURI = checkCache.data.wordlistDocsrcURI;
+        responses.wordlistRessortURI = checkCache.data.wordlistRessortURI;
+        responses.viewattrsxURI = checkCache.data.viewattrsxURI;
+        responses.freqmlURI = checkCache.data.freqmlURI;
+        responses.collxURI = checkCache.data.collxURI;
+      } else {
+        responses.freqttURI = await axios.get(requestURIs.freqttURI);
+        responses.freqsURI = await axios.get(requestURIs.freqsURI);
+        responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
+        responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
+        responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
+        responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
+        responses.collxURI = await axios.get(requestURIs.collxURI);
+        await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
+      }
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
-      commit('processWordFreqSum', { term: queryTerm, result: wordFormFreqresponse.data, processSumResp: response.data.fullsize });
-      commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
-      commit('processRegional', { term: queryTerm, result: response.data.Blocks[1].Items });
-      commit('processKWIC', { term: queryTerm, result: kwicResp.data });
-      commit('processWordTree', { term: queryTerm, result: wordTreeResp.data });
-      commit('processSources', { term: queryTerm, result: response.data.Blocks[2].Items, docsrcSize: docsrcSizeResponse.data });
-      commit('processSections', { term: queryTerm, result: response.data.Blocks[3].Items, ressortSize: ressortSizeResponse.data });
-      commit('processCollocations', { term: queryTerm, result: collxResp.data });
-      commit('updateRawResults', { term: queryTerm, result: response.data });
+      commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
+      commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
+      commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items });
+      commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data });
+      commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
+      commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
+      commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
+      commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
+      commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
+
     } catch (error) {
       console.log(error);
     }
