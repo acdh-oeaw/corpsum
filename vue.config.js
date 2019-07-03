@@ -9,6 +9,7 @@ module.exports = {
       },
     },
   },
+  outputDir: 'html',
   configureWebpack: {
     devtool: 'eval-source-map',
   },
