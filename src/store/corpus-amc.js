@@ -14,7 +14,7 @@ function getObjectKey(object, value, property) {
 }
 
 export const state = {
-  engineAPI: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
+  engineAPI: 'https://corpsum-proxy.hephaistos.arz.oeaw.ac.at/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
   subcorpusName: 'none',
   rawResults: [],
@@ -628,8 +628,8 @@ export const actions = {
         responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
         responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
         responses.collxURI = await axios.get(requestURIs.collxURI);
-        //await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
-      //}
+        /* await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
+      }*/
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
