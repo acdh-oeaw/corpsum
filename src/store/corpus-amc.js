@@ -14,7 +14,7 @@ function getObjectKey(object, value, property) {
 }
 
 export const state = {
-  engineAPI: 'https://corpsum-proxy.hephaistos.arz.oeaw.ac.at/run.cgi/',
+  engineAPI: 'http://proxy/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
   subcorpusName: 'none',
   rawResults: [],
