@@ -610,6 +610,7 @@ export const actions = {
 
       const responses = {};
 
+      /*
       const checkCache = await axios.get('http://localhost:3000/api/corpusQuery', { params: { queryTerm: JSON.stringify(queryTermEncoded), corpus: state.corpusName, subcorpus: state.subcorpusName } });
       if (checkCache.data !== 'Error') {
         responses.freqttURI = checkCache.data.freqttURI;
@@ -619,7 +620,7 @@ export const actions = {
         responses.viewattrsxURI = checkCache.data.viewattrsxURI;
         responses.freqmlURI = checkCache.data.freqmlURI;
         responses.collxURI = checkCache.data.collxURI;
-      } else {
+      } else {*/
         responses.freqttURI = await axios.get(requestURIs.freqttURI);
         responses.freqsURI = await axios.get(requestURIs.freqsURI);
         responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
@@ -627,8 +628,8 @@ export const actions = {
         responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
         responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
         responses.collxURI = await axios.get(requestURIs.collxURI);
-        await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
-      }
+        //await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
+      //}
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
