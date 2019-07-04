@@ -22,6 +22,9 @@
       v-model="tag"
       :tags="tags"
       placeholder="Type a keyword or query and hit enter"
+      :add-from-paste="false"
+      :add-on-blur="false"
+      :max-tags="6"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
     

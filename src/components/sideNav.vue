@@ -85,12 +85,24 @@ export default {
     }
   },
   mounted() {
+    if (localStorage.selectedCorpus) {
+      this.$store.commit('changeSelectedCorpus', localStorage.selectedCorpus);
+    }
+    if (localStorage.selectedSubcorpus) {
+      this.$store.commit('changeSelectedSubcorpus', localStorage.selectedSubcorpus);
+    }
   },
   computed: {
     selectedCorpus() {
+      if (localStorage.selectedCorpus) {
+        return localStorage.selectedCorpus;
+      }
       return this.$store.getters.corpusName;
     },
     selectedSubcorpus() {
+      if (localStorage.selectedSubcorpus) {
+        return localStorage.selectedSubcorpus;
+      }
       return this.$store.getters.subcorpusName;
     },
   },
@@ -100,9 +112,11 @@ export default {
     },
     changeCorpus(val) {
       this.$store.commit('changeSelectedCorpus', val);
+      localStorage.selectedCorpus = val;
     },
     changeSubcorpus(val) {
       this.$store.commit('changeSelectedSubcorpus', val);
+      localStorage.selectedSubcorpus = val;
     }
   }
 };

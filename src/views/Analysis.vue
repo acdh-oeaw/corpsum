@@ -1,18 +1,6 @@
 <template>
     <main role="main" class="ml-auto px-4">
-<!--       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
-      <div>
-        <h6>Sample Queries: </h6>
-        <b-button class="mr-2" variant="primary" size="sm" @click="changeSampleQuery(1)">Car: coche / carro / auto</b-button>
-        <b-button class="mr-2" variant="secondary" size="sm" @click="changeSampleQuery(2)">Cellphone: teléfono celular / teléfono móvil</b-button>
-        <b-button class="mr-2" variant="success" size="sm" @click="changeSampleQuery(3)">Spelling Changes: Iraq / Irak</b-button>
-      </div>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <b-button variant="danger" size="sm" @click="resetQuery">Reset Query</b-button>
-        </div>
-      </div> -->
       <div class="home pt-3">
-
         <div class="row vis-intro-wrapper" v-show="toggleIntroSection">
           <div class="col-md-12 vis-component">
             <div class="vis-component-inner">
@@ -45,20 +33,18 @@
 
 <script>
 // @ is an alias to /src
-// import mapChart from '@/components/d3-charts/map.vue';
-
-import radarChart from '@/components/charts/radarChart.vue'
+// import radarChart from '@/components/charts/radarChart.vue'
 import lineChart from '@/components/charts/lineChart.vue'
 import barChart from '@/components/charts/barChart.vue'
-import queryBuilder from '@/components/ui-elements/queryBuilder.vue'
-import stackedBarChart from '@/components/charts/stackedBarChart.vue'
-import heatmapChart from '@/components/charts/heatmapChart.vue'
-import mapChart from '@/components/charts/mapChart.vue'
-import genericChart from '@/components/charts/genericChart.vue'
-import scatterChart from '@/components/charts/scatterChart.vue'
-import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
+// import queryBuilder from '@/components/ui-elements/queryBuilder.vue'
+// import stackedBarChart from '@/components/charts/stackedBarChart.vue'
+// import heatmapChart from '@/components/charts/heatmapChart.vue'
+// import mapChart from '@/components/charts/mapChart.vue'
+// import genericChart from '@/components/charts/genericChart.vue'
+// import scatterChart from '@/components/charts/scatterChart.vue'
+// import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 import kwicTable from '@/components/ui-elements/kwicTable.vue'
-import visSeparator from '@/components/ui-elements/visSeparator.vue'
+// import visSeparator from '@/components/ui-elements/visSeparator.vue'
 import multiMap from '@/components/charts/multiMap.vue'
 import multiWordcloud from '@/components/charts/multiWordcloud.vue'
 import treemapChart from '@/components/charts/treemapChart.vue'
@@ -68,7 +54,7 @@ import multiSankey from '@/components/charts/multiSankey.vue'
 export default {
   name: 'analysis',
   components: {
-    radarChart, lineChart, barChart, queryBuilder, stackedBarChart, heatmapChart, mapChart, genericChart, scatterChart, interactiveTable, kwicTable, visSeparator, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey
+    lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey
   },
   data() {
     return {
@@ -79,17 +65,6 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    /*
-    var pckry = new Packery( '.vis-wrapper', {
-      itemSelector: '.vis-component',
-      columnWidth: ".vis-component.col-md-6",
-      gutter: 0,
-      percentPosition: true
-    });
-    pckry.getItemElements().forEach( function( itemElem ) {
-      var draggie = new Draggabilly( itemElem, { handle: '.move-component-btn' } );
-      pckry.bindDraggabillyEvents( draggie );
-    });*/
   },
   watch: {
   },
