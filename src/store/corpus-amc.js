@@ -212,7 +212,7 @@ export const state = {
       clouds: [],
     },
     regions: {
-      title: 'Total Absolute Frequency',
+      title: 'Regional Relative Frequency',
       subtitle: 'Total absolute number of occurences (hits) of a given query',
       yAxisText: 'Number of Hits',
       height: 480,
@@ -549,7 +549,6 @@ export const mutations = {
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;
-    console.log(items);
     let content = '';
     for (let i = 0; i < items.length; i += 1) {
       if (items[i].class === 'coll') {

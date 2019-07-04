@@ -66,8 +66,8 @@ export default {
           name: 'logDice Score',
           rotation: {
             from: 0,
-            to: 90,
-            orientations: 2,
+            to: 0,
+            orientations: 1,
           },
           spiral: 'square',
           placementStrategy: 'center',

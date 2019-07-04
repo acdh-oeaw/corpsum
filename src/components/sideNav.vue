@@ -77,7 +77,7 @@ export default {
       optionsCorpora: [
         { value: 'amc3_demo', text: 'AMC3 (demo)' },
         { value: 'amc_60M', text: 'AMC3 (60M)' },
-        { value: 'amc_3.1', text: 'AMC3 (Full)', disabled: true },
+        { value: 'amc_3.1', text: 'AMC3 (Full)' },
       ],
       optionsSubcorpora: [
         { value: 'none', text: 'None' },

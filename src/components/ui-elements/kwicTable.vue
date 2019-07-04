@@ -117,9 +117,20 @@
       </div>
 
       <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" ok-only scrollable @hide="resetInfoModal">
+      <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" scrollable @hide="resetInfoModal">
         <p v-html="modalTextContent"></p>
         <pre>{{ infoModal.content }}</pre>
+
+        <template slot="modal-footer" slot-scope="{ ok }">
+          <b-button-group class="mr-auto">
+            <b-button variant="info" @click="prevDoc()">&lsaquo; Previous</b-button>
+            <b-button variant="info" @click="nextDoc()">Next &rsaquo;</b-button>
+          </b-button-group>
+          <b-button variant="primary" @click="ok()">
+            OK
+          </b-button>
+        </template>
+
       </b-modal>
 
       <!-- Create subcorpus modal -->
@@ -156,7 +167,8 @@
         infoModal: {
           id: 'info-modal',
           title: '',
-          content: ''
+          content: '',
+          rowId: 0,
         },
         subcorpusModal: {
           id: 'create-subcorpus-modal',
@@ -186,9 +198,38 @@
     mounted() {
     },
     methods: {
+      nextDoc() {
+        const curRow = this.infoModal.rowId;
+        let nextRow = curRow;
+        do {
+          nextRow++;
+        }
+        while (this.items[[nextRow]].docid == this.items[[curRow]].docid);
+        const item = this.items[[nextRow]];
+        this.infoModal.title = item.source + ' - ' + item.date;
+        this.infoModal.rowId = nextRow;
+        this.modalTextContent = '';
+        this.$store.dispatch('modalTextQuery', item);
+        this.infoModal.content = JSON.stringify(item, null, 2)
+      },
+      prevDoc() {
+        const curRow = this.infoModal.rowId;
+        let prevRow = curRow;
+        do {
+          prevRow--;
+        }
+        while (this.items[[prevRow]].docid == this.items[[curRow]].docid);
+        const item = this.items[[prevRow]];
+        this.infoModal.title = item.source + ' - ' + item.date;
+        this.infoModal.rowId = prevRow;
+        this.modalTextContent = '';
+        this.$store.dispatch('modalTextQuery', item);
+        this.infoModal.content = JSON.stringify(item, null, 2)
+      },
       info(item, index, button) {
         // this.infoModal.title = `Row index: ${index}`
         this.infoModal.title = item.source + ' - ' + item.date;
+        this.infoModal.rowId = index;
         this.modalTextContent = '';
         this.$store.dispatch('modalTextQuery', item);
         this.infoModal.content = JSON.stringify(item, null, 2)
@@ -266,5 +307,11 @@
 }
 .modal-body p {
   font-size: 1rem;
+}
+
+@media (min-width: 576px) {
+  #info-modal .modal-dialog-scrollable {
+    height: calc(100% - 3.5rem);
+  }
 }
 </style>
