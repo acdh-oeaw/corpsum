@@ -4,25 +4,25 @@
       <!-- User Interface controls -->
       <b-row class="py-3">
 
-        <div class="my-1 ml-3">
+        <div class="ml-3">
           <b-button @click="subcorpus($event.target)" variant="outline-primary" size="sm">Create Subcorpus with Selection</b-button>
         </div>
 
-        <div class="my-1 ml-3">
-          <b-button
-            v-for="(element, index) in tags"
-            v-bind:key="element.id"
-            size="sm"
-            :class="`mr-2 bg-series-color-${index}`"
-            v-model="filter"
-            @click='filter = `${element.text}`'
-            style="border:0;"
-          >
-            {{ element.text }}
-          </b-button>
-        </div>
-
-        <b-col md="3" class="mx-auto">
+        <div class="ml-3 mx-auto d-flex align-items-center">
+          <div class="mr-2">
+            <b-button
+              v-for="(element, index) in tags"
+              v-bind:key="element.id"
+              size="sm"
+              :class="`mr-2 bg-series-color-${index}`"
+              v-model="filter"
+              @click='filter = `${element.text}`'
+              style="border:0;"
+              v-b-tooltip.hover title="Filter results for this query"
+            >
+              {{ element.text }}
+            </b-button>
+          </div>
           <b-form-group class="mb-0">
             <b-input-group size="sm">
               <b-form-input v-model="filter" placeholder="Type to Filter"></b-form-input>
@@ -31,9 +31,10 @@
               </b-input-group-append>
             </b-input-group>
           </b-form-group>
-        </b-col>
+        </div>
 
-        <div class="my-1 mr-3">
+        <div class="mr-3 d-flex align-items-center">
+          <div class="mr-2">Total rows: {{ totalVisibleRows }}</div>
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
@@ -73,10 +74,6 @@
             <b-form-select v-model="perPage" :options="pageOptions"></b-form-select>
           </b-form-group>
         </b-col> -->
-      </b-row>
-
-      <b-row class="py-3">
-        Total rows: {{ totalVisibleRows }}
       </b-row>
 
       <div class="kwic-table">
