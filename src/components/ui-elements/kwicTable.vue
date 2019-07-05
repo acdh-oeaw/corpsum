@@ -8,6 +8,20 @@
           <b-button @click="subcorpus($event.target)" variant="outline-primary" size="sm">Create Subcorpus with Selection</b-button>
         </div>
 
+        <div class="my-1 ml-3">
+          <b-button
+            v-for="(element, index) in tags"
+            v-bind:key="element.id"
+            size="sm"
+            :class="`mr-2 bg-series-color-${index}`"
+            v-model="filter"
+            @click='filter = `${element.text}`'
+            style="border:0;"
+          >
+            {{ element.text }}
+          </b-button>
+        </div>
+
         <b-col md="3" class="mx-auto">
           <b-form-group class="mb-0">
             <b-input-group size="sm">
@@ -59,6 +73,10 @@
             <b-form-select v-model="perPage" :options="pageOptions"></b-form-select>
           </b-form-group>
         </b-col> -->
+      </b-row>
+
+      <b-row class="py-3">
+        Total rows: {{ totalVisibleRows }}
       </b-row>
 
       <div class="kwic-table">
@@ -174,7 +192,8 @@
           id: 'create-subcorpus-modal',
           title: '',
           content: ''
-        }
+        },
+        totalVisibleRows: this.chartProp.items.length,
       }
     },
     computed: {
@@ -194,8 +213,16 @@
         return this.$store.getters.modalTextContent;
         set: (value) => console.log(value) // this.$state.commit('someMutation', value )
       },
+      tags() {
+        return this.$store.getters.queryTerms;
+      },
     },
     mounted() {
+    },
+    watch: {
+      items(val) {
+        this.totalVisibleRows = val.length;
+      },
     },
     methods: {
       nextDoc() {
@@ -240,6 +267,7 @@
         this.infoModal.content = ''
       },
       onFiltered(filteredItems) {
+        this.totalVisibleRows = filteredItems.length;
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1

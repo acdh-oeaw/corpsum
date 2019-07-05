@@ -83,6 +83,34 @@ body {
 
 }
 
+.bg-series-color-0 {
+  background-color: #4e79a7;
+}
+.bg-series-color-1 {
+  background-color: #edc948;
+}
+.bg-series-color-2 {
+  background-color: #e15759;
+}
+.bg-series-color-3 {
+  background-color: #76b7b2;
+}
+.bg-series-color-4 {
+  background-color: #f28e2b;
+}
+.bg-series-color-5 {
+  background-color: #ff9da7;
+}
+.bg-series-color-6 {
+  background-color: #FF9655;
+}
+.bg-series-color-7 {
+  background-color: #FFF263;
+}
+.bg-series-color-8 {
+  background-color: #6AF9C4;
+}
+
 /*
  * Content
  */
