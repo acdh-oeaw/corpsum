@@ -95,14 +95,6 @@
           :sort-direction="sortDirection"
           @filtered="onFiltered"
         >
-          <!--       <template slot="name" slot-scope="row">
-            {{ row.value.first }} {{ row.value.last }}
-          </template>
-
-          <template slot="isActive" slot-scope="row">
-            {{ row.value ? 'Yes :)' : 'No :(' }}
-          </template>
-          -->
 
           <template slot="actions" slot-scope="row">
             <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
@@ -150,7 +142,23 @@
 
       <!-- Create subcorpus modal -->
       <b-modal :id="subcorpusModal.id" :title="subcorpusModal.title" size="lg" ok-only scrollable>
-        {{ selectedDocs }}
+        <b-form-group
+          id="subcorpus-title-fieldset"
+          label="Subcorpus Name"
+          label-for="subcorpus-title-input"
+          :invalid-feedback="invalidFeedback"
+          :valid-feedback="validFeedback"
+          :state="subcorpusTitleState"
+        >
+          <b-form-input id="subcorpus-title-input" v-model="subcorpusTitle" :state="subcorpusTitleState" trim></b-form-input>
+        </b-form-group>
+        You have selected {{ selectedDocs.length }} documents for this new subcorpus.
+        <template slot="modal-footer">
+          <b-button variant="primary" class="mr-auto d-block" @click="createSubcorpus()">Create Subcorpus</b-button>
+          <b-toast id="example-toast" title="BootstrapVue" static no-auto-hide>
+            Hello, world! This is a toast message.
+          </b-toast>
+        </template>
       </b-modal>
     </b-container>
   </div>
@@ -191,6 +199,7 @@
           content: ''
         },
         totalVisibleRows: this.chartProp.items.length,
+        subcorpusTitle: '',
       }
     },
     computed: {
@@ -213,6 +222,21 @@
       tags() {
         return this.$store.getters.queryTerms;
       },
+      subcorpusTitleState() {
+        return this.subcorpusTitle.length >= 4 ? true : false
+      },
+      invalidFeedback() {
+        if (this.subcorpusTitle.length > 4) {
+          return ''
+        } else if (this.subcorpusTitle.length > 0) {
+          return 'Enter at least 4 characters'
+        } else {
+          return 'This field is required'
+        }
+      },
+      validFeedback() {
+        return this.subcorpusTitleState === true ? '' : ''
+      }
     },
     mounted() {
     },
@@ -222,6 +246,14 @@
       },
     },
     methods: {
+      createSubcorpus() {
+        this.$store.dispatch('createSubcorpus', this.selectedDocs);
+        if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
+          this.$root.$emit('bv::hide::modal', this.subcorpusModal.id);
+        } else {
+          this.$bvToast.show('example-toast')
+        }
+      },
       nextDoc() {
         const curRow = this.infoModal.rowId;
         let nextRow = curRow;
