@@ -55,8 +55,9 @@ export default {
           enabled: false,
         },
         chart: {
-          type: "scatter",
-          zoomType: "xy",
+          type: 'area',
+          zoomType: 'x',
+          height: this.chartProp.height,
           spacingBottom: 20,
           spacingTop: 20,
           spacingLeft: 10,
@@ -64,14 +65,10 @@ export default {
         },
         title: false,
         xAxis: {
-          min: 0,
           title: {
-            enabled: true,
             text: this.chartProp.xAxisText
           },
-          startOnTick: true,
-          endOnTick: true,
-          showLastLabel: true,
+          allowDecimals: false,
           plotLines: this.chartProp.plotLinesX
         },
         yAxis: {
@@ -81,45 +78,39 @@ export default {
           plotLines: this.chartProp.plotLinesY
         },
         legend: {
-          enabled:  this.chartProp.legendEnabled,
           layout: 'horizontal',
           align: 'center',
           verticalAlign: 'top',
           y: -15,
-          margin: 15,
+          margin: 5,
         },
         plotOptions: {
-          scatter: {
-            dataLabels: {
-              format: "{series.name}",
-              enabled: true
+          series: {
+            label: {
+              connectorAllowed: false
             },
             marker: {
-              symbol: 'circle',
-              radius: 4,
-              fillOpacity:0.3,
-              states: {
-                hover: {
-                  enabled: true,
-                  lineColor: "rgb(100,100,100)"
-                }
-              }
+              radius: 6
             },
-            states: {
-              hover: {
-                marker: {
-                  enabled: false
-                }
-              }
+            dataLabels: {
+              enabled: false,
+              align: 'center',
+              padding: 8,
+              format: '{point.y} %'
             },
+          },
+          spline: {
+            dataLabels: {
+              // enabled: true
+            },
+            // enableMouseTracking: false
           }
         },
+        series: this.chartProp.data,
         tooltip: {
-          pointFormat:
-            '<span><b>{point.source}</b></span>: {point.x}, {point.y}<br/>',
+          pointFormat: this.chartProp.pointFormat,
           shared: true
         },
-        series: this.chartProp.series,
       }
     };
   },

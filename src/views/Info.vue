@@ -1,5 +1,21 @@
 <template>
-    <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
+    <main role="main" class="ml-auto px-4">
+      <div class="home pt-3">
+        <div class="row vis-wrapper">
+          <component
+            v-for="(element, index) in infoElements"
+            v-bind:key="element.key"
+            v-bind:is="element.component"
+            v-bind:chartProp="infoData[element.chartProp]"
+            v-bind:class="element.class"
+            v-bind:elKey="index"
+          />
+        </div>
+      </div>
+    </main>
+
+
+<!--     <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-0 border-bottom">
         <h3>Corpus Information</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
@@ -24,50 +40,47 @@
           <genericChart :chartProp="infoData.themesData" class="col-md-8 vis-component"></genericChart>
         </div>
       </div>
-    </main>
+    </main> -->
 </template>
 
 <script>
 // @ is an alias to /src
-import radarChart from '@/components/charts/radarChart.vue'
+import corpusInfoJumbotron from '@/components/ui-elements/corpusInfoJumbotron.vue'
+import areaChart from '@/components/charts/areaChart.vue'
 import lineChart from '@/components/charts/lineChart.vue'
-import stackedBarChart from '@/components/charts/stackedBarChart.vue'
-import heatmapChart from '@/components/charts/heatmapChart.vue'
-import mapChart from '@/components/charts/mapChart.vue'
-import genericChart from '@/components/charts/genericChart.vue'
-import corpusDescription from '@/components/ui-elements/corpusDescription.vue'
-import basicStats from '@/components/ui-elements/basicStats.vue'
+import barChart from '@/components/charts/barChart.vue'
+import kwicTable from '@/components/ui-elements/kwicTable.vue'
+import multiMap from '@/components/charts/multiMap.vue'
+import multiWordcloud from '@/components/charts/multiWordcloud.vue'
+import treemapChart from '@/components/charts/treemapChart.vue'
+import bubbleChart from '@/components/charts/bubbleChart.vue'
+import scatterChart from '@/components/charts/scatterChart.vue'
+import multiSankey from '@/components/charts/multiSankey.vue'
 
 export default {
   name: 'info',
   components: {
-    radarChart, lineChart, stackedBarChart, heatmapChart, mapChart, genericChart, corpusDescription, basicStats
+    corpusInfoJumbotron, areaChart, lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, scatterChart, bubbleChart, multiSankey
   },
   data() {
     return {
-      infoData: this.$store.getters.infoData,
     };
   },
-  created(){
-    this.$store.dispatch('queryCorpusInfo');
+  created() {
+    console.log("created");
   },
   mounted() {
     console.log("mounted");
-    var pckry = new Packery( '.vis-wrapper', {
-      itemSelector: '.vis-component',
-      columnWidth: ".vis-component.col-md-4",
-      gutter: 0,
-      percentPosition: true
-    });
-
-    pckry.getItemElements().forEach( function( itemElem ) {
-      var draggie = new Draggabilly( itemElem );
-      pckry.bindDraggabillyEvents( draggie );
-    });
   },
   watch: {
   },
   computed: {
+    infoData() {
+      return this.$store.getters.infoData
+    },
+    infoElements() {
+      return this.$store.getters.infoElements
+    },
   },
   methods: {
   },

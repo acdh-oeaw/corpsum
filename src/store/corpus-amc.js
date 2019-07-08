@@ -31,12 +31,6 @@ export const state = {
     ressortSizes: [],
   },
   chartElements: [
-    /*
-    {
-      component: 'barChart',
-      class: 'col-md-4 vis-component',
-      chartProp: 'querySummary',
-    },*/
     {
       component: 'multiSankey',
       class: 'container-fluid p-0 d-flex',
@@ -93,6 +87,92 @@ export const state = {
       chartProp: 'collocations',
     },
   ],
+  infoElements: [
+    {
+      component: 'corpusInfoJumbotron',
+      class: 'col-md-12 vis-component vis-intro-component',
+      chartProp: 'corpusBasicInfo',
+    },
+    {
+      component: 'areaChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsYears',
+    },
+    {
+      component: 'barChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsRegions',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsSources',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsRessorts',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'topLCs',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'topLemmas',
+    },
+  ],
+  infoData: {
+    corpusBasicInfo: {
+      logo: 'https://www.oeaw.ac.at/fileadmin/_processed_/6/8/csm_acdh_projects_amc_logo_web_a92e4e1d33.png',
+      desc: 'The Austrian Media Corpus (amc), created as part of a cooperation between the Austrian Academy of Sciences and the Austrian Press Agency (APA), covers the entire Austrian media landscape of the past decades, comprising a wide range of text types which can be classified as journalistic prose. Altogether, the corpus contains 40 million texts, constituting more than 10 billion tokens. In comparison to other contemporary German language corpora, the amc ranks among the largest collection of its kind.',
+    },
+    docsYears: {
+      title: 'Yearly Docs Size',
+      subtitle: 'Absolute number of occurences (hits) of a given query in years',
+      yAxisText: 'Number of Docs',
+      data: [],
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+    },
+    docsRegions: {
+      title: 'Regions Document Size',
+      subtitle: '',
+      yAxisText: 'Docs',
+      categoriesX: [
+        'AT-Nationwide',
+        'AT-Ost',
+        'AT-Südost',
+        'AT-Mitte',
+        'AT-West',
+        'Specific',
+      ],
+      series: [],
+    },
+    docsSources: {
+      title: 'Sources Sizes',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      data: [],
+    },
+    docsRessorts: {
+      title: 'Ressorts Sizes',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      data: [],
+    },
+    topLCs: {
+      title: 'Top LCs',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      legendEnabled: true,
+      series: [],
+    },
+    topLemmas: {
+      title: 'Top Lemmas',
+      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      legendEnabled: true,
+      series: [],
+    },
+  },
   chartData: {
     queryTerms: [],
     separatorQuery: {
@@ -588,6 +668,108 @@ export const mutations = {
     // state = JSON.parse(JSON.stringify(defaultState));
     state.chartData.queryTerms.push(payload);
   },
+  processDocsYears(state, payload) {
+    const items = payload.result.Items;
+    const absolute = { name: 'Number of Documents', data: [] };
+    for (let i = 0; i < items.length; i += 1) {
+      absolute.data.push([Number(items[i].str), items[i].freq]);
+    }
+    // Sort by year
+    absolute.data.sort((a, b) => a[0] - b[0]);
+    state.infoData.docsYears.data.push(absolute);
+  },
+  processDocsRegions(state, payload) {
+    const itemsRegions = payload.result.Items;
+    const seriesData = {
+      name: 'Documents',
+      data: [0, 0, 0, 0, 0, 0],
+    };
+    for (let i = 0; i < itemsRegions.length; i += 1) {
+      const regionName = itemsRegions[i].str;
+      switch (regionName) {
+        case 'aost':
+          seriesData.data[1] = itemsRegions[i].freq;
+          break;
+        case 'asuedost':
+          seriesData.data[2] = itemsRegions[i].freq;
+          break;
+        case 'amitte':
+          seriesData.data[3] = itemsRegions[i].freq;
+          break;
+        case 'awest':
+          seriesData.data[4] = itemsRegions[i].freq;
+          break;
+        case 'agesamt':
+          seriesData.data[0] = itemsRegions[i].freq;
+          break;
+        case 'spezifisch':
+          seriesData.data[5] = itemsRegions[i].freq;
+          break;
+        default:
+      }
+    }
+    state.infoData.docsRegions.series.push(seriesData);
+  },
+  processDocsSources(state, payload) {
+    const items = payload.result.Items;
+    for (let i = 0; (i < items.length) && (i < 20); i += 1) {
+      state.infoData.docsSources.data.push({
+        id: items[i].str,
+        name: items[i].str,
+        value: items[i].freq,
+      });
+    }
+  },
+  processDocsRessorts(state, payload) {
+    const items = payload.result.Items;
+    for (let i = 0; (i < items.length) && (i < 20); i += 1) {
+      state.infoData.docsRessorts.data.push({
+        id: items[i].str,
+        name: items[i].str,
+        value: items[i].freq,
+      });
+    }
+  },
+  processTopLCs(state, payload) {
+    const items = payload.result.Items;
+    const zipfCurve = {
+      type: 'line',
+      name: 'zipfCurve',
+      marker: false,
+      data: [],
+    };
+    const maxVal = items[0].freq;
+    for (let i = 0; i < items.length; i += 1) {
+      state.infoData.topLCs.series.push({
+        name: items[i].str,
+        color: '#4e79a7',
+        data: [[i, items[i].freq]],
+        showInLegend: false,
+      });
+      zipfCurve.data.push(maxVal / (i + 1));
+    }
+    state.infoData.topLCs.series.push(zipfCurve);
+  },
+  processTopLemmas(state, payload) {
+    const items = payload.result.Items;
+    const zipfCurve = {
+      type: 'line',
+      name: 'zipfCurve',
+      marker: false,
+      data: [],
+    };
+    const maxVal = items[0].freq;
+    for (let i = 0; i < items.length; i += 1) {
+      state.infoData.topLemmas.series.push({
+        name: items[i].str,
+        color: '#4e79a7',
+        data: [[i, items[i].freq]],
+        showInLegend: false,
+      });
+      zipfCurve.data.push(maxVal / (i + 1));
+    }
+    state.infoData.topLemmas.series.push(zipfCurve);
+  },
 };
 
 export const getters = {
@@ -601,6 +783,8 @@ export const getters = {
   loadingStatus: state => state.loadingStatus,
   toggleIntroSection: state => state.toggleIntroSection,
   toggleVisSection: state => state.toggleVisSection,
+  infoData: state => state.infoData,
+  infoElements: state => state.infoElements,
 };
 
 export const actions = {
@@ -608,30 +792,19 @@ export const actions = {
     try {
       commit('changeLoadingStatus', { status: true });
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
-
       const requestURIs = {};
-
       let useSubCorp = '';
       if (state.subcorpusName !== 'none') {
         useSubCorp = `usesubcorp=${state.subcorpusName};`;
       }
-
       requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
-
       requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
-
       requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};${useSubCorp}wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-
       requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};${useSubCorp}wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-
       requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;format=json`;
-
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
-
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
-
       const responses = {};
-
       responses.freqttURI = await axios.get(requestURIs.freqttURI);
       responses.freqsURI = await axios.get(requestURIs.freqsURI);
       responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
@@ -681,6 +854,36 @@ export const actions = {
     try {
       const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
       commit('updateSubcorporaList', { result: response.data.subcorpora });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async queryCorpusInfo({ state, commit, dispatch }) {
+    try {
+      commit('changeLoadingStatus', { status: true });
+      const requestURIs = {};
+      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+
+      const responses = {};
+      responses.docsYears = await axios.get(requestURIs.docsYears);
+      responses.docsRegions = await axios.get(requestURIs.docsRegions);
+      responses.docsSources = await axios.get(requestURIs.docsSources);
+      responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
+      responses.topLCs = await axios.get(requestURIs.topLCs);
+      responses.topLemmas = await axios.get(requestURIs.topLemmas);
+
+      commit('changeLoadingStatus', { status: false });
+      commit('processDocsYears', { result: responses.docsYears.data });
+      commit('processDocsRegions', { result: responses.docsRegions.data });
+      commit('processDocsSources', { result: responses.docsSources.data });
+      commit('processDocsRessorts', { result: responses.docsRessorts.data });
+      commit('processTopLCs', { result: responses.topLCs.data });
+      commit('processTopLemmas', { result: responses.topLemmas.data });
     } catch (error) {
       console.log(error);
     }
