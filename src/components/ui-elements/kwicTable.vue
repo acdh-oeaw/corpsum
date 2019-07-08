@@ -247,11 +247,11 @@
     },
     methods: {
       createSubcorpus() {
-        this.$store.dispatch('createSubcorpus', this.selectedDocs);
+        this.$store.dispatch('createSubcorpus', {docs: this.selectedDocs, title: this.subcorpusTitle} );
         if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
           this.$root.$emit('bv::hide::modal', this.subcorpusModal.id);
         } else {
-          this.$bvToast.show('example-toast')
+          // Not validated
         }
       },
       nextDoc() {

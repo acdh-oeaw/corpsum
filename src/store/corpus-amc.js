@@ -609,26 +609,13 @@ export const actions = {
 
       const responses = {};
 
-      /*
-      const checkCache = await axios.get('http://localhost:3000/api/corpusQuery', { params: { queryTerm: JSON.stringify(queryTermEncoded), corpus: state.corpusName, subcorpus: state.subcorpusName } });
-      if (checkCache.data !== 'Error') {
-        responses.freqttURI = checkCache.data.freqttURI;
-        responses.freqsURI = checkCache.data.freqsURI;
-        responses.wordlistDocsrcURI = checkCache.data.wordlistDocsrcURI;
-        responses.wordlistRessortURI = checkCache.data.wordlistRessortURI;
-        responses.viewattrsxURI = checkCache.data.viewattrsxURI;
-        responses.freqmlURI = checkCache.data.freqmlURI;
-        responses.collxURI = checkCache.data.collxURI;
-      } else {*/
-        responses.freqttURI = await axios.get(requestURIs.freqttURI);
-        responses.freqsURI = await axios.get(requestURIs.freqsURI);
-        responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
-        responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
-        responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
-        responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
-        responses.collxURI = await axios.get(requestURIs.collxURI);
-        /* await axios.post('http://localhost:3000/api/corpusQuery', { queryTerm: queryTermEncoded, corpus: state.corpusName, subcorpus: state.subcorpusName, queryResponse: responses });
-      }*/
+      responses.freqttURI = await axios.get(requestURIs.freqttURI);
+      responses.freqsURI = await axios.get(requestURIs.freqsURI);
+      responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
+      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
+      responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
+      responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
+      responses.collxURI = await axios.get(requestURIs.collxURI);
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
@@ -641,7 +628,6 @@ export const actions = {
       commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
       commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
       commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
-
     } catch (error) {
       console.log(error);
     }
@@ -650,6 +636,20 @@ export const actions = {
     try {
       const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc&format=json`);
       commit('updateModalTextContent', { term: item.word, result: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async createSubcorpus({ state, commit, dispatch }, params) {
+    try {
+      const docs = params.docs;
+      const title = params.title;
+
+      let docsURIComp;
+      for (let i = 0; i < docs.length; i += 1) {
+        docsURIComp += `&sca_doc.id=${docs[i]}`;
+      }
+      await axios.get(`${state.engineAPI}subcorp?corpname=${state.corpusName}&reload=&subcname=${title}&create=True${docsURIComp}`);
     } catch (error) {
       console.log(error);
     }
