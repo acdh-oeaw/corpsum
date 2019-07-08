@@ -15,6 +15,7 @@ function getObjectKey(object, value, property) {
 
 export const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
+  engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
   subcorpusName: 'none',
   subcorporaList: [
@@ -288,6 +289,8 @@ export const mutations = {
       if (state.chartData.queryTerms[i].text === queryTerm.text) {
         state.chartData.queryTerms.splice(i, 1);
         state.chartData.querySummary.series[0].data.splice(i, 1);
+        state.chartData.queryRelSummary.series[0].data.splice(i, 1);
+        state.chartData.wordTree.charts.splice(i, 1);
         state.chartData.absolute.data.splice(i, 1);
         state.chartData.relative.data.splice(i, 1);
         state.chartData.regions.maps.splice(i, 1);
@@ -295,6 +298,11 @@ export const mutations = {
         state.chartData.sources.series.splice(i, 1);
         state.chartData.sections.series.splice(i, 1);
         state.chartData.collocations.clouds.splice(i, 1);
+        for (let k = state.chartData.wordFreqSummary.data.length - 1; k >= 0; k--) {
+          if (state.chartData.wordFreqSummary.data[k].parent === queryTerm.text || state.chartData.wordFreqSummary.data[k].id === queryTerm.text) {
+            state.chartData.wordFreqSummary.data.splice(k, 1);
+          }
+        }
         for (let j = state.chartData.kwic.items.length - 1; j >= 0; j--) {
           if (state.chartData.kwic.items[j].queryTerm === queryTerm.text) {
             state.chartData.kwic.items.splice(j, 1);
@@ -607,7 +615,6 @@ export const actions = {
       if (state.subcorpusName !== 'none') {
         useSubCorp = `usesubcorp=${state.subcorpusName};`;
       }
-      console.log(useSubCorp)
 
       requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
 
@@ -664,7 +671,7 @@ export const actions = {
       for (let i = 0; i < docs.length; i += 1) {
         docsURIComp += `;sca_doc.id=${docs[i]}`;
       }
-      await axios.get(`${state.engineAPI}subcorp?corpname=${state.corpusName};reload=;subcname=${title};create=True${docsURIComp}`);
+      await axios.get(`${state.engineAPINoCache}subcorp?corpname=${state.corpusName};reload=;subcname=${title};create=True${docsURIComp}`);
       dispatch('getSubcorporaList');
     } catch (error) {
       console.log(error);
@@ -672,11 +679,7 @@ export const actions = {
   },
   async getSubcorporaList({ state, commit, dispatch }) {
     try {
-      const config = {
-        headers: { 'Cache-Control': 'no-cache' },
-        params: {},
-      };
-      const response = await axios.get(`${state.engineAPI}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`, config);
+      const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
       commit('updateSubcorporaList', { result: response.data.subcorpora });
     } catch (error) {
       console.log(error);

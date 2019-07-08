@@ -15,6 +15,7 @@ module.exports = {
   outputDir: 'html',
   configureWebpack: {
     devtool: '',
+    /*
     optimization: {
       splitChunks: {
         cacheGroups: {
@@ -27,7 +28,7 @@ module.exports = {
           },
         },
       },
-    },
-    // plugins: [/* new BundleAnalyzerPlugin() */ /* new CompressionPlugin */],
+    }, */
+    plugins: [/* new BundleAnalyzerPlugin() */ /* new CompressionPlugin */],
   },
 };
