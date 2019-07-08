@@ -27,6 +27,7 @@ export default {
   created() {
   },
   mounted() {
+    this.$store.dispatch('getSubcorporaList');
   },
   computed: {
     tags() {

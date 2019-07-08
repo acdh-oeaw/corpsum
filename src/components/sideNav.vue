@@ -13,7 +13,7 @@
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
         <span>Subcorpus:</span>
       </h6>
-      <b-form-select v-model="selectedSubcorpus" :options="optionsSubcorpora" @change="changeSubcorpus" size="sm" class="corpus-selector"></b-form-select>
+      <b-form-select v-model="selectedSubcorpus" :options="subcorporaList" @change="changeSubcorpus" size="sm" class="corpus-selector"></b-form-select>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-1">
         <span>Anaylsis:</span>
       </h6>
@@ -79,9 +79,6 @@ export default {
         { value: 'amc_60M', text: 'AMC3 (60M)' },
         { value: 'amc_3.1', text: 'AMC3 (Full)' },
       ],
-      optionsSubcorpora: [
-        { value: 'none', text: 'None' },
-      ],
     }
   },
   mounted() {
@@ -93,6 +90,9 @@ export default {
     }
   },
   computed: {
+    subcorporaList() {
+      return this.$store.getters.subcorporaList;
+    },
     selectedCorpus() {
       if (localStorage.selectedCorpus) {
         return localStorage.selectedCorpus;
