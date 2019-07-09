@@ -263,12 +263,6 @@ main, .navbar {
 .v-step {
   z-index: 9999;
   font-size: 1.2rem;
-  background-color: #ce890c !important;
-}
-
-.v-step {
-  z-index: 9999;
-  font-size: 1.2rem;
 }
 
 </style>

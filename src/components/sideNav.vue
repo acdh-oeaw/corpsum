@@ -19,13 +19,13 @@
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link">
+          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link active">
             <hard-drive-icon></hard-drive-icon>
             Corpus Info
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link active">
+          <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link">
             <activity-icon></activity-icon>
             Corpus Analysis
           </router-link>

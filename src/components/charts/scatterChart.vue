@@ -21,7 +21,9 @@
           </b-button>
         </div>
       </div>
-      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
+      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>
+        <p v-html="this.chartProp.subtitle"></p>
+      </b-modal>
       <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>
     </div>
   </div>

@@ -5,7 +5,7 @@
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
           <info-icon></info-icon>
         </b-link>
-        <span class="vis-title">{{ chartProp.title }}</span>
+        <span class="vis-title">{{ chartProp.mapTitle }}</span>
         <div class="actions ml-auto">
           <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
@@ -21,7 +21,7 @@
           </b-button>
         </div>
       </div>
-      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
+      <b-modal :id="chartInfoModal.id" :title="this.chartProp.mapTitle" ok-only scrollable>{{this.chartProp.mapSubtitle}}</b-modal>
       <choroplethMap
         v-for="(element, index) in maps"
         v-bind:key="element.id"

@@ -130,16 +130,16 @@ export const state = {
       desc: 'The Austrian Media Corpus (amc), created as part of a cooperation between the Austrian Academy of Sciences and the Austrian Press Agency (APA), covers the entire Austrian media landscape of the past decades, comprising a wide range of text types which can be classified as journalistic prose. Altogether, the corpus contains 40 million texts, constituting more than 10 billion tokens. In comparison to other contemporary German language corpora, the amc ranks among the largest collection of its kind.',
     },
     docsYears: {
-      title: 'Yearly Docs Size',
-      subtitle: 'Absolute number of occurences (hits) of a given query in years',
-      yAxisText: 'Number of Docs',
+      title: 'Number of Documents per Year',
+      subtitle: 'This chart displays the yearly distribution of documents in the selected corpus.',
+      yAxisText: 'Number of Documents',
       data: [],
       pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
     },
     docsRegions: {
-      title: 'Regions Document Size',
-      subtitle: '',
-      yAxisText: 'Docs',
+      title: 'Number of Documents per Region',
+      subtitle: 'This chart displays the regional distribution of documents in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
+      yAxisText: 'Number of Documents',
       categoriesX: [
         'AT-Nationwide',
         'AT-Ost',
@@ -151,26 +151,30 @@ export const state = {
       series: [],
     },
     docsSources: {
-      title: 'Sources Sizes',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'Number of Documents per Media Source',
+      subtitle: 'This chart displays the distribution of documents in the selected corpus per media source.',
       data: [],
     },
     docsRessorts: {
-      title: 'Ressorts Sizes',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'Number of Documents per Newspaper Section',
+      subtitle: 'This chart displays the distribution of documents in the selected corpus per newspaper section / ressort.',
       data: [],
     },
     topLCs: {
-      title: 'Top LCs',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'The Most Frequent Word Forms',
+      subtitle: "This chart displays the most frequent word forms (case insensitive) in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
       legendEnabled: true,
       series: [],
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Ranking',
     },
     topLemmas: {
-      title: 'Top Lemmas',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'The Most Frequent Lemmas',
+      subtitle: "This chart displays the most frequent lemmas in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
       legendEnabled: true,
       series: [],
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Ranking',
     },
   },
   chartData: {
@@ -191,8 +195,8 @@ export const state = {
       title: 'Discourse Analysis',
     },
     querySummary: {
-      title: 'Total Frequency',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'Total Absolute Frequency and Word Forms',
+      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
       yAxisText: 'Number of Hits',
       xAxisType: 'category',
       legendEnabled: false,
@@ -200,8 +204,8 @@ export const state = {
     },
     queryRelSummary: {
       title: 'Total Relative Frequency',
-      subtitle: 'Total normalised frequency (per million tokens) of a given query',
-      yAxisText: 'Per million tokens',
+      subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
+      yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
       legendEnabled: false,
       series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
@@ -212,20 +216,18 @@ export const state = {
       data: [],
     },
     wordTree: {
-      title: 'Total Frequency',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
       charts: [],
     },
     absolute: {
       title: 'Yearly Absolute Frequency',
-      subtitle: 'Absolute number of occurences (hits) of a given query in years',
+      subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
       yAxisText: 'Number of Hits',
       data: [],
       pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
     },
     relative: {
       title: 'Yearly Relative Frequency (%)',
-      subtitle: 'Relative comparison to the baseline (100%) for the query in years',
+      subtitle: 'Relative comparison to the baseline (100%) for the query in years is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Relative Frequency (%)',
       data: [],
       pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
@@ -247,7 +249,8 @@ export const state = {
       }],
     },
     sources: {
-      title: 'Sources',
+      title: 'Distribution of Media Sources',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) abd relative comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
       plotLinesX: [{
@@ -270,7 +273,8 @@ export const state = {
       series: [],
     },
     sections: {
-      title: 'Newspaper Sections',
+      title: 'Distribution of Newspaper Sections',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) abd relative comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
       plotLinesX: [{
@@ -296,8 +300,10 @@ export const state = {
       clouds: [],
     },
     regions: {
-      title: 'Regional Relative Frequency',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      mapTitle: 'Regional Relative Frequency (%)',
+      mapSubtitle: 'Relative comparison to the baseline (100%) for the query in regions is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      title: 'Regional Absolute Frequency',
+      subtitle: 'This chart displays the absolute number of occurences (hits) of a given query per regions in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
       yAxisText: 'Number of Hits',
       height: 480,
       legendEnabled: true,
@@ -498,7 +504,7 @@ export const mutations = {
         data.push({ name: items[i].str, weight: items[i].Stats[0].s });
       }
     }
-    state.chartData.collocations.clouds.push({ cloudData: { data, title: `Collocations Wordcloud: ${payload.term}`, subtitle: 'Content' } });
+    state.chartData.collocations.clouds.push({ cloudData: { data, title: `Collocations Wordcloud: ${payload.term}`, subtitle: 'This word cloud displays the highest ranking collocations of this query sorted by the logDice score.' } });
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
@@ -595,6 +601,8 @@ export const mutations = {
   processWordTree(state, payload) {
     const chart = {
       chartData: {
+        title: 'The Most Frequent Multilevel Combinations',
+        subtitle: 'This chart displays the most frequent multilevel combinations for the given query. From the node in the center one level left and one level right combinations are queried.',
         data: [],
         nodes: [],
       },
