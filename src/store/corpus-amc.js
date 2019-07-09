@@ -211,8 +211,8 @@ export const state = {
       series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
     },
     wordFreqSummary: {
-      title: 'Total Frequency',
-      subtitle: 'Total absolute number of occurences (hits) of a given query',
+      title: 'Total Absolute Frequency and Word Forms',
+      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
       data: [],
     },
     wordTree: {
@@ -250,7 +250,7 @@ export const state = {
     },
     sources: {
       title: 'Distribution of Media Sources',
-      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) abd relative comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
       plotLinesX: [{
@@ -274,7 +274,7 @@ export const state = {
     },
     sections: {
       title: 'Distribution of Newspaper Sections',
-      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) abd relative comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
       plotLinesX: [{

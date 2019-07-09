@@ -121,7 +121,7 @@ export default {
         },
         tooltip: {
           pointFormat:
-            '<span><b>{point.source}</b></span>: {point.x}, {point.y}<br/>',
+            '<span><b>{point.source}</b></span>:<br/>Relative freq: {point.x}%<br/> Absolute freq:: {point.y}<br/> Partition size: {point.z}<br/>',
           shared: true
         },
         series: this.chartProp.series,

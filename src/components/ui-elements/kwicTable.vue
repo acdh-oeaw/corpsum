@@ -195,7 +195,7 @@
         },
         subcorpusModal: {
           id: 'create-subcorpus-modal',
-          title: '',
+          title: 'Create a subcorpus',
           content: ''
         },
         totalVisibleRows: this.chartProp.items.length,
