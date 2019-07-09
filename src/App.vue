@@ -27,11 +27,11 @@ export default {
       steps: [
         {
           target: '.v-step-0',
-          content: `Using this search bar you can make queries in the corpus. Type your query and hit enter to search.`
+          content: `Using this search bar you can make queries in the corpus by typing your query and hitting enter to search.`
         },
         {
           target: '.query-type-selector',
-          content: `The selected query type will be applied to your search. Click this selector to see the descriptions of different type of queries.`
+          content: `The selected query type will be applied to your search. You can click this selector to see the descriptions of different type of queries.`
         },
         {
           target: '.sidebar-sticky',
@@ -49,21 +49,21 @@ export default {
         },
         {
           target: '.feather-list',
-          content: `Click this button to see the data behind the chart as a table.`,
+          content: `You can click this button to see the data behind the chart as a table.`,
           params: {
             enableScrolling: false
           }
         },
         {
           target: '.feather-download',
-          content: `Click this button to download the data as CSV.`,
+          content: `You can click this button to download the data as CSV.`,
           params: {
             enableScrolling: false
           }
         },
         {
           target: '.feather-image',
-          content: `Click this button to download the chart as an SVG.`,
+          content: `You can click this button to download the chart as an SVG.`,
           params: {
             enableScrolling: false
           }
