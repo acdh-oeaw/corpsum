@@ -3,10 +3,11 @@
     <div class="container-fluid">
       <div class="row">
         <sideNav/>
-        <topNav v-bind:tags="tags"/>
+        <topNav v-bind:tags="tags" class="v-step-0"/>
         <router-view name="Content"></router-view>
       </div>
     </div>
+    <v-tour name="myTour" :steps="steps"></v-tour>
   </div>
 </template>
 
@@ -22,13 +23,60 @@ export default {
   },
   mixins: [],
   data() {
-    return {}
+    return {
+      steps: [
+        {
+          target: '.v-step-0',
+          content: `Using this search bar you can make queries in the corpus. Type your query and hit enter to search.`
+        },
+        {
+          target: '.query-type-selector',
+          content: `The selected query type will be applied to your search. Click this selector to see the descriptions of different type of queries.`
+        },
+        {
+          target: '.sidebar-sticky',
+          content: `Using selectors on this sidebar you can select your active corpus and subcorpus. You can also switch between different pages such as Corpus Info and Corpus Analysis.`,
+          params: {
+            placement: 'left-start'
+          }
+        },
+        {
+          target: '.feather-info',
+          content: `If you want to more know about a component click this info button to open the information window.`,
+          params: {
+            enableScrolling: false
+          }
+        },
+        {
+          target: '.feather-list',
+          content: `Click this button to see the data behind the chart as a table.`,
+          params: {
+            enableScrolling: false
+          }
+        },
+        {
+          target: '.feather-download',
+          content: `Click this button to download the data as CSV.`,
+          params: {
+            enableScrolling: false
+          }
+        },
+        {
+          target: '.feather-image',
+          content: `Click this button to download the chart as an SVG.`,
+          params: {
+            enableScrolling: false
+          }
+        },
+      ]
+    }
   },
   created() {
   },
   mounted() {
     this.$store.dispatch('getSubcorporaList');
     this.$store.dispatch('queryCorpusInfo');
+    this.$tours['myTour'].start()
   },
   computed: {
     tags() {
@@ -210,6 +258,17 @@ main, .navbar {
 
 .vis-separator {
   padding: .5rem !important;
+}
+
+.v-step {
+  z-index: 9999;
+  font-size: 1.2rem;
+  background-color: #ce890c !important;
+}
+
+.v-step {
+  z-index: 9999;
+  font-size: 1.2rem;
 }
 
 </style>

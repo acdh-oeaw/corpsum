@@ -406,7 +406,7 @@ export const mutations = {
   },*/
   changeLoadingStatus(state, payload) {
     state.loadingStatus = payload.status;
-    if (payload.status === false) {
+    if (payload.status === false && payload.type !== 'intro') {
       state.toggleIntroSection = false;
       state.toggleVisSection = true;
     }
@@ -717,6 +717,7 @@ export const mutations = {
         id: items[i].str,
         name: items[i].str,
         value: items[i].freq,
+        sortIndex: i,
       });
     }
   },
@@ -727,6 +728,7 @@ export const mutations = {
         id: items[i].str,
         name: items[i].str,
         value: items[i].freq,
+        sortIndex: i,
       });
     }
   },
@@ -734,7 +736,8 @@ export const mutations = {
     const items = payload.result.Items;
     const zipfCurve = {
       type: 'line',
-      name: 'zipfCurve',
+      name: "Zipf's curve",
+      color: 'rgba(78, 121, 167, 0.5)',
       marker: false,
       data: [],
     };
@@ -742,7 +745,7 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       state.infoData.topLCs.series.push({
         name: items[i].str,
-        color: '#4e79a7',
+        color: 'rgba(78, 121, 167, 0.75)',
         data: [[i, items[i].freq]],
         showInLegend: false,
       });
@@ -754,7 +757,8 @@ export const mutations = {
     const items = payload.result.Items;
     const zipfCurve = {
       type: 'line',
-      name: 'zipfCurve',
+      name: "Zipf's curve",
+      color: 'rgba(78, 121, 167, 0.5)',
       marker: false,
       data: [],
     };
@@ -762,7 +766,7 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       state.infoData.topLemmas.series.push({
         name: items[i].str,
-        color: '#4e79a7',
+        color: 'rgba(78, 121, 167, 0.75)',
         data: [[i, items[i].freq]],
         showInLegend: false,
       });
@@ -860,7 +864,7 @@ export const actions = {
   },
   async queryCorpusInfo({ state, commit, dispatch }) {
     try {
-      commit('changeLoadingStatus', { status: true });
+      commit('changeLoadingStatus', { status: true, type: 'intro' });
       const requestURIs = {};
       requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
@@ -877,7 +881,7 @@ export const actions = {
       responses.topLCs = await axios.get(requestURIs.topLCs);
       responses.topLemmas = await axios.get(requestURIs.topLemmas);
 
-      commit('changeLoadingStatus', { status: false });
+      commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
       commit('processDocsRegions', { result: responses.docsRegions.data });
       commit('processDocsSources', { result: responses.docsSources.data });

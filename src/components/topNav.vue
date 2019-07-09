@@ -2,7 +2,7 @@
   <nav class="navbar navbar-dark fixed-top flex-md-nowrap shadow ml-auto px-2">
     <search-icon class="topnav-search-icon" @click="$bvModal.show(chartInfoModal.id)" v-b-tooltip.hover title="See query examples"></search-icon>
     <multiselect
-      class="ml-2"
+      class="ml-2 query-type-selector"
       v-model="queryAttribute"
       :options="queryAttributeOptions"
       :searchable="false"

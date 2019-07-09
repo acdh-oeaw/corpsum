@@ -13,6 +13,7 @@ import sankey from 'highcharts/modules/sankey';
 import mapInit from 'highcharts/modules/map';
 import TextHighlight from 'vue-text-highlight';
 import Multiselect from 'vue-multiselect';
+import VueTour from 'vue-tour'
 import mapAustria from './mapAustria';
 
 import './scss/bootstrap.scss';
@@ -41,6 +42,10 @@ Highcharts.setOptions({
 Highcharts.setOptions({
   credits: false,
 });
+
+require('vue-tour/dist/vue-tour.css');
+
+Vue.use(VueTour);
 
 Vue.use(HighchartsVue);
 
