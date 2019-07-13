@@ -32,11 +32,6 @@ export const state = {
   },
   chartElements: [
     {
-      component: 'multiSankey',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'wordTree',
-    },
-    {
       component: 'barChart',
       class: 'col-md-4 vis-component',
       chartProp: 'queryRelSummary',
@@ -47,14 +42,24 @@ export const state = {
       chartProp: 'wordFreqSummary',
     },
     {
-      component: 'lineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'absolute',
+      component: 'multiSankey',
+      class: 'container-fluid p-0 d-flex',
+      chartProp: 'wordTree',
+    },
+    {
+      component: 'kwicTable',
+      class: 'col-md-12 vis-component',
+      chartProp: 'kwic',
     },
     {
       component: 'lineChart',
       class: 'col-md-6 vis-component',
       chartProp: 'relative',
+    },
+    {
+      component: 'lineChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'absolute',
     },
     {
       component: 'multiMap',
@@ -65,11 +70,6 @@ export const state = {
       component: 'barChart',
       class: 'col-md-6 vis-component',
       chartProp: 'regions',
-    },
-    {
-      component: 'kwicTable',
-      class: 'col-md-12 vis-component',
-      chartProp: 'kwic',
     },
     {
       component: 'bubbleChart',
@@ -346,7 +346,7 @@ export const state = {
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '120px' }, class: '' },
+        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '120px' }, class: 'annotations' },
       ],
       height: 600,
     },
@@ -610,41 +610,37 @@ export const mutations = {
       },
     };
     const items = payload.result.Blocks[0].Items;
-    let max;
-    if (items.length < 10) {
-      max = items.length;
-    } else {
-      max = 10;
-    }
     let nodeID = 0;
-    for (let i = 0; i < max; i += 1) {
-      chart.chartData.nodes.push({
-        id: nodeID,
-        name: items[i].Word[0].n,
-        pos: 0,
-      });
-      const centerNodeID = getObjectKey(chart.chartData.nodes, items[i].Word[1].n, 'name') || nodeID + 1;
-      chart.chartData.nodes.push({
-        id: centerNodeID,
-        name: items[i].Word[1].n,
-        pos: 1,
-      });
-      chart.chartData.nodes.push({
-        id: nodeID + 2,
-        name: items[i].Word[2].n,
-        pos: 2,
-      });
-      chart.chartData.data.push({
-        from: nodeID,
-        to: centerNodeID,
-        weight: items[i].freq,
-      });
-      chart.chartData.data.push({
-        from: centerNodeID,
-        to: nodeID + 2,
-        weight: items[i].freq,
-      });
-      nodeID += 3;
+    for (let i = 0; (i < items.length) && (chart.chartData.data.length < 20); i += 1) {
+      if (items[i] && !items[i].Word[0].n.match(/[^A-zÀ-ú\s]/gi) && !items[i].Word[2].n.match(/[^A-zÀ-ú\s]/gi)) {
+        chart.chartData.nodes.push({
+          id: nodeID,
+          name: items[i].Word[0].n,
+          pos: 0,
+        });
+        const centerNodeID = getObjectKey(chart.chartData.nodes, items[i].Word[1].n, 'name') || nodeID + 1;
+        chart.chartData.nodes.push({
+          id: centerNodeID,
+          name: items[i].Word[1].n,
+          pos: 1,
+        });
+        chart.chartData.nodes.push({
+          id: nodeID + 2,
+          name: items[i].Word[2].n,
+          pos: 2,
+        });
+        chart.chartData.data.push({
+          from: nodeID,
+          to: centerNodeID,
+          weight: items[i].freq,
+        });
+        chart.chartData.data.push({
+          from: centerNodeID,
+          to: nodeID + 2,
+          weight: items[i].freq,
+        });
+        nodeID += 3;
+      }
     }
     state.chartData.wordTree.charts.push(chart);
   },
@@ -828,6 +824,7 @@ export const actions = {
       responses.collxURI = await axios.get(requestURIs.collxURI);
 
       // KWIC Annotation
+      /*
       const items = responses.viewattrsxURI.data.Lines;
       const kwicIDs = [];
       for (let i = 0; i < items.length; i += 1) {
@@ -836,6 +833,7 @@ export const actions = {
       const annoReqData = { ids: kwicIDs };
       const annoResponse = await axios.post('https://basex-dev.hephaistos.arz.oeaw.ac.at/skeAnn/1/MARA/annotations/get-by-ske-object-id', annoReqData);
       console.log(annoResponse);
+      */
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });

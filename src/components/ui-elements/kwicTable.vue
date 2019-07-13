@@ -84,7 +84,6 @@
           small
           striped
           bordered
-          responsive
           stacked="md"
           class="text-nowrap"
           :items="items"
@@ -365,7 +364,8 @@
 <style lang="scss">
 .kwic-table {
   overflow-y: auto;
-  max-height: 500px;
+  overflow-x: hidden;
+  max-height: 540px;
 }
 .kw-highlight {
   background-color: #ffd600;

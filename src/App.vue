@@ -131,6 +131,10 @@ body {
     display: none;
   }
 
+  .highcharts-data-label * {
+    font-size: 12px;
+  }
+
 }
 
 .bg-series-color-0 {
@@ -263,6 +267,68 @@ main, .navbar {
 .v-step {
   z-index: 9999;
   font-size: 1.2rem;
+}
+
+.kwic-table {
+
+  td.annotations {
+    padding: 0.15rem;
+
+    .multiselect {
+      min-height: auto;
+    }
+
+    .multiselect__select {
+      height: 27px;
+      width: 22px;
+    }
+
+    .multiselect__tags {
+      min-height: auto;
+      padding: 0px 16px 0 4px;
+      height: 26px;
+    }
+
+    .multiselect__tag {
+      margin-bottom: 0;
+      margin-right: 3px;
+      margin-top: 3px;
+      padding: 2px 16px 3px 5px;
+      font-size: 12px;
+    }
+
+    .multiselect__tag-icon {
+      width: 17px;
+      line-height: 16px;
+    }
+
+    .multiselect__placeholder {
+      margin-bottom: -1px;
+      font-size: 12px;
+    }
+
+    .multiselect__input {
+      font-size: 12px;
+      padding: 0;
+    }
+
+    .multiselect__content-wrapper {
+      font-size: 12px;
+    }
+
+    .multiselect__option {
+      min-height: auto;
+      padding: 6px;
+    }
+
+    .multiselect__option:after {
+      font-size: 12px;
+      padding: 6px 3px;
+      line-height: 12px;
+    }
+
+  }
+
 }
 
 </style>
