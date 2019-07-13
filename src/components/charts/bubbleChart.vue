@@ -63,6 +63,9 @@ export default {
           spacingTop: 20,
           spacingLeft: 10,
           spacingRight: 20,
+          style: {
+            cursor: 'crosshair'
+          },
         },
         title: false,
         xAxis: {

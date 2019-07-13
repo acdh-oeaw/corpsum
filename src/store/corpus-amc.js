@@ -346,6 +346,7 @@ export const state = {
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
+        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '120px' }, class: '' },
       ],
       height: 600,
     },
@@ -586,6 +587,7 @@ export const mutations = {
           left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
           word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
           right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+          annotation: [],
           docid: items[i].Tbl_refs[0],
           topic: items[i].Tbl_refs[3],
           toknum: items[i].toknum,
@@ -824,6 +826,16 @@ export const actions = {
       responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
       responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
       responses.collxURI = await axios.get(requestURIs.collxURI);
+
+      // KWIC Annotation
+      const items = responses.viewattrsxURI.data.Lines;
+      const kwicIDs = [];
+      for (let i = 0; i < items.length; i += 1) {
+        kwicIDs.push(items[i].Tbl_refs[0]);
+      }
+      const annoReqData = { ids: kwicIDs };
+      const annoResponse = await axios.post('https://basex-dev.hephaistos.arz.oeaw.ac.at/skeAnn/1/MARA/annotations/get-by-ske-object-id', annoReqData);
+      console.log(annoResponse);
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });

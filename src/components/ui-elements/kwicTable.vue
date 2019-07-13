@@ -84,7 +84,9 @@
           small
           striped
           bordered
+          responsive
           stacked="md"
+          class="text-nowrap"
           :items="items"
           :fields="fields"
           :current-page="currentPage"
@@ -119,6 +121,18 @@
               </ul>
             </b-card>
           </template>
+
+          <template slot="annotation" slot-scope="row">
+            <multiselect
+              v-model="row.item.annotation"
+              tag-placeholder="Add annotation"
+              placeholder="Add annotation"
+              :options="annotationOptions"
+              :multiple="true"
+              @tag="addTag"
+            />
+          </template>
+
         </b-table>
 
       </div>
@@ -177,6 +191,7 @@
     data() {
       return {
         selectedDocs: [],
+        annotationOptions: ['A', 'B', 'C'],
         items: this.chartProp.items,
         fields: this.chartProp.fields,
         height: this.chartProp.height + 'px',
