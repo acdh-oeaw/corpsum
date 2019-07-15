@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-dark fixed-top flex-md-nowrap shadow ml-auto px-2">
+  <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
     <search-icon class="topnav-search-icon" @click="$bvModal.show(chartInfoModal.id)" v-b-tooltip.hover title="See query examples"></search-icon>
     <multiselect
       class="ml-2 query-type-selector"
@@ -35,6 +35,15 @@
         </b-link>
       </li>
     </ul> -->
+
+    <nav class="p-0 navbar-light navbar-expand">
+      <b-navbar-nav>
+        <b-nav-item-dropdown text="MARA" right>
+          <b-dropdown-item href="#">Profile</b-dropdown-item>
+          <b-dropdown-item href="#">Logout</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </nav>
 
     <div class="topnav-spinner text-center" v-show="loadingStatus">
       <span>Querying the corpus, please wait.</span>
