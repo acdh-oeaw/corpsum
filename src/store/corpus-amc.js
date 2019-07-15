@@ -830,10 +830,13 @@ export const actions = {
       for (let i = 0; i < items.length; i += 1) {
         kwicIDs.push(items[i].Tbl_refs[0]);
       }
-      const annoReqData = { ids: kwicIDs };
-      const annoResponse = await axios.post('https://basex-dev.hephaistos.arz.oeaw.ac.at/skeAnn/1/MARA/annotations/get-by-ske-object-id', annoReqData);
+      const annoReqData = { ids: kwicIDs };*/
+
+      const annoReqData = {
+        "ids": ["APA_20040301_APA0284", "KRONE_200109010319550312", "KURIER_200306011635470071"]
+      };
+      const annoResponse = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations/get-by-ske-object-id', annoReqData);
       console.log(annoResponse);
-      */
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
