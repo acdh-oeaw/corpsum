@@ -56,11 +56,12 @@ import treemapChart from '@/components/charts/treemapChart.vue'
 import bubbleChart from '@/components/charts/bubbleChart.vue'
 import scatterChart from '@/components/charts/scatterChart.vue'
 import multiSankey from '@/components/charts/multiSankey.vue'
+import basicTable from '@/components/ui-elements/basicTable.vue'
 
 export default {
   name: 'info',
   components: {
-    corpusInfoJumbotron, areaChart, lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, scatterChart, bubbleChart, multiSankey
+    corpusInfoJumbotron, areaChart, lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, scatterChart, bubbleChart, multiSankey, basicTable
   },
   data() {
     return {

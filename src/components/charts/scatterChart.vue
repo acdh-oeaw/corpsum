@@ -63,6 +63,7 @@ export default {
           spacingTop: 20,
           spacingLeft: 10,
           spacingRight: 20,
+          height: this.chartProp.height
         },
         title: false,
         xAxis: {

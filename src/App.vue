@@ -235,6 +235,7 @@ main, .navbar {
     padding: 0.5rem;
     background-color: #f0f7fd;
     align-items: center;
+    min-height: 43px;
 
     .vis-title {
       font-weight: 500;
@@ -242,6 +243,12 @@ main, .navbar {
 
   }
 
+}
+
+.no-min-height {
+  .vis-component-inner {
+    min-height: auto;
+  }
 }
 
 .vis-intro-component {

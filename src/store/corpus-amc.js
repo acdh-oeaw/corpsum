@@ -104,6 +104,16 @@ export const state = {
       chartProp: 'docsRegions',
     },
     {
+      component: 'basicTable',
+      class: 'col-md-6 vis-component no-min-height',
+      chartProp: 'corpInfoTable',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component no-min-height',
+      chartProp: 'topLemmas',
+    },
+    {
       component: 'treemapChart',
       class: 'col-md-6 vis-component',
       chartProp: 'docsSources',
@@ -113,16 +123,12 @@ export const state = {
       class: 'col-md-6 vis-component',
       chartProp: 'docsRessorts',
     },
+    /*
     {
       component: 'scatterChart',
       class: 'col-md-6 vis-component',
       chartProp: 'topLCs',
-    },
-    {
-      component: 'scatterChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'topLemmas',
-    },
+    },*/
   ],
   infoData: {
     corpusBasicInfo: {
@@ -150,6 +156,25 @@ export const state = {
       ],
       series: [],
     },
+    corpInfoTable: {
+      title: 'Unit Sizes of the Corpus',
+      subtitle: 'An annotated text corpus consists of structured elements such as documents, paragraphs, sentences, words and tokens. Tokens are the smallest units, which are symbols, numbers and lemmas. The size of a corpus is generally described by its total count of tokens and documents.',
+      items: [],
+      fields: [
+        { key: 'unit', label: 'Unit', sortable: true },
+        { key: 'count', label: 'Count', sortable: true },
+      ],
+      height: 360,
+    },
+    topLemmas: {
+      title: 'The Most Frequent Lemmas',
+      subtitle: "This chart displays the most frequent lemmas in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
+      legendEnabled: true,
+      series: [],
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Ranking',
+      height: 315,
+    },
     docsSources: {
       title: 'Number of Documents per Media Source',
       subtitle: 'This chart displays the distribution of documents in the selected corpus per media source.',
@@ -160,6 +185,7 @@ export const state = {
       subtitle: 'This chart displays the distribution of documents in the selected corpus per newspaper section / ressort.',
       data: [],
     },
+    /*
     topLCs: {
       title: 'The Most Frequent Word Forms',
       subtitle: "This chart displays the most frequent word forms (case insensitive) in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
@@ -167,15 +193,7 @@ export const state = {
       series: [],
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Ranking',
-    },
-    topLemmas: {
-      title: 'The Most Frequent Lemmas',
-      subtitle: "This chart displays the most frequent lemmas in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
-      legendEnabled: true,
-      series: [],
-      yAxisText: 'Absolute Frequency',
-      xAxisText: 'Ranking',
-    },
+    },*/
   },
   chartData: {
     queryTerms: [],
@@ -347,7 +365,7 @@ export const state = {
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },
+        /*{ key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },*/
       ],
       height: 600,
     },
@@ -577,6 +595,16 @@ export const mutations = {
     }
     state.chartData.narrative.categories.push(payload.term);
   },
+  processCorpInfo(state, payload) {
+    const items = payload.result.sizes;
+    state.infoData.corpInfoTable.items.push(
+      { unit: 'Documents', count: items.doccount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+      { unit: 'Paragraphs', count: items.parcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+      { unit: 'Sentences', count: items.sentcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+      { unit: 'Words', count: items.wordcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+      { unit: 'Tokens', count: items.tokencount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+    );
+  },
   processKWIC(state, payload) {
     const items = payload.result.Lines;
     const annotations = payload.annotations;
@@ -761,6 +789,7 @@ export const mutations = {
       color: 'rgba(78, 121, 167, 0.5)',
       marker: false,
       data: [],
+      visible: false,
     };
     const maxVal = items[0].freq;
     for (let i = 0; i < items.length; i += 1) {
@@ -782,6 +811,7 @@ export const mutations = {
       color: 'rgba(78, 121, 167, 0.5)',
       marker: false,
       data: [],
+      visible: false,
     };
     const maxVal = items[0].freq;
     for (let i = 0; i < items.length; i += 1) {
@@ -926,7 +956,8 @@ export const actions = {
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=amc3_demo&format=json`;
       requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};
@@ -934,7 +965,8 @@ export const actions = {
       responses.docsRegions = await axios.get(requestURIs.docsRegions);
       responses.docsSources = await axios.get(requestURIs.docsSources);
       responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
-      responses.topLCs = await axios.get(requestURIs.topLCs);
+      // responses.topLCs = await axios.get(requestURIs.topLCs);
+      responses.corpInfo = await axios.get(requestURIs.corpInfo);
       responses.topLemmas = await axios.get(requestURIs.topLemmas);
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
@@ -942,7 +974,8 @@ export const actions = {
       commit('processDocsRegions', { result: responses.docsRegions.data });
       commit('processDocsSources', { result: responses.docsSources.data });
       commit('processDocsRessorts', { result: responses.docsRessorts.data });
-      commit('processTopLCs', { result: responses.topLCs.data });
+      // commit('processTopLCs', { result: responses.topLCs.data });
+      commit('processCorpInfo', { result: responses.corpInfo.data });
       commit('processTopLemmas', { result: responses.topLemmas.data });
     } catch (error) {
       console.log(error);
