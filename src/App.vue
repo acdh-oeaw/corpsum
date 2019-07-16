@@ -7,7 +7,7 @@
         <router-view name="Content"></router-view>
       </div>
     </div>
-    <v-tour name="myTour" :steps="steps"></v-tour>
+    <v-tour name="myTour" :steps="steps" :callbacks="tourCallbacks"></v-tour>
   </div>
 </template>
 
@@ -24,6 +24,9 @@ export default {
   mixins: [],
   data() {
     return {
+      tourCallbacks: {
+        onStop: this.onTourComplete,
+      },
       steps: [
         {
           target: '.v-step-0',
@@ -76,7 +79,9 @@ export default {
   mounted() {
     this.$store.dispatch('getSubcorporaList');
     this.$store.dispatch('queryCorpusInfo');
-    this.$tours['myTour'].start()
+    if (!localStorage.tourCompleted) {
+      this.$tours['myTour'].start()
+    }
   },
   computed: {
     tags() {
@@ -86,6 +91,9 @@ export default {
   watch: {
   },
   methods: {
+    onTourComplete() {
+      localStorage.tourCompleted = true;
+    }
   },
 };
 </script>

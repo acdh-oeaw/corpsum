@@ -35,9 +35,20 @@
         </b-link>
       </li>
     </ul> -->
-
     <nav class="p-0 navbar-light navbar-expand">
       <b-navbar-nav>
+        <b-nav-item-dropdown>
+          <template slot="button-content">
+            <help-circle-icon></help-circle-icon>
+          </template>
+          <b-dropdown-item href="#" @click="restartTour">Show Guide</b-dropdown-item>
+          <b-dropdown-item href="#">Give Feedback</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item class="text-nowrap">
+          <b-link href="https://github.com/asilcetin/corpsum">
+            <github-icon></github-icon>
+          </b-link>
+        </b-nav-item>
         <b-nav-item-dropdown text="MARA" right>
           <b-dropdown-item href="#">Profile</b-dropdown-item>
           <b-dropdown-item href="#">Logout</b-dropdown-item>
@@ -59,6 +70,7 @@
 import VueTagsInput from '@johmun/vue-tags-input';
 import { SearchIcon } from 'vue-feather-icons'
 import { GithubIcon } from 'vue-feather-icons'
+import { HelpCircleIcon } from 'vue-feather-icons'
 
 export default {
   name: 'topNav',
@@ -66,7 +78,7 @@ export default {
     tags: Array
   },
   components: {
-    VueTagsInput, SearchIcon, GithubIcon
+    VueTagsInput, SearchIcon, GithubIcon, HelpCircleIcon
   },
   data() {
     return {
@@ -90,6 +102,9 @@ export default {
   computed: {
   },
   methods: {
+    restartTour() {
+      this.$tours['myTour'].start()
+    },
     tagAdded(val) {
       this.tag = '';
       switch (this.queryAttribute.value) {
