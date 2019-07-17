@@ -957,7 +957,7 @@ export const actions = {
       requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
-      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=amc3_demo&format=json`;
+      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.corpusName}&format=json`;
       requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};

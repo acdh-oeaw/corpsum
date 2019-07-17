@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
-    <search-icon class="topnav-search-icon" @click="$bvModal.show(chartInfoModal.id)" v-b-tooltip.hover title="See query examples"></search-icon>
+
     <multiselect
       class="ml-2 query-type-selector"
       v-model="queryAttribute"
@@ -12,15 +12,19 @@
       track-by="name"
       label="name" 
       placeholder="Query attribute"
+      @close="moveFocusToInput"
     >
       <template slot="option" slot-scope="{ option }">
         {{ option.name }} <span class="ml-auto">{{ option.desc }}</span>
       </template>
     </multiselect>
 
-    <vue-tags-input element-id="queryTerms" class="w-100"
+<!--     <search-icon class="topnav-search-icon" @click="startQueryOnClick" v-b-tooltip.hover title="Type your query and click to search"></search-icon> -->
+
+    <vue-tags-input element-id="queryTerms" class="mr-auto"
       v-model="tag"
       :tags="tags"
+      ref="searchInput"
       placeholder="Type a keyword or query and hit enter"
       :add-from-paste="false"
       :add-on-blur="false"
@@ -102,8 +106,16 @@ export default {
   computed: {
   },
   methods: {
+    moveFocusToInput() {
+      this.$refs.searchInput.$el.querySelector('.ti-new-tag-input').focus();
+    },
     restartTour() {
       this.$tours['myTour'].start()
+    },
+    startQueryOnClick() {
+      // this.tagAdded(tag)
+      console.log(this.$refs.searchInput)
+      this.$refs.searchInput.performAddTags(this.tag);
     },
     tagAdded(val) {
       this.tag = '';
@@ -231,6 +243,15 @@ export default {
 
   }
 
+}
+
+.ti-new-tag-input-wrapper {
+  padding: 0 5px !important;
+}
+
+.ti-new-tag-input.ti-valid {
+  border-bottom: 1px solid #3d97bd42 !important;
+  min-width: 260px !important;
 }
 
 .navbar .form-control {
