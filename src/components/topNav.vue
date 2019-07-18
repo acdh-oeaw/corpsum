@@ -53,7 +53,7 @@
             <github-icon></github-icon>
           </b-link>
         </b-nav-item>
-        <b-nav-item-dropdown text="MARA" right>
+        <b-nav-item-dropdown text="Demo User" right>
           <b-dropdown-item href="#">Profile</b-dropdown-item>
           <b-dropdown-item href="#">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
