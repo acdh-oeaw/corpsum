@@ -25,40 +25,12 @@
       v-model="tag"
       :tags="tags"
       ref="searchInput"
-      placeholder="Type a keyword or query and hit enter"
+      placeholder="Type your query and hit enter"
       :add-from-paste="false"
       :add-on-blur="false"
       :max-tags="6"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
-    
-<!--     <ul class="navbar-nav px-3 topbar-rightnav">
-      <li class="nav-item text-nowrap">
-        <b-link href="https://github.com/asilcetin/corpsum">
-          <github-icon></github-icon>
-        </b-link>
-      </li>
-    </ul> -->
-    <nav class="p-0 navbar-light navbar-expand">
-      <b-navbar-nav>
-        <b-nav-item-dropdown>
-          <template slot="button-content">
-            <help-circle-icon></help-circle-icon>
-          </template>
-          <b-dropdown-item href="#" @click="restartTour">Show Guide</b-dropdown-item>
-          <b-dropdown-item href="#">Give Feedback</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item class="text-nowrap">
-          <b-link href="https://github.com/asilcetin/corpsum">
-            <github-icon></github-icon>
-          </b-link>
-        </b-nav-item>
-        <b-nav-item-dropdown text="Demo User" right>
-          <b-dropdown-item href="#">Profile</b-dropdown-item>
-          <b-dropdown-item href="#">Logout</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </nav>
 
     <div class="topnav-spinner text-center" v-show="loadingStatus">
       <span>Querying the corpus, please wait.</span>
@@ -93,7 +65,7 @@ export default {
         title: 'Query Examples',
         content: 'Here are some examples',
       },
-      queryAttribute: { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
+      queryAttribute: { name: 'Custom query', value: 'custom', desc: 'Write your own query in CQL' },
       queryAttributeOptions: [
         { name: 'Custom query', value: 'custom', desc: 'Write your own query in CQL' },
         { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
@@ -183,11 +155,11 @@ export default {
 }
 
 .ti-new-tag-input-wrapper {
-  font-size: 1rem !important;
+  font-size: 0.85rem !important;
 }
 
 .ti-tag {
-  font-size: 1rem !important;
+  font-size: 0.7rem !important;
   background-color: #eff2f5 !important;
   -webkit-box-shadow: 1px 1px 0px 0px #afafafba;
   box-shadow: 1px 1px 0px 0px #afafafba;

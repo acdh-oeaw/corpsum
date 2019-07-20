@@ -9,9 +9,8 @@
                 <template slot="lead">
                   This dashboard allows you to analyze the results of your corpus queries in multiple dimensions and with visualization components.
                   <br/>
-                  You can start by typing your query in the above search bar or clicking the below button for some examples.
+                  You can start by typing your query in the above search bar.
                 </template>
-                <b-button variant="success" @click="exampleQuery()">Try Example Query</b-button>
               </b-jumbotron>
             </div>
           </div>
@@ -65,6 +64,7 @@ export default {
   },
   mounted() {
     console.log("mounted");
+    this.exampleQuery();
   },
   watch: {
   },
@@ -90,7 +90,7 @@ export default {
       this.$store.dispatch('corpusQuery', 'Ball');
     },
     exampleQuery() {
-      const queryTerms = [{"text":'[lc=".*leben.*"]',"tiClasses":["ti-valid"]},{"text":'[lc=".*arbeit.*"]',"tiClasses":["ti-valid"]}];
+      const queryTerms = [{"text":'[word="Robotik"] | [lc="künstlich.*"] [word="Intelligenz"] | [word="Artificial"] [word="Intelligence"] |  [word="Algorithmen"] | [word="Automatisierung"]',"tiClasses":["ti-valid"]}];
       for (let i = 0; i < queryTerms.length; i += 1) {
         this.$store.commit('queryTermAdded', queryTerms[i]);
         this.$store.dispatch('corpusQuery', queryTerms[i].text);

@@ -9,20 +9,6 @@
         </div>
 
         <div class="ml-3 mx-auto d-flex align-items-center">
-          <div class="mr-2">
-            <b-button
-              v-for="(element, index) in tags"
-              v-bind:key="element.id"
-              size="sm"
-              :class="`mr-2 bg-series-color-${index}`"
-              v-model="filter"
-              @click='filter = `${element.text}`'
-              style="border:0;"
-              v-b-tooltip.hover title="Filter results for this query"
-            >
-              {{ element.text }}
-            </b-button>
-          </div>
           <b-form-group class="mb-0">
             <b-input-group size="sm">
               <b-form-input v-model="filter" placeholder="Type to Filter"></b-form-input>
@@ -197,7 +183,7 @@
         fields: this.chartProp.fields,
         height: this.chartProp.height + 'px',
         currentPage: 1,
-        perPage: 15,
+        perPage: 20,
         pageOptions: [10, 15, 20],
         sortBy: null,
         sortDesc: false,
@@ -377,7 +363,7 @@
 .kwic-table {
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 540px;
+  max-height: 700px;
 }
 .kw-highlight {
   background-color: #ffd600;

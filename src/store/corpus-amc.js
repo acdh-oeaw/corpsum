@@ -16,7 +16,7 @@ function getObjectKey(object, value, property) {
 export const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
+  corpusName: 'mara001_1000', // amc3_demo, amc_50M, amc_60M, amc_3.1
   subcorpusName: 'none',
   subcorporaList: [
     { value: 'none', text: 'None' },
@@ -32,29 +32,14 @@ export const state = {
   },
   chartElements: [
     {
-      component: 'barChart',
-      class: 'col-md-4 vis-component',
-      chartProp: 'queryRelSummary',
-    },
-    {
-      component: 'treemapChart',
-      class: 'col-md-8 vis-component',
-      chartProp: 'wordFreqSummary',
-    },
-    {
-      component: 'multiSankey',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'wordTree',
-    },
-    {
       component: 'kwicTable',
       class: 'col-md-12 vis-component',
       chartProp: 'kwic',
     },
     {
-      component: 'lineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'relative',
+      component: 'treemapChart',
+      class: 'col-md-12 vis-component',
+      chartProp: 'wordFreqSummary',
     },
     {
       component: 'lineChart',
@@ -62,24 +47,9 @@ export const state = {
       chartProp: 'absolute',
     },
     {
-      component: 'multiMap',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
-      component: 'barChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
       component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sources',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sections',
     },
     {
       component: 'multiWordcloud',
@@ -361,13 +331,12 @@ export const state = {
         { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
         { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
         { key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' } },
-        { key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' } },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-        /*{ key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },*/
+        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },
       ],
-      height: 600,
+      height: 750,
     },
   },
 };
@@ -856,7 +825,7 @@ export const actions = {
       requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
       requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;format=json`;
+      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;pagesize=2000;newctxsize=30;format=json`;
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};

@@ -19,40 +19,10 @@
       </h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <router-link :to="{ name: 'info', params: { id: selectedProvider } }" class="nav-link active">
-            <hard-drive-icon></hard-drive-icon>
-            Corpus Info
-          </router-link>
-        </li>
-        <li class="nav-item">
           <router-link :to="{ name: 'analysis', params: { id: selectedProvider } }" class="nav-link">
             <activity-icon></activity-icon>
             Corpus Analysis
           </router-link>
-        </li>
-      </ul>
-
-      <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-3 mb-1">
-        <span>Settings:</span>
-      </h6>
-      <ul class="nav flex-column mb-2">
-        <li class="nav-item">
-          <b-link class="nav-link" href="" disabled>
-            <user-icon></user-icon>
-            Profile
-          </b-link>
-        </li>
-        <li class="nav-item">
-          <b-link class="nav-link" href="" disabled>
-            <settings-icon></settings-icon>
-            Settings
-          </b-link>
-        </li>
-        <li class="nav-item">
-          <b-link class="nav-link" href="" disabled>
-            <rotate-ccw-icon></rotate-ccw-icon>
-            History
-          </b-link>
         </li>
       </ul>
     </div>
@@ -72,12 +42,9 @@ export default {
       selectedProvider: this.$route.params.id,
       optionsProviders: [
         { value: 'acdh', text: 'ACDH - ÖAW' },
-        { value: 'rae', text: 'R.A.Espańola', disabled: true },
       ],
       optionsCorpora: [
-        { value: 'amc3_demo', text: 'AMC3 (demo)' },
-        { value: 'amc_60M', text: 'AMC3 (60M)' },
-        { value: 'amc_3.1', text: 'AMC3 (Full)' },
+        { value: 'mara001_1000', text: 'MARA 1000' },
       ],
     }
   },
