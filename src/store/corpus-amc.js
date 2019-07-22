@@ -330,13 +330,13 @@ export const state = {
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
         { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
         { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
-        { key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' } },
+        { key: 'source', label: 'Source', sortable: true },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-        { key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },
       ],
       height: 750,
+      annotationFields: [],
     },
   },
 };
@@ -577,37 +577,56 @@ export const mutations = {
   processKWIC(state, payload) {
     const items = payload.result.Lines;
     const annotations = payload.annotations;
-    const annotationClasses = payload.annotationClasses;
+    // const annotationClasses = payload.annotationClasses;
     for (let i = 0; i < items.length; i += 1) {
-      const docAnno = [];
+      // const docAnno = [];
+      const docRow = {
+        date: items[i].Tbl_refs[1],
+        source: items[i].Tbl_refs[4],
+        source_name: items[i].Tbl_refs[5],
+        region: items[i].Tbl_refs[2],
+        left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+        word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+        right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+        docid: items[i].Tbl_refs[0],
+        topic: items[i].Tbl_refs[3],
+        toknum: items[i].toknum,
+        selected: false,
+        queryTerm: payload.term,
+      };
+
       for (let j = 0; j < annotations.length; j += 1) {
+        if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
+          if (Array.isArray(docRow[annotations[j].annotationClass])) {
+            docRow[annotations[j].annotationClass].push({
+              title: annotations[j].content,
+              annoID: annotations[j].id,
+            });
+          } else {
+            docRow[annotations[j].annotationClass] = [{
+              title: annotations[j].content,
+              annoID: annotations[j].id,
+            }];
+          }
+        }
+      }
+/*       for (let j = 0; j < annotations.length; j += 1) {
         if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
           for (let k = 0; k < annotationClasses.length; k += 1) {
             if (annotations[j].annotationClass === annotationClasses[k].id) {
+              docRow[]
+              aCl003:Array[1]
+              0:"Industrie"
+
               docAnno.push({ id: annotations[j].annotationClass, title: annotationClasses[k].title });
             }
           }
         }
-      }
-      state.chartData.kwic.items.push(
-        {
-          date: items[i].Tbl_refs[1],
-          source: items[i].Tbl_refs[4],
-          region: items[i].Tbl_refs[2],
-          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-          annotation: docAnno,
-          docid: items[i].Tbl_refs[0],
-          topic: items[i].Tbl_refs[3],
-          toknum: items[i].toknum,
-          selected: false,
-          queryTerm: payload.term,
-        },
-      );
+      } */
+      state.chartData.kwic.items.push(docRow);
     }
     // Append anno classes
-    state.chartData.kwic.annotationOptions = annotationClasses;
+    // state.chartData.kwic.annotationOptions = annotationClasses;
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
@@ -750,6 +769,28 @@ export const mutations = {
       });
     }
   },
+  processAnnoClasses(state, payload) {
+    const annoClasses = payload.result;
+    console.log(annoClasses);
+    for (let i = 0; i < annoClasses.length; i += 1) {
+      state.chartData.kwic.annotationFields.push(
+        {
+          key: annoClasses[i].id,
+          type: annoClasses[i].dataType,
+          options: annoClasses[i].values,
+          label: annoClasses[i].title,
+          sortable: true,
+        }
+      );
+      state.chartData.kwic.fields.push(
+        {
+          key: annoClasses[i].id,
+          label: annoClasses[i].title,
+          sortable: true,
+        }
+      );
+    }
+  },
   processTopLCs(state, payload) {
     const items = payload.result.Items;
     const zipfCurve = {
@@ -825,7 +866,7 @@ export const actions = {
       requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
       requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;pagesize=2000;newctxsize=30;format=json`;
+      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30;format=json`;
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
@@ -839,6 +880,9 @@ export const actions = {
 
       // KWIC Annotation
       const annoClasses = await axios.get('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotationClasses');
+
+      commit('processAnnoClasses', { result: annoClasses.data });
+
       const items = responses.viewattrsxURI.data.Lines;
       const kwicIDs = [];
       for (let i = 0; i < items.length; i += 1) {
@@ -872,10 +916,11 @@ export const actions = {
   },
   async addAnnotation({ state, commit, dispatch }, params) {
     try {
-      const { annoClass, docID } = params;
+      const { annoContent, annoClass, docID } = params;
       const annoReqData = {
-        'docId': docID,
-        'annotationClass': annoClass
+        docId: docID,
+        annotationClass: annoClass,
+        content: annoContent,
       };
       await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
     } catch (error) {

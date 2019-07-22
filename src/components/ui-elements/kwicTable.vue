@@ -107,6 +107,29 @@
             </b-card>
           </template>
 
+          <template v-for="(field, key) in annotationFields" :slot="field.key" slot-scope="row">
+            <div v-bind:key="key" v-if="field.type === 'html'">
+              Add note
+            </div>
+            <div v-bind:key="key" v-else-if="field.type === 'boolean'">
+              Checkbox
+            </div>
+            <div v-bind:key="key" v-else-if="field.type === 'vocabulary'">
+              <multiselect
+                v-model="row.item[field.key]"
+                tag-placeholder="Add annotation"
+                placeholder="Add annotation"
+                :options="field.options"
+                :multiple="true"
+                @select="addAnnotation($event, field.key, row.item.docid)"
+                @remove="removeAnnotation($event.id, row.item.docid)"
+                track-by="id"
+                label="title"
+              />
+            </div>
+          </template>
+
+
           <template slot="annotation" slot-scope="row">
             <multiselect
               v-model="row.item.annotation"
@@ -182,6 +205,7 @@
         items: this.chartProp.items,
         fields: this.chartProp.fields,
         height: this.chartProp.height + 'px',
+        annotationFields: this.chartProp.annotationFields,
         currentPage: 1,
         perPage: 20,
         pageOptions: [10, 15, 20],
@@ -252,8 +276,8 @@
       },
     },
     methods: {
-      addAnnotation(id, docid) {
-        this.$store.dispatch('addAnnotation', { annoClass: id, docID: docid } );
+      addAnnotation(annoContent, annoClass, docid) {
+        this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid } );
       },
       removeAnnotation(id, docid) {
         //this.$store.dispatch('removeAnnotation', { annoClass: id, docID: docid } );
@@ -362,7 +386,6 @@
 <style lang="scss">
 .kwic-table {
   overflow-y: auto;
-  overflow-x: hidden;
   max-height: 700px;
 }
 .kw-highlight {
