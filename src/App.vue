@@ -216,6 +216,18 @@ main, .navbar {
     border: solid 1px #dde4ea;
     min-height: 445px;
     overflow: hidden;
+    position: relative;
+
+    .component-loading-overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 9;
+      background-color: #ffffffd4;
+    }
 
     .actions {
       button {

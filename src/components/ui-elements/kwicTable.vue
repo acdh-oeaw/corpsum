@@ -1,6 +1,14 @@
 <template>
   <div>
     <b-container :style="{'height':height}" fluid class="vis-component-inner">
+
+      <div v-show="isBusy" class="component-loading-overlay">
+        <div class="text-center text-success my-2 mt-5">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+      </div>
+
       <!-- User Interface controls -->
       <b-row class="py-3">
 
@@ -121,27 +129,13 @@
                 placeholder="Add annotation"
                 :options="field.options"
                 :multiple="true"
-                @select="addAnnotation($event, field.key, row.item.docid)"
-                @remove="removeAnnotation($event.id, row.item.docid)"
-                track-by="id"
+                @select="addAnnotation($event.title, field.key, row.item.docid, row.index, row.item[field.key])"
+                @remove="removeAnnotation($event, field.key, row.index, row.item[field.key])"
+                track-by="title"
                 label="title"
+                :taggable="true"
               />
             </div>
-          </template>
-
-
-          <template slot="annotation" slot-scope="row">
-            <multiselect
-              v-model="row.item.annotation"
-              tag-placeholder="Add annotation"
-              placeholder="Add annotation"
-              :options="annotationOptions"
-              :multiple="true"
-              @select="addAnnotation($event.id, row.item.docid)"
-              @remove="removeAnnotation($event.id, row.item.docid)"
-              track-by="id"
-              label="title"
-            />
           </template>
 
         </b-table>
@@ -202,7 +196,6 @@
     data() {
       return {
         selectedDocs: [],
-        items: this.chartProp.items,
         fields: this.chartProp.fields,
         height: this.chartProp.height + 'px',
         annotationFields: this.chartProp.annotationFields,
@@ -236,6 +229,14 @@
           .map(f => {
             return { text: f.label, value: f.key }
           })
+      },
+      items() {
+        return this.chartProp.items;
+        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      },
+      isBusy() {
+        return this.chartProp.isBusy;
+        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
       },
       annotationOptions() {
         return this.chartProp.annotationOptions;
@@ -276,11 +277,20 @@
       },
     },
     methods: {
-      addAnnotation(annoContent, annoClass, docid) {
-        this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid } );
+      addAnnotation(annoContent, annoClass, docid, rowIndex, optionsArray) {
+        let optionIndex = 0;
+        if (Array.isArray(optionsArray)) {
+          optionIndex = optionsArray.length;
+        }
+        this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, optionIndex: optionIndex } );
       },
-      removeAnnotation(id, docid) {
-        //this.$store.dispatch('removeAnnotation', { annoClass: id, docID: docid } );
+      removeAnnotation(event, annoClass, rowIndex, optionsArray) {
+        let id = event.annoID;
+        if (!id) {
+          const optionKey = Object.keys(this.items[rowIndex][annoClass]).find(key => this.items[rowIndex][annoClass][key].title === event.title);
+          id = this.items[rowIndex][annoClass][optionKey].annoID;
+        }
+        this.$store.dispatch('removeAnnotation', { annoID: id } );
       },
       createSubcorpus() {
         this.$store.dispatch('createSubcorpus', {docs: this.selectedDocs, title: this.subcorpusTitle} );

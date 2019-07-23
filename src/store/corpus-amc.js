@@ -337,6 +337,7 @@ export const state = {
       ],
       height: 750,
       annotationFields: [],
+      isBusy: false,
     },
   },
 };
@@ -771,13 +772,18 @@ export const mutations = {
   },
   processAnnoClasses(state, payload) {
     const annoClasses = payload.result;
-    console.log(annoClasses);
     for (let i = 0; i < annoClasses.length; i += 1) {
+      const annoOptions = [];
+      for (let j = 0; j < annoClasses[i].values.length; j += 1) {
+        annoOptions.push({
+          title: annoClasses[i].values[j],
+        });
+      }
       state.chartData.kwic.annotationFields.push(
         {
           key: annoClasses[i].id,
           type: annoClasses[i].dataType,
-          options: annoClasses[i].values,
+          options: annoOptions,
           label: annoClasses[i].title,
           sortable: true,
         }
@@ -916,26 +922,31 @@ export const actions = {
   },
   async addAnnotation({ state, commit, dispatch }, params) {
     try {
-      const { annoContent, annoClass, docID } = params;
+      state.chartData.kwic.isBusy = true;
+      const { annoContent, annoClass, docID, rowIndex, optionIndex } = params;
       const annoReqData = {
         docId: docID,
         annotationClass: annoClass,
         content: annoContent,
       };
-      await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
+      const response = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
+      state.chartData.kwic.items[rowIndex][annoClass].push({ annoID: response.data[0].id, title: annoContent });
+      for (let i = state.chartData.kwic.items[rowIndex][annoClass].length - 1; i >= 0; i--) {
+        if (!state.chartData.kwic.items[rowIndex][annoClass][i].annoID) {
+          state.chartData.kwic.items[rowIndex][annoClass].splice(i, 1);
+        }
+      }
+      state.chartData.kwic.isBusy = false;
     } catch (error) {
       console.log(error);
     }
   },
   async removeAnnotation({ state, commit, dispatch }, params) {
     try {
-      // TODO
-      const { annoClass, docID } = params;
-      const annoReqData = {
-        'docId': docID,
-        'annotationClass': annoClass
-      };
-      await axios.delete('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
+      state.chartData.kwic.isBusy = true;
+      const { annoID } = params;
+      await axios.delete(`https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations/${annoID}`);
+      state.chartData.kwic.isBusy = false;
     } catch (error) {
       console.log(error);
     }
