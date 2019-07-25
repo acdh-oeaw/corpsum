@@ -80,7 +80,7 @@ export default {
     this.$store.dispatch('getSubcorporaList');
     this.$store.dispatch('queryCorpusInfo');
     if (!localStorage.tourCompleted) {
-      this.$tours['myTour'].start()
+      //this.$tours['myTour'].start()
     }
   },
   computed: {

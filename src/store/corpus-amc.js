@@ -308,6 +308,7 @@ export const state = {
       annotationOptions: [],
       fields: [
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
+        { key: 'hits', label: 'Hits', sortable: true, thStyle: { width: '45px' } },
         { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
@@ -559,51 +560,64 @@ export const mutations = {
     const annotations = payload.annotations;
     const annotationClasses = payload.annotationClasses;
     for (let i = 0; i < items.length; i += 1) {
-      // const docAnno = [];
-      const docRow = {
-        date: items[i].Tbl_refs[1],
-        source: items[i].Tbl_refs[4],
-        source_name: items[i].Tbl_refs[5],
-        region: items[i].Tbl_refs[2],
-        left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-        word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-        right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-        docid: items[i].Tbl_refs[0],
-        topic: items[i].Tbl_refs[3],
-        toknum: items[i].toknum,
-        selected: false,
-        queryTerm: payload.term,
-      };
-
-      for (let j = 0; j < annotations.length; j += 1) {
-        if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
-
-          let annoType;
-          for (let k = 0; k < annotationClasses.length; k += 1) {
-            if (annotations[j].annotationClass === annotationClasses[k].id) {
-              annoType = annotationClasses[k].dataType;
-              break;
-            }
-          }
-
-          if (annoType === 'vocabulary') {
-            if (Array.isArray(docRow[annotations[j].annotationClass])) {
-              docRow[annotations[j].annotationClass].push({
-                title: annotations[j].content,
-                annoID: annotations[j].id,
-              });
-            } else {
-              docRow[annotations[j].annotationClass] = [{
-                title: annotations[j].content,
-                annoID: annotations[j].id,
-              }];
-            }
-          } else if (annoType === 'boolean' || annoType === 'html') {
-            docRow[annotations[j].annotationClass] = annotations[j].content;
-          }
+      let docIdExists = false;
+      let docRowIndex;
+      for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
+        if (state.chartData.kwic.items[j].docid === items[i].Tbl_refs[0]) {
+          docIdExists = true;
+          docRowIndex = j;
+          break
         }
       }
-      state.chartData.kwic.items.push(docRow);
+      if (!docIdExists) {
+        const docRow = {
+          date: items[i].Tbl_refs[1],
+          source: items[i].Tbl_refs[4],
+          source_name: items[i].Tbl_refs[5],
+          region: items[i].Tbl_refs[2],
+          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+          docid: items[i].Tbl_refs[0],
+          topic: items[i].Tbl_refs[3],
+          toknum: items[i].toknum,
+          selected: false,
+          queryTerm: payload.term,
+          hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
+        };
+
+        for (let j = 0; j < annotations.length; j += 1) {
+          if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
+
+            let annoType;
+            for (let k = 0; k < annotationClasses.length; k += 1) {
+              if (annotations[j].annotationClass === annotationClasses[k].id) {
+                annoType = annotationClasses[k].dataType;
+                break;
+              }
+            }
+
+            if (annoType === 'vocabulary') {
+              if (Array.isArray(docRow[annotations[j].annotationClass])) {
+                docRow[annotations[j].annotationClass].push({
+                  title: annotations[j].content,
+                  annoID: annotations[j].id,
+                });
+              } else {
+                docRow[annotations[j].annotationClass] = [{
+                  title: annotations[j].content,
+                  annoID: annotations[j].id,
+                }];
+              }
+            } else if (annoType === 'boolean' || annoType === 'html') {
+              docRow[annotations[j].annotationClass] = annotations[j].content;
+            }
+          }
+        }
+        state.chartData.kwic.items.push(docRow);
+      } else {
+        state.chartData.kwic.items[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+      }
     }
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
@@ -655,6 +669,8 @@ export const mutations = {
   },
   updateModalTextContent(state, payload) {
     const items = payload.result.content;
+    const term = payload.item.word;
+    const hits = payload.item.hits;
     let content = '';
     for (let i = 0; i < items.length; i += 1) {
       if (items[i].class === 'coll') {
@@ -662,7 +678,8 @@ export const mutations = {
       }
       content += items[i].str;
     }
-    content = content.replace(payload.term.trim(), `<span class="kw-highlight">${payload.term.trim()}</span>`);
+    const regexFromHits = new RegExp(hits.join('|'), 'gi');
+    content = content.replace(regexFromHits, m => `<span class="kw-highlight">${m}</span>`);
     state.modalTextContent = content;
   },
   updateSubcorporaList(state, payload) {
@@ -759,6 +776,8 @@ export const mutations = {
       let thStyle;
       if (annoClasses[i].dataType === 'boolean') {
         thStyle = { width: '45px' };
+      } else if (annoClasses[i].dataType === 'vocabulary') {
+        thStyle = { width: '250px' };
       }
       state.chartData.kwic.annotationFields.push(
         {
@@ -854,7 +873,7 @@ export const actions = {
       requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
       requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30;format=json`;
+      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30&q=sdoc.datum/ 0>0&format=json`;
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
@@ -897,7 +916,28 @@ export const actions = {
   async modalTextQuery({ state, commit, dispatch }, item) {
     try {
       const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
-      commit('updateModalTextContent', { term: item.word, result: response.data });
+      commit('updateModalTextContent', { item: item, result: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async addNewAnnoVocabulary({ state, commit, dispatch }, params) {
+    try {
+      state.chartData.kwic.isBusy = true;
+      const { annoContent, annoClass, docID, rowIndex, annoType } = params;
+      const annoReqData = {
+        add: [annoContent],
+      };
+      const response = await axios.patch(`https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotationClasses/${annoClass}/vocabularyTerms`, annoReqData, { headers: { 'Content-Type': 'application/json' } });
+      if (response.status === 200) {
+        for (let i = 0; i < state.chartData.kwic.annotationFields.length; i += 1) {
+          if (state.chartData.kwic.annotationFields[i].key === annoClass) {
+            state.chartData.kwic.annotationFields[i].options.push({ title: annoContent });
+            break;
+          }
+        }
+        dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docID, rowIndex: rowIndex, annoType: annoType } );
+      }
     } catch (error) {
       console.log(error);
     }
@@ -913,11 +953,15 @@ export const actions = {
       };
       const response = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
       if (annoType === 'vocabulary') {
-        state.chartData.kwic.items[rowIndex][annoClass].push({ annoID: response.data[0].id, title: annoContent });
-        for (let i = state.chartData.kwic.items[rowIndex][annoClass].length - 1; i >= 0; i--) {
-          if (!state.chartData.kwic.items[rowIndex][annoClass][i].annoID) {
-            state.chartData.kwic.items[rowIndex][annoClass].splice(i, 1);
+        if (state.chartData.kwic.items[rowIndex][annoClass]) {
+          state.chartData.kwic.items[rowIndex][annoClass].push({ annoID: response.data[0].id, title: annoContent });
+          for (let i = state.chartData.kwic.items[rowIndex][annoClass].length - 1; i >= 0; i--) {
+            if (!state.chartData.kwic.items[rowIndex][annoClass][i].annoID) {
+              state.chartData.kwic.items[rowIndex][annoClass].splice(i, 1);
+            }
           }
+        } else {
+          state.chartData.kwic.items[rowIndex][annoClass] = [{ annoID: response.data[0].id, title: annoContent }];
         }
       } else if (annoType === 'boolean' || annoType === 'html') {
         state.chartData.kwic.items[rowIndex][annoClass] = annoContent;

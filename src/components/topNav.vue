@@ -283,11 +283,11 @@ export default {
 }
 
 .navbar .ti-new-tag-input-wrapper {
-  display: none;
+  display: none !important;
 }
 
 .navbar .ti-icon-close {
-  display: none;
+  display: none !important;
 }
 
 </style>

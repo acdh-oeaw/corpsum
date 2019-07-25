@@ -78,7 +78,6 @@
           small
           striped
           bordered
-          stacked="md"
           class="text-nowrap"
           :items="items"
           :fields="fields"
@@ -105,6 +104,10 @@
             <b-form-group class="mb-0">
               <input type="checkbox" v-model="row.item.selected" @change="toggleSelectedDocs(row.item)"/>
             </b-form-group>
+          </template>
+
+          <template slot="hits" slot-scope="row">
+            {{ row.item.hits.length }}
           </template>
 
           <template slot="row-details" slot-scope="row">
@@ -146,6 +149,7 @@
                 track-by="title"
                 label="title"
                 :taggable="true"
+                @tag="addNewAnnoVocabulary($event, field.key, row.item.docid, row.index, 'vocabulary')"
               />
             </div>
           </template>
@@ -194,6 +198,7 @@
                   track-by="title"
                   label="title"
                   :taggable="true"
+                  @tag="addNewAnnoVocabulary($event, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
                 />
               </div>
             </template>
@@ -349,6 +354,9 @@
       },
     },
     methods: {
+      addNewAnnoVocabulary(annoContent, annoClass, docid, rowIndex, annoType) {
+        this.$store.dispatch('addNewAnnoVocabulary', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
+      },
       changeAnnotation(checked, annoClass, docid, rowIndex, annoType) {
         this.addAnnotation(checked, annoClass, docid, rowIndex, annoType);
       },
@@ -479,8 +487,12 @@
 
   .multiselect__tags {
     min-height: 26px;
-    padding: 4px 0px 0 4px;
-    max-height: 32px;
+    padding: 4px 30px 0 4px;
+  }
+
+  .multiselect__option {
+    min-height: auto;
+    padding: 10px;
   }
 
   .multiselect__tag {
@@ -499,8 +511,8 @@
     font-size: 0.8rem;
   }
 
-  .multiselect__input, .multiselect__single {
-    background: transparent;
+  .multiselect__tags-wrap {
+    display: flex;
   }
 
   .multiselect__option--highlight::after {
