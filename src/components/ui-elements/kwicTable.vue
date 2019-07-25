@@ -159,7 +159,7 @@
       </div>
 
       <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" scrollable @hide="resetInfoModal">
+      <b-modal :id="infoModal.id" :title="infoModal.title" size="xl" scrollable @hide="resetInfoModal">
 
         <div v-if="annotationFields" class="docviewer-anno-wrapper sticky-top bg-light">
           <h5>Annotations</h5>
@@ -210,8 +210,8 @@
                 v-model="items[infoModal.rowId][field.key]"
                 id="textarea-auto-height"
                 placeholder="Enter your annotation comments here"
-                rows="3"
-                max-rows="8"
+                rows="2"
+                max-rows="5"
                 @blur="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')"
               ></b-form-textarea>
               <b-button @click="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')" variant="info" class="mt-2" size="sm">Save Comments</b-button>
@@ -361,6 +361,9 @@
         this.addAnnotation(checked, annoClass, docid, rowIndex, annoType);
       },
       addAnnotation(annoContent, annoClass, docid, rowIndex, annoType) {
+        if (annoContent === undefined) {
+          annoContent = '';
+        }
         this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
       },
       removeAnnotation(event, annoClass, rowIndex, optionsArray) {
