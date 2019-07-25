@@ -36,26 +36,6 @@ export const state = {
       class: 'col-md-12 vis-component',
       chartProp: 'kwic',
     },
-    {
-      component: 'treemapChart',
-      class: 'col-md-12 vis-component',
-      chartProp: 'wordFreqSummary',
-    },
-    {
-      component: 'lineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'absolute',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sources',
-    },
-    {
-      component: 'multiWordcloud',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'collocations',
-    },
   ],
   infoElements: [
     {
@@ -328,7 +308,6 @@ export const state = {
       annotationOptions: [],
       fields: [
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
-        { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
         { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
@@ -879,13 +858,13 @@ export const actions = {
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
-      responses.freqttURI = await axios.get(requestURIs.freqttURI);
+/*       responses.freqttURI = await axios.get(requestURIs.freqttURI);
       responses.freqsURI = await axios.get(requestURIs.freqsURI);
       responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
-      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
+      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI); */
       responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
-      responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
-      responses.collxURI = await axios.get(requestURIs.collxURI);
+/*       responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
+      responses.collxURI = await axios.get(requestURIs.collxURI); */
 
       // KWIC Annotation
       const annoClasses = await axios.get('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotationClasses');
@@ -902,15 +881,15 @@ export const actions = {
 
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
-      commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
+/*       commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
-      commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items });
+      commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items }); */
       commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data, annotations: annoResponse.data.response, annotationClasses: annoClasses.data });
-      commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
+/*       commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
       commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
       commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
       commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
-      commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
+      commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data }); */
     } catch (error) {
       console.log(error);
     }
@@ -974,15 +953,15 @@ export const actions = {
   },
   async getSubcorporaList({ state, commit, dispatch }) {
     try {
-      const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
-      commit('updateSubcorporaList', { result: response.data.subcorpora });
+      // const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
+      // commit('updateSubcorporaList', { result: response.data.subcorpora });
     } catch (error) {
       console.log(error);
     }
   },
   async queryCorpusInfo({ state, commit, dispatch }) {
     try {
-      commit('changeLoadingStatus', { status: true, type: 'intro' });
+/*       commit('changeLoadingStatus', { status: true, type: 'intro' });
       const requestURIs = {};
       requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
@@ -1008,7 +987,7 @@ export const actions = {
       commit('processDocsRessorts', { result: responses.docsRessorts.data });
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
-      commit('processTopLemmas', { result: responses.topLemmas.data });
+      commit('processTopLemmas', { result: responses.topLemmas.data }); */
     } catch (error) {
       console.log(error);
     }

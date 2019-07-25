@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
-
+    <a class="navbar-brand text-center m-0" href="#">corpsum</a>
     <multiselect
       class="ml-2 query-type-selector"
       v-model="queryAttribute"
@@ -159,7 +159,7 @@ export default {
 }
 
 .ti-tag {
-  font-size: 0.7rem !important;
+  font-size: 0.85rem !important;
   background-color: #eff2f5 !important;
   -webkit-box-shadow: 1px 1px 0px 0px #afafafba;
   box-shadow: 1px 1px 0px 0px #afafafba;
@@ -264,6 +264,7 @@ export default {
   height: 100%;
   top: 0;
   padding: 13px;
+  margin-left: -1rem;
 }
 
 .topnav-spinner > span {
@@ -271,4 +272,22 @@ export default {
   padding: 0 10px;
   font-weight: 500;
 }
+
+.navbar-brand {
+  font-size: 1.6rem;
+  font-family: Signika,sans-serif;
+  color: #fff;
+  padding: 8px 0 8px 0;
+  background-color: rgb(21, 129, 151);
+  margin: -0.5rem 0.5rem -0.5rem -0.5rem !important;
+}
+
+.navbar .ti-new-tag-input-wrapper {
+  display: none;
+}
+
+.navbar .ti-icon-close {
+  display: none;
+}
+
 </style>

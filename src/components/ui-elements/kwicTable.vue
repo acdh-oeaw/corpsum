@@ -12,11 +12,11 @@
       <!-- User Interface controls -->
       <b-row class="py-3">
 
-        <div class="ml-3">
+<!--         <div class="ml-3">
           <b-button @click="subcorpus($event.target)" variant="outline-primary" size="sm">Create Subcorpus with Selection</b-button>
-        </div>
+        </div> -->
 
-        <div class="ml-3 mx-auto d-flex align-items-center">
+        <div class="ml-3 mr-auto d-flex align-items-center">
           <b-form-group class="mb-0">
             <b-input-group size="sm">
               <b-form-input v-model="filter" placeholder="Type to Filter"></b-form-input>
@@ -157,7 +157,7 @@
       <!-- Info modal -->
       <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" scrollable @hide="resetInfoModal">
 
-        <div v-if="annotationFields" class="docviewer-anno-wrapper sticky-top bg-white py-2">
+        <div v-if="annotationFields" class="docviewer-anno-wrapper sticky-top bg-light">
           <h5>Annotations</h5>
           <b-table
             show-empty
@@ -272,7 +272,7 @@
         height: this.chartProp.height + 'px',
         annotationFields: this.chartProp.annotationFields,
         currentPage: 1,
-        perPage: 20,
+        perPage: 15,
         pageOptions: [10, 15, 20],
         sortBy: null,
         sortDesc: false,
@@ -469,6 +469,53 @@
   overflow-y: auto;
   max-height: 700px;
 }
+
+.kwic-table, .docviewer-anno-wrapper {
+
+  .multiselect__select {
+    height: 32px;
+    z-index: 9;
+  }
+
+  .multiselect__tags {
+    min-height: 26px;
+    padding: 4px 0px 0 4px;
+    max-height: 32px;
+  }
+
+  .multiselect__tag {
+    padding: 4px 22px 4px 6px;
+    margin-right: 5px;
+  }
+
+  .multiselect__placeholder {
+    margin-bottom: 5px;
+    padding-top: 1px;
+    padding-left: 3px;
+    font-size: 0.8rem;
+  }
+
+  .multiselect, .multiselect__input, .multiselect__single {
+    font-size: 0.8rem;
+  }
+
+  .multiselect__input, .multiselect__single {
+    background: transparent;
+  }
+
+  .multiselect__option--highlight::after {
+    display: none;
+  }
+
+  .multiselect__option, .multiselect__input, .multiselect__single {
+    line-height: 10px;
+  }
+
+  .multiselect {
+    min-height: auto;
+  }
+
+}
 .kw-highlight {
   background-color: #ffd600;
   padding: 2px 1px;
@@ -485,6 +532,14 @@
 
 #info-modal___BV_modal_body_ {
   padding-top: 0;
+}
+
+.docviewer-anno-wrapper {
+  margin-left: -1rem !important;
+  margin-right: -1rem !important;
+  padding: 1rem !important;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
 }
 
 @media (min-width: 576px) {

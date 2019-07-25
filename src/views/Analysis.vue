@@ -1,5 +1,5 @@
 <template>
-    <main role="main" class="ml-auto px-4">
+    <main role="main" class="px-4 w-100">
       <div class="home pt-3">
         <div class="row vis-intro-wrapper" v-show="toggleIntroSection">
           <div class="col-md-12 vis-component">
