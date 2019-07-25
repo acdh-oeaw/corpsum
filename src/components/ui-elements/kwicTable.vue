@@ -88,6 +88,7 @@
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
           @filtered="onFiltered"
+          ref="table"
         >
 
           <template slot="actions" slot-scope="row">
@@ -106,8 +107,8 @@
             </b-form-group>
           </template>
 
-          <template slot="hits" slot-scope="row">
-            {{ row.item.hits.length }}
+          <template slot="hitsNo" slot-scope="row">
+            {{row.item.hitsNo}}
           </template>
 
           <template slot="row-details" slot-scope="row">
@@ -319,9 +320,13 @@
         return this.chartProp.annotationOptions;
         set: (value) => console.log(value) // this.$state.commit('someMutation', value )
       },
-      totalRows() {
-        return this.chartProp.items.length;
-        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      totalRows: {
+        get: function() {
+          return this.chartProp.totalRows;
+        },
+        set: function(value) {
+          this.chartProp.totalRows = value;
+        }
       },
       modalTextContent() {
         return this.$store.getters.modalTextContent;
@@ -388,8 +393,8 @@
         do {
           nextRow++;
         }
-        while (this.items[[nextRow]].docid == this.items[[curRow]].docid);
-        const item = this.items[[nextRow]];
+        while (this.$refs.table.sortedItems[[nextRow]].docid == this.$refs.table.sortedItems[[curRow]].docid);
+        const item = this.$refs.table.sortedItems[[nextRow]];
         this.infoModal.title = item.source + ' - ' + item.date;
         this.infoModal.rowId = nextRow;
         this.modalTextContent = '';
@@ -402,8 +407,8 @@
         do {
           prevRow--;
         }
-        while (this.items[[prevRow]].docid == this.items[[curRow]].docid);
-        const item = this.items[[prevRow]];
+        while (this.$refs.table.sortedItems[[prevRow]].docid == this.$refs.table.sortedItems[[curRow]].docid);
+        const item = this.$refs.table.sortedItems[[prevRow]];
         this.infoModal.title = item.source + ' - ' + item.date;
         this.infoModal.rowId = prevRow;
         this.modalTextContent = '';

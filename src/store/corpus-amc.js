@@ -308,7 +308,7 @@ export const state = {
       annotationOptions: [],
       fields: [
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
-        { key: 'hits', label: 'Hits', sortable: true, thStyle: { width: '45px' } },
+        { key: 'hitsNo', label: 'Hits', sortable: true, thStyle: { width: '45px' } },
         { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
         { key: 'source', label: 'Source', sortable: true },
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
@@ -318,6 +318,7 @@ export const state = {
       height: 750,
       annotationFields: [],
       isBusy: false,
+      totalRows: 0,
     },
   },
 };
@@ -584,6 +585,7 @@ export const mutations = {
           selected: false,
           queryTerm: payload.term,
           hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
+          hitsNo: 1,
         };
 
         for (let j = 0; j < annotations.length; j += 1) {
@@ -617,8 +619,10 @@ export const mutations = {
         state.chartData.kwic.items.push(docRow);
       } else {
         state.chartData.kwic.items[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+        state.chartData.kwic.items[docRowIndex].hitsNo++;
       }
     }
+    state.chartData.kwic.totalRows = state.chartData.kwic.items.length;
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
