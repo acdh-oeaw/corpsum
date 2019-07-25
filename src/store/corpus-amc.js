@@ -578,7 +578,7 @@ export const mutations = {
   processKWIC(state, payload) {
     const items = payload.result.Lines;
     const annotations = payload.annotations;
-    // const annotationClasses = payload.annotationClasses;
+    const annotationClasses = payload.annotationClasses;
     for (let i = 0; i < items.length; i += 1) {
       // const docAnno = [];
       const docRow = {
@@ -598,36 +598,34 @@ export const mutations = {
 
       for (let j = 0; j < annotations.length; j += 1) {
         if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
-          if (Array.isArray(docRow[annotations[j].annotationClass])) {
-            docRow[annotations[j].annotationClass].push({
-              title: annotations[j].content,
-              annoID: annotations[j].id,
-            });
-          } else {
-            docRow[annotations[j].annotationClass] = [{
-              title: annotations[j].content,
-              annoID: annotations[j].id,
-            }];
+
+          let annoType;
+          for (let k = 0; k < annotationClasses.length; k += 1) {
+            if (annotations[j].annotationClass === annotationClasses[k].id) {
+              annoType = annotationClasses[k].dataType;
+              break;
+            }
+          }
+
+          if (annoType === 'vocabulary') {
+            if (Array.isArray(docRow[annotations[j].annotationClass])) {
+              docRow[annotations[j].annotationClass].push({
+                title: annotations[j].content,
+                annoID: annotations[j].id,
+              });
+            } else {
+              docRow[annotations[j].annotationClass] = [{
+                title: annotations[j].content,
+                annoID: annotations[j].id,
+              }];
+            }
+          } else if (annoType === 'boolean' || annoType === 'html') {
+            docRow[annotations[j].annotationClass] = annotations[j].content;
           }
         }
       }
-/*       for (let j = 0; j < annotations.length; j += 1) {
-        if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
-          for (let k = 0; k < annotationClasses.length; k += 1) {
-            if (annotations[j].annotationClass === annotationClasses[k].id) {
-              docRow[]
-              aCl003:Array[1]
-              0:"Industrie"
-
-              docAnno.push({ id: annotations[j].annotationClass, title: annotationClasses[k].title });
-            }
-          }
-        }
-      } */
       state.chartData.kwic.items.push(docRow);
     }
-    // Append anno classes
-    // state.chartData.kwic.annotationOptions = annotationClasses;
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
@@ -779,6 +777,10 @@ export const mutations = {
           title: annoClasses[i].values[j],
         });
       }
+      let thStyle;
+      if (annoClasses[i].dataType === 'boolean') {
+        thStyle = { width: '45px' };
+      }
       state.chartData.kwic.annotationFields.push(
         {
           key: annoClasses[i].id,
@@ -791,6 +793,7 @@ export const mutations = {
       state.chartData.kwic.fields.push(
         {
           key: annoClasses[i].id,
+          thStyle,
           label: annoClasses[i].title,
           sortable: true,
         }
@@ -923,18 +926,22 @@ export const actions = {
   async addAnnotation({ state, commit, dispatch }, params) {
     try {
       state.chartData.kwic.isBusy = true;
-      const { annoContent, annoClass, docID, rowIndex, optionIndex } = params;
+      const { annoContent, annoClass, docID, rowIndex, annoType } = params;
       const annoReqData = {
         docId: docID,
         annotationClass: annoClass,
         content: annoContent,
       };
       const response = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
-      state.chartData.kwic.items[rowIndex][annoClass].push({ annoID: response.data[0].id, title: annoContent });
-      for (let i = state.chartData.kwic.items[rowIndex][annoClass].length - 1; i >= 0; i--) {
-        if (!state.chartData.kwic.items[rowIndex][annoClass][i].annoID) {
-          state.chartData.kwic.items[rowIndex][annoClass].splice(i, 1);
+      if (annoType === 'vocabulary') {
+        state.chartData.kwic.items[rowIndex][annoClass].push({ annoID: response.data[0].id, title: annoContent });
+        for (let i = state.chartData.kwic.items[rowIndex][annoClass].length - 1; i >= 0; i--) {
+          if (!state.chartData.kwic.items[rowIndex][annoClass][i].annoID) {
+            state.chartData.kwic.items[rowIndex][annoClass].splice(i, 1);
+          }
         }
+      } else if (annoType === 'boolean' || annoType === 'html') {
+        state.chartData.kwic.items[rowIndex][annoClass] = annoContent;
       }
       state.chartData.kwic.isBusy = false;
     } catch (error) {

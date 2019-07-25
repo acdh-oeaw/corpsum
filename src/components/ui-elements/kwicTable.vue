@@ -117,10 +117,22 @@
 
           <template v-for="(field, key) in annotationFields" :slot="field.key" slot-scope="row">
             <div v-bind:key="key" v-if="field.type === 'html'">
-              Add note
+              <span v-if="row.item[field.key]">
+                Yes
+                <b-link @click="info(row.item, row.index, $event.target)" class="mr-1">
+                  <external-link-icon></external-link-icon>
+                </b-link>
+              </span>
+              <span v-else>No</span>
             </div>
             <div v-bind:key="key" v-else-if="field.type === 'boolean'">
-              Checkbox
+              <b-form-checkbox
+                v-model="row.item[field.key]"
+                value="true"
+                unchecked-value="false"
+                @change="changeAnnotation($event, field.key, row.item.docid, row.index, 'boolean')"
+              >
+              </b-form-checkbox>
             </div>
             <div v-bind:key="key" v-else-if="field.type === 'vocabulary'">
               <multiselect
@@ -129,7 +141,7 @@
                 placeholder="Add annotation"
                 :options="field.options"
                 :multiple="true"
-                @select="addAnnotation($event.title, field.key, row.item.docid, row.index, row.item[field.key])"
+                @select="addAnnotation($event.title, field.key, row.item.docid, row.index, 'vocabulary')"
                 @remove="removeAnnotation($event, field.key, row.index, row.item[field.key])"
                 track-by="title"
                 label="title"
@@ -144,6 +156,65 @@
 
       <!-- Info modal -->
       <b-modal :id="infoModal.id" :title="infoModal.title" size="lg" scrollable @hide="resetInfoModal">
+
+        <div v-if="annotationFields" class="docviewer-anno-wrapper sticky-top bg-white py-2">
+          <h5>Annotations</h5>
+          <b-table
+            show-empty
+            small
+            bordered
+            stacked="md"
+            class="text-nowrap"
+            :items="[items[infoModal.rowId]]"
+            :fields="annotationFields"
+          >
+            <template v-for="(field, key) in annotationFields" :slot="field.key" slot-scope="row">
+              <div v-bind:key="key" v-if="field.type === 'html'">
+                <span v-if="items[infoModal.rowId][field.key]">Yes</span>
+                <span v-else>No</span>
+              </div>
+              <div v-bind:key="key" v-else-if="field.type === 'boolean'">
+                <b-form-checkbox
+                  v-model="items[infoModal.rowId][field.key]"
+                  value="true"
+                  unchecked-value="false"
+                  @change="changeAnnotation($event, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'boolean')"
+                >
+                </b-form-checkbox>
+              </div>
+              <div v-bind:key="key" v-else-if="field.type === 'vocabulary'">
+                <multiselect
+                  v-model="items[infoModal.rowId][field.key]"
+                  tag-placeholder="Add annotation"
+                  placeholder="Add annotation"
+                  :options="field.options"
+                  :multiple="true"
+                  @select="addAnnotation($event.title, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
+                  @remove="removeAnnotation($event, field.key, infoModal.rowId, items[infoModal.rowId][field.key])"
+                  track-by="title"
+                  label="title"
+                  :taggable="true"
+                />
+              </div>
+            </template>
+          </b-table>
+
+          <template v-for="(field, key) in annotationFields">
+            <div v-bind:key="key" v-if="field.type === 'html'">
+              <b-form-textarea
+                v-model="items[infoModal.rowId][field.key]"
+                id="textarea-auto-height"
+                placeholder="Enter your annotation comments here"
+                rows="3"
+                max-rows="8"
+                @blur="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')"
+              ></b-form-textarea>
+              <b-button @click="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')" variant="info" class="mt-2" size="sm">Save Comments</b-button>
+            </div>
+          </template>
+
+        </div>
+
         <p v-html="modalTextContent"></p>
         <pre>{{ infoModal.content }}</pre>
 
@@ -185,13 +256,14 @@
 
 <script>
   import { FileTextIcon } from 'vue-feather-icons'
+  import { ExternalLinkIcon } from 'vue-feather-icons'
 
   export default {
     props: {
       chartProp: Object
     },
     components: {
-      FileTextIcon
+      FileTextIcon, ExternalLinkIcon
     },
     data() {
       return {
@@ -277,12 +349,11 @@
       },
     },
     methods: {
-      addAnnotation(annoContent, annoClass, docid, rowIndex, optionsArray) {
-        let optionIndex = 0;
-        if (Array.isArray(optionsArray)) {
-          optionIndex = optionsArray.length;
-        }
-        this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, optionIndex: optionIndex } );
+      changeAnnotation(checked, annoClass, docid, rowIndex, annoType) {
+        this.addAnnotation(checked, annoClass, docid, rowIndex, annoType);
+      },
+      addAnnotation(annoContent, annoClass, docid, rowIndex, annoType) {
+        this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
       },
       removeAnnotation(event, annoClass, rowIndex, optionsArray) {
         let id = event.annoID;
@@ -410,6 +481,10 @@
 }
 .modal-body p {
   font-size: 1rem;
+}
+
+#info-modal___BV_modal_body_ {
+  padding-top: 0;
 }
 
 @media (min-width: 576px) {
