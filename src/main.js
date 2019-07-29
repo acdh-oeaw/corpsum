@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import store from '@/store/store';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue';
 import HighchartsVue from 'highcharts-vue';
@@ -19,6 +18,7 @@ import mapAustria from './mapAustria';
 import './scss/bootstrap.scss';
 
 import router from './router';
+import store from '@/store/store';
 
 // register globally
 Vue.component('multiselect', Multiselect);

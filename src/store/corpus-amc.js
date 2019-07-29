@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import router from '../router';
 
 // Axios properties
 Vue.prototype.$http = axios;
@@ -16,7 +17,7 @@ function getObjectKey(object, value, property) {
 export const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'mara001_1000', // amc3_demo, amc_50M, amc_60M, amc_3.1
+  corpusName: 'mara002_1500', // amc3_demo, amc_50M, amc_60M, amc_3.1
   subcorpusName: 'none',
   subcorporaList: [
     { value: 'none', text: 'None' },
@@ -867,19 +868,28 @@ export const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
       commit('changeLoadingStatus', { status: true });
+      let corpusParam = state.corpusName;
+      if (router.currentRoute.params.corpus) corpusParam = router.currentRoute.params.corpus;
+      let subcorpusParam = state.subcorpusName;
+      if (router.currentRoute.params.subcorpus) subcorpusParam = router.currentRoute.params.subcorpus;
+      if (router.currentRoute.params.query) {
+        queryTerm = router.currentRoute.params.query;
+        state.chartData.queryTerms = [];
+        commit('queryTermAdded', {"text": queryTerm, "tiClasses":["ti-valid"]});
+      }
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       const requestURIs = {};
       let useSubCorp = '';
-      if (state.subcorpusName !== 'none') {
-        useSubCorp = `usesubcorp=${state.subcorpusName};`;
+      if (subcorpusParam !== 'none') {
+        useSubCorp = `usesubcorp=${subcorpusParam};`;
       }
-      requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
-      requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
-      requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30&q=sdoc.datum/ 0>0&format=json`;
-      requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
-      requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
+      requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
+      requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
+      requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30&q=sdoc.datum/ 0>0&format=json`;
+      requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
+      requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
 /*       responses.freqttURI = await axios.get(requestURIs.freqttURI);
       responses.freqsURI = await axios.get(requestURIs.freqsURI);
@@ -896,30 +906,35 @@ export const actions = {
 
       const items = responses.viewattrsxURI.data.Lines;
       const kwicIDs = [];
-      for (let i = 0; i < items.length; i += 1) {
-        kwicIDs.push(items[i].Tbl_refs[0]);
-      }
-      const annoReqData = { ids: kwicIDs };
-      const annoResponse = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations/get-by-ske-object-id', annoReqData, { headers: { 'Content-Type': 'application/json' } });
+      if (items !== undefined && items.length > 0) {
+        for (let i = 0; i < items.length; i += 1) {
+          kwicIDs.push(items[i].Tbl_refs[0]);
+        }
+        const annoReqData = { ids: kwicIDs };
+        const annoResponse = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations/get-by-ske-object-id', annoReqData, { headers: { 'Content-Type': 'application/json' } });
 
+        commit('changeLoadingStatus', { status: false });
+        // commit('processSum', { term: queryTerm, result: response.data.fullsize });
+  /*       commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
+        commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
+        commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items }); */
+        commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data, annotations: annoResponse.data.response, annotationClasses: annoClasses.data });
+  /*       commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
+        commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
+        commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
+        commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
+        commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data }); */
+      }
       commit('changeLoadingStatus', { status: false });
-      // commit('processSum', { term: queryTerm, result: response.data.fullsize });
-/*       commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
-      commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
-      commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items }); */
-      commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data, annotations: annoResponse.data.response, annotationClasses: annoClasses.data });
-/*       commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
-      commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
-      commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
-      commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
-      commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data }); */
     } catch (error) {
       console.log(error);
     }
   },
   async modalTextQuery({ state, commit, dispatch }, item) {
     try {
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
+      let corpusParam = state.corpusName;
+      if (router.currentRoute.params.corpus) corpusParam = router.currentRoute.params.corpus;
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=${corpusParam};pos=${item.toknum};struct=doc;format=json`);
       commit('updateModalTextContent', { item: item, result: response.data });
     } catch (error) {
       console.log(error);

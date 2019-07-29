@@ -37,6 +37,13 @@ export default new Router({
             Content: Analysis,
           },
         },
+        {
+          path: 'analysis/:corpus/:subcorpus/:query',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
       ],
     },
     {

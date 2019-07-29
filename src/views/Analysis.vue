@@ -33,8 +33,8 @@
 <script>
 // @ is an alias to /src
 // import radarChart from '@/components/charts/radarChart.vue'
-import lineChart from '@/components/charts/lineChart.vue'
-import barChart from '@/components/charts/barChart.vue'
+// import lineChart from '@/components/charts/lineChart.vue'
+// import barChart from '@/components/charts/barChart.vue'
 // import queryBuilder from '@/components/ui-elements/queryBuilder.vue'
 // import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 // import heatmapChart from '@/components/charts/heatmapChart.vue'
@@ -44,16 +44,16 @@ import barChart from '@/components/charts/barChart.vue'
 // import interactiveTable from '@/components/ui-elements/interactiveTable.vue'
 import kwicTable from '@/components/ui-elements/kwicTable.vue'
 // import visSeparator from '@/components/ui-elements/visSeparator.vue'
-import multiMap from '@/components/charts/multiMap.vue'
-import multiWordcloud from '@/components/charts/multiWordcloud.vue'
-import treemapChart from '@/components/charts/treemapChart.vue'
-import bubbleChart from '@/components/charts/bubbleChart.vue'
-import multiSankey from '@/components/charts/multiSankey.vue'
+// import multiMap from '@/components/charts/multiMap.vue'
+// import multiWordcloud from '@/components/charts/multiWordcloud.vue'
+// import treemapChart from '@/components/charts/treemapChart.vue'
+// import bubbleChart from '@/components/charts/bubbleChart.vue'
+// import multiSankey from '@/components/charts/multiSankey.vue'
 
 export default {
   name: 'analysis',
   components: {
-    lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey
+    kwicTable
   },
   data() {
     return {
@@ -90,7 +90,7 @@ export default {
       this.$store.dispatch('corpusQuery', 'Ball');
     },
     exampleQuery() {
-      const queryTerms = [{"text":'[word="Robotik"] | [lc="künstlich.*"] [word="Intelligenz"] | [word="Artificial"] [word="Intelligence"] |  [word="Algorithmen"] | [word="Automatisierung"]',"tiClasses":["ti-valid"]}];
+      const queryTerms = [{"text":'[lemma="Roboter"] | [word="Robotik"] | [lc="künstlich.*"] [word="Intelligenz"] | [word="Artificial"] [word="Intelligence"] | [word="Algorithmen"] | [word="Automatisierung"]',"tiClasses":["ti-valid"]}];
       for (let i = 0; i < queryTerms.length; i += 1) {
         this.$store.commit('queryTermAdded', queryTerms[i]);
         this.$store.dispatch('corpusQuery', queryTerms[i].text);

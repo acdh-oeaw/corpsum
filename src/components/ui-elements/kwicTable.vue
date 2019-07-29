@@ -560,6 +560,7 @@
   padding: 1rem !important;
   border-bottom: 1px solid #ccc;
   margin-bottom: 1rem;
+  overflow-x: scroll;
 }
 
 @media (min-width: 576px) {
