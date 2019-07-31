@@ -867,6 +867,7 @@ export const actions = {
     try {
       commit('changeLoadingStatus', { status: true });
       let corpusParam = state.corpusName;
+      console.log(router.currentRoute)
       if (router.currentRoute.params.corpus) corpusParam = router.currentRoute.params.corpus;
       let subcorpusParam = state.subcorpusName;
       if (router.currentRoute.params.subcorpus) subcorpusParam = router.currentRoute.params.subcorpus;

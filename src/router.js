@@ -36,6 +36,20 @@ export default new Router({
             Content: Analysis,
           },
         },
+        {
+          path: 'analysis/:corpus/:subcorpus',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
+        {
+          path: 'analysis/:corpus',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
       ],
     },
     {
