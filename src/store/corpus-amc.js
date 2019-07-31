@@ -568,20 +568,20 @@ export const mutations = {
         if (state.chartData.kwic.items[j].docid === items[i].Tbl_refs[0]) {
           docIdExists = true;
           docRowIndex = j;
-          break
+          break;
         }
       }
       if (!docIdExists) {
         const docRow = {
           date: items[i].Tbl_refs[1],
-          source: items[i].Tbl_refs[4],
-          source_name: items[i].Tbl_refs[5],
-          region: items[i].Tbl_refs[2],
+          source: items[i].Tbl_refs[2],
+          source_name: items[i].Tbl_refs[3],
+          region: items[i].Tbl_refs[4],
           left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
           word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
           right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
           docid: items[i].Tbl_refs[0],
-          topic: items[i].Tbl_refs[3],
+          topic: items[i].Tbl_refs[5],
           toknum: items[i].toknum,
           selected: false,
           queryTerm: payload.term,
@@ -790,7 +790,6 @@ export const mutations = {
           type: annoClasses[i].dataType,
           options: annoOptions,
           label: annoClasses[i].title,
-          sortable: true,
         }
       );
       state.chartData.kwic.fields.push(
@@ -798,7 +797,6 @@ export const mutations = {
           key: annoClasses[i].id,
           thStyle,
           label: annoClasses[i].title,
-          sortable: true,
         }
       );
     }
@@ -883,14 +881,17 @@ export const actions = {
       if (subcorpusParam !== 'none') {
         useSubCorp = `usesubcorp=${subcorpusParam};`;
       }
-      requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
-      requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
-      requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=30&q=sdoc.datum/ 0>0&format=json`;
-      requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
-      requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
-      const responses = {};
+      // requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
+      // requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
+      // requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      // requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${corpusParam};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.viewattrsxURI = `${state.engineAPI}view?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30&q=sdoc.datum/ 0>0&format=json;fromp=1`;
+
+      // requestURIs.viewattrsxURI = `${state.engineAPI}view?q=${queryTermEncoded}&q=sdoc.datum/ 0>0&corpname=${corpusParam}&${useSubCorp}&refs==doc.id&refs==doc.datum&refs==doc.region&refs==doc.ressort2&refs==doc.docsrc&refs==doc.docsrc_name&pagesize=10000&fromp=1&format=json`;
+
+      // requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
+      // requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
+      let responses = {};
 /*       responses.freqttURI = await axios.get(requestURIs.freqttURI);
       responses.freqsURI = await axios.get(requestURIs.freqsURI);
       responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
@@ -904,7 +905,18 @@ export const actions = {
 
       commit('processAnnoClasses', { result: annoClasses.data });
 
-      const items = responses.viewattrsxURI.data.Lines;
+      if (responses.viewattrsxURI.data.numofpages !== undefined) {
+        let nextpage = responses.viewattrsxURI.data.nextlink;
+        for (let i = 1; i < responses.viewattrsxURI.data.numofpages; i += 1) {
+          const nextpageKWIC = `${state.engineAPI}view?q=${queryTermEncoded};corpname=${corpusParam};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30&q=sdoc.datum/ 0>0&format=json;${nextpage}`;
+          const nextpageKWICResp = await axios.get(nextpageKWIC);
+          nextpage = nextpageKWICResp.data.nextlink;
+          responses.viewattrsxURI.data.Lines = responses.viewattrsxURI.data.Lines.concat(nextpageKWICResp.data.Lines);
+        }
+      }
+
+      let items = responses.viewattrsxURI.data.Lines;
+
       const kwicIDs = [];
       if (items !== undefined && items.length > 0) {
         for (let i = 0; i < items.length; i += 1) {

@@ -70,7 +70,7 @@
         </b-col> -->
       </b-row>
 
-      <div class="kwic-table">
+      <div class="kwic-table" >
 
         <!-- Main table element -->
         <b-table
@@ -150,7 +150,7 @@
                 track-by="title"
                 label="title"
                 :taggable="true"
-                @tag="addNewAnnoVocabulary($event, field.key, row.item.docid, row.index, 'vocabulary')"
+                @tag="addNewAnnoVocabulary($event, field.key, row.item.docid, (perPage * (currentPage - 1)) + row.index, 'vocabulary')"
               />
             </div>
           </template>
@@ -170,36 +170,36 @@
             bordered
             stacked="md"
             class="text-nowrap"
-            :items="[items[infoModal.rowId]]"
+            :items="[sortedItemsKWIC[infoModal.rowId]]"
             :fields="annotationFields"
           >
             <template v-for="(field, key) in annotationFields" :slot="field.key" slot-scope="row">
               <div v-bind:key="key" v-if="field.type === 'html'">
-                <span v-if="items[infoModal.rowId][field.key]">Yes</span>
+                <span v-if="sortedItemsKWIC[infoModal.rowId][field.key]">Yes</span>
                 <span v-else>No</span>
               </div>
               <div v-bind:key="key" v-else-if="field.type === 'boolean'">
                 <b-form-checkbox
-                  v-model="items[infoModal.rowId][field.key]"
+                  v-model="sortedItemsKWIC[infoModal.rowId][field.key]"
                   value="true"
                   unchecked-value="false"
-                  @change="changeAnnotation($event, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'boolean')"
+                  @change="changeAnnotation($event, field.key, sortedItemsKWIC[infoModal.rowId].docid, infoModal.rowId, 'boolean')"
                 >
                 </b-form-checkbox>
               </div>
               <div v-bind:key="key" v-else-if="field.type === 'vocabulary'">
                 <multiselect
-                  v-model="items[infoModal.rowId][field.key]"
+                  v-model="sortedItemsKWIC[infoModal.rowId][field.key]"
                   tag-placeholder="Add annotation"
                   placeholder="Add annotation"
                   :options="field.options"
                   :multiple="true"
-                  @select="addAnnotation($event.title, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
-                  @remove="removeAnnotation($event, field.key, infoModal.rowId, items[infoModal.rowId][field.key])"
+                  @select="addAnnotation($event.title, field.key, sortedItemsKWIC[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
+                  @remove="removeAnnotation($event, field.key, infoModal.rowId, sortedItemsKWIC[infoModal.rowId][field.key])"
                   track-by="title"
                   label="title"
                   :taggable="true"
-                  @tag="addNewAnnoVocabulary($event, field.key, items[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
+                  @tag="addNewAnnoVocabulary($event, field.key, sortedItemsKWIC[infoModal.rowId].docid, infoModal.rowId, 'vocabulary')"
                 />
               </div>
             </template>
@@ -208,14 +208,14 @@
           <template v-for="(field, key) in annotationFields">
             <div v-bind:key="key" v-if="field.type === 'html'">
               <b-form-textarea
-                v-model="items[infoModal.rowId][field.key]"
+                v-model="sortedItemsKWIC[infoModal.rowId][field.key]"
                 id="textarea-auto-height"
                 placeholder="Enter your annotation comments here"
                 rows="2"
                 max-rows="5"
-                @blur="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')"
+                @blur="addAnnotation(sortedItemsKWIC[infoModal.rowId][field.key], field.key, sortedItemsKWIC[infoModal.rowId].docid, infoModal.rowId, 'html')"
               ></b-form-textarea>
-              <b-button @click="addAnnotation(items[infoModal.rowId][field.key], field.key, items[infoModal.rowId].docid, infoModal.rowId, 'html')" variant="info" class="mt-2" size="sm">Save Comments</b-button>
+              <b-button @click="addAnnotation(sortedItemsKWIC[infoModal.rowId][field.key], field.key, sortedItemsKWIC[infoModal.rowId].docid, infoModal.rowId, 'html')" variant="info" class="mt-2" size="sm">Save Comments</b-button>
             </div>
           </template>
 
@@ -280,7 +280,7 @@
         currentPage: 1,
         perPage: 15,
         pageOptions: [10, 15, 20],
-        sortBy: null,
+        sortBy: 'null',
         sortDesc: false,
         sortDirection: 'asc',
         filter: null,
@@ -300,6 +300,10 @@
       }
     },
     computed: {
+      sortedItemsKWIC() {
+        if (this.$refs.table) return this.$refs.table.sortedItems;
+        else return this.chartProp.items;
+      },
       sortOptions() {
         // Create an options list from our fields
         return this.fields
@@ -360,6 +364,7 @@
     },
     methods: {
       addNewAnnoVocabulary(annoContent, annoClass, docid, rowIndex, annoType) {
+
         this.$store.dispatch('addNewAnnoVocabulary', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
       },
       changeAnnotation(checked, annoClass, docid, rowIndex, annoType) {
@@ -418,7 +423,7 @@
       info(item, index, button) {
         // this.infoModal.title = `Row index: ${index}`
         this.infoModal.title = item.source + ' - ' + item.date;
-        this.infoModal.rowId = index;
+        this.infoModal.rowId = (this.perPage * (this.currentPage - 1)) + index;
         this.modalTextContent = '';
         this.$store.dispatch('modalTextQuery', item);
         this.infoModal.content = JSON.stringify(item, null, 2)
