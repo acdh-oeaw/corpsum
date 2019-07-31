@@ -134,7 +134,7 @@
                 v-model="row.item[field.key]"
                 value="true"
                 unchecked-value="false"
-                @change="changeAnnotation($event, field.key, row.item.docid, row.index, 'boolean')"
+                @change="changeAnnotation($event, field.key, row.item.docid, (perPage * (currentPage - 1)) + row.index, 'boolean')"
               >
               </b-form-checkbox>
             </div>
@@ -145,8 +145,8 @@
                 placeholder="Add annotation"
                 :options="field.options"
                 :multiple="true"
-                @select="addAnnotation($event.title, field.key, row.item.docid, row.index, 'vocabulary')"
-                @remove="removeAnnotation($event, field.key, row.index, row.item[field.key])"
+                @select="addAnnotation($event.title, field.key, row.item.docid, (perPage * (currentPage - 1)) + row.index, 'vocabulary')"
+                @remove="removeAnnotation($event, field.key, (perPage * (currentPage - 1)) + row.index, row.item[field.key])"
                 track-by="title"
                 label="title"
                 :taggable="true"
