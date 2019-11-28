@@ -355,7 +355,6 @@ export const state = {
     },
     kwic: {
       items: [],
-      annotationOptions: [],
       fields: [
         { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
         { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
@@ -365,7 +364,6 @@ export const state = {
         { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
         { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
         { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-        /*{ key: 'annotation', label: 'Annotation', sortable: true, thStyle: { width: '250px' }, class: 'annotations' },*/
       ],
       height: 600,
     },
@@ -607,19 +605,7 @@ export const mutations = {
   },
   processKWIC(state, payload) {
     const items = payload.result.Lines;
-    const annotations = payload.annotations;
-    const annotationClasses = payload.annotationClasses;
     for (let i = 0; i < items.length; i += 1) {
-      const docAnno = [];
-      for (let j = 0; j < annotations.length; j += 1) {
-        if (annotations[j].targets[0].id === items[i].Tbl_refs[0]) {
-          for (let k = 0; k < annotationClasses.length; k += 1) {
-            if (annotations[j].annotationClass === annotationClasses[k].id) {
-              docAnno.push({ id: annotations[j].annotationClass, title: annotationClasses[k].title });
-            }
-          }
-        }
-      }
       state.chartData.kwic.items.push(
         {
           date: items[i].Tbl_refs[1],
@@ -628,7 +614,6 @@ export const mutations = {
           left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
           word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
           right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-          annotation: docAnno,
           docid: items[i].Tbl_refs[0],
           topic: items[i].Tbl_refs[3],
           toknum: items[i].toknum,
@@ -637,8 +622,6 @@ export const mutations = {
         },
       );
     }
-    // Append anno classes
-    state.chartData.kwic.annotationOptions = annotationClasses;
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
     state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
@@ -868,22 +851,12 @@ export const actions = {
       responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
       responses.collxURI = await axios.get(requestURIs.collxURI);
 
-      // KWIC Annotation
-      const annoClasses = await axios.get('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotationClasses');
-      const items = responses.viewattrsxURI.data.Lines;
-      const kwicIDs = [];
-      for (let i = 0; i < items.length; i += 1) {
-        kwicIDs.push(items[i].Tbl_refs[0]);
-      }
-      const annoReqData = { ids: kwicIDs };
-      const annoResponse = await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations/get-by-ske-object-id', annoReqData, { headers: { 'Content-Type': 'application/json' } });
-
       commit('changeLoadingStatus', { status: false });
       // commit('processSum', { term: queryTerm, result: response.data.fullsize });
       commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
       commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
       commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items });
-      commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data, annotations: annoResponse.data.response, annotationClasses: annoClasses.data });
+      commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data });
       commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
       commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
       commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
@@ -897,31 +870,6 @@ export const actions = {
     try {
       const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
       commit('updateModalTextContent', { term: item.word, result: response.data });
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  async addAnnotation({ state, commit, dispatch }, params) {
-    try {
-      const { annoClass, docID } = params;
-      const annoReqData = {
-        'docId': docID,
-        'annotationClass': annoClass
-      };
-      await axios.post('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  async removeAnnotation({ state, commit, dispatch }, params) {
-    try {
-      // TODO
-      const { annoClass, docID } = params;
-      const annoReqData = {
-        'docId': docID,
-        'annotationClass': annoClass
-      };
-      await axios.delete('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotations', annoReqData, { headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
       console.log(error);
     }

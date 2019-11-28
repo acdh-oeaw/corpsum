@@ -121,20 +121,6 @@
             </b-card>
           </template>
 
-          <template slot="annotation" slot-scope="row">
-            <multiselect
-              v-model="row.item.annotation"
-              tag-placeholder="Add annotation"
-              placeholder="Add annotation"
-              :options="annotationOptions"
-              :multiple="true"
-              @select="addAnnotation($event.id, row.item.docid)"
-              @remove="removeAnnotation($event.id, row.item.docid)"
-              track-by="id"
-              label="title"
-            />
-          </template>
-
         </b-table>
 
       </div>
@@ -227,10 +213,6 @@
             return { text: f.label, value: f.key }
           })
       },
-      annotationOptions() {
-        return this.chartProp.annotationOptions;
-        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-      },
       totalRows() {
         return this.chartProp.items.length;
         set: (value) => console.log(value) // this.$state.commit('someMutation', value )
@@ -266,12 +248,6 @@
       },
     },
     methods: {
-      addAnnotation(id, docid) {
-        this.$store.dispatch('addAnnotation', { annoClass: id, docID: docid } );
-      },
-      removeAnnotation(id, docid) {
-        //this.$store.dispatch('removeAnnotation', { annoClass: id, docID: docid } );
-      },
       createSubcorpus() {
         this.$store.dispatch('createSubcorpus', {docs: this.selectedDocs, title: this.subcorpusTitle} );
         if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
