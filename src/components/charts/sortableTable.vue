@@ -39,15 +39,15 @@
 <script>
 export default {
   props: {
-    tableData: Object
+    tableData: Object,
   },
   data() {
     return {
-      height: this.tableData.height + 'px',
+      height: `${this.tableData.height}px`,
       currentPage: 1,
-      totalPages: 0
+      totalPages: 0,
     };
-  }
+  },
 };
 </script>
 
@@ -61,4 +61,3 @@ td.kwic-center {
   color: #c70e0e;
 }
 </style>
-

@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -48,7 +47,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: `chart-info-modal-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
@@ -66,16 +65,16 @@ export default {
         title: false,
         xAxis: {
           title: {
-            text: this.chartProp.xAxisText
+            text: this.chartProp.xAxisText,
           },
           allowDecimals: false,
-          plotLines: this.chartProp.plotLinesX
+          plotLines: this.chartProp.plotLinesX,
         },
         yAxis: {
           title: {
-            text: this.chartProp.yAxisText
+            text: this.chartProp.yAxisText,
           },
-          plotLines: this.chartProp.plotLinesY
+          plotLines: this.chartProp.plotLinesY,
         },
         legend: {
           layout: 'horizontal',
@@ -87,16 +86,16 @@ export default {
         plotOptions: {
           series: {
             label: {
-              connectorAllowed: false
+              connectorAllowed: false,
             },
             marker: {
-              radius: 6
+              radius: 6,
             },
             dataLabels: {
               enabled: false,
               align: 'center',
               padding: 8,
-              format: '{point.y} %'
+              format: '{point.y} %',
             },
           },
           spline: {
@@ -104,14 +103,14 @@ export default {
               // enabled: true
             },
             // enableMouseTracking: false
-          }
+          },
         },
         series: this.chartProp.data,
         tooltip: {
           pointFormat: this.chartProp.pointFormat,
-          shared: true
+          shared: true,
         },
-      }
+      },
     };
   },
   methods: {

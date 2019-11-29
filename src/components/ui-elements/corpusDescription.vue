@@ -20,21 +20,21 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        corpusName: this.chartProp.corpusName,
-        corpusLogo: this.chartProp.corpusLogo,
-      }
-    },
-    computed: {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-  }
+export default {
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      corpusName: this.chartProp.corpusName,
+      corpusLogo: this.chartProp.corpusLogo,
+    };
+  },
+  computed: {
+  },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>

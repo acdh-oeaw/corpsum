@@ -5,7 +5,7 @@
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
           <info-icon></info-icon>
         </b-link>
-        <span class="vis-title">{{ chartProp.mapTitle }}</span>
+        <span class="vis-title">{{ chartProp.title }}</span>
         Relative
         <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
         Absolute
@@ -24,14 +24,10 @@
           </b-button>
         </div>
       </div>
-      <b-modal :id="chartInfoModal.id" :title="this.chartProp.mapTitle" ok-only scrollable>{{this.chartProp.mapSubtitle}}</b-modal>
+      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
       <div :key="componentKey">
-        <choroplethMap
-          v-for="(element, index) in maps"
-          v-bind:key="element.id"
-          v-bind:chartProp="element.mapData"
-          v-bind:elKey="index"
-          v-bind:elHeight="480/maps.length"
+        <lineChart
+          v-bind:chartProp="selectedChartData"
           ref="chart"
           v-show="showChartElement"
         />
@@ -45,7 +41,7 @@ import {
   DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
 } from 'vue-feather-icons';
 import { ToggleButton } from 'vue-js-toggle-button';
-import choroplethMap from '@/components/charts/choroplethMap.vue';
+import lineChart from '@/components/charts/lineChart.vue';
 
 export default {
   props: {
@@ -53,12 +49,12 @@ export default {
     elKey: Number,
   },
   components: {
-    choroplethMap, DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton,
+    lineChart, DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton,
   },
   data() {
     return {
       componentKey: 0,
-      maps: this.chartProp.relativeMaps,
+      selectedChartData: this.chartProp.relative,
       showTableIcon: true,
       showChartIcon: false,
       showChartElement: true,
@@ -73,7 +69,7 @@ export default {
   mounted() {
   },
   watch: {
-    maps(val) {
+    selectedChartData(val) {
       this.forceRerender();
     },
   },
@@ -82,9 +78,9 @@ export default {
   methods: {
     onFrequencyValueTypeChange() {
       if (this.frequencyValueTypeAbsolute) {
-        this.maps = this.chartProp.absoluteMaps;
+        this.selectedChartData = this.chartProp.absolute;
       } else {
-        this.maps = this.chartProp.relativeMaps;
+        this.selectedChartData = this.chartProp.relative;
       }
       this.forceRerender();
     },

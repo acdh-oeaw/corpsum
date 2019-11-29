@@ -101,7 +101,7 @@ export const mutations = {
 };
 
 export const getters = {
-  infoData: state => state.infoData,
+  infoData: (state) => state.infoData,
 };
 
 export const actions = {

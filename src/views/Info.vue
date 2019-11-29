@@ -45,42 +45,42 @@
 
 <script>
 // @ is an alias to /src
-import corpusInfoJumbotron from '@/components/ui-elements/corpusInfoJumbotron.vue'
-import areaChart from '@/components/charts/areaChart.vue'
-import lineChart from '@/components/charts/lineChart.vue'
-import barChart from '@/components/charts/barChart.vue'
-import kwicTable from '@/components/ui-elements/kwicTable.vue'
-import multiMap from '@/components/charts/multiMap.vue'
-import multiWordcloud from '@/components/charts/multiWordcloud.vue'
-import treemapChart from '@/components/charts/treemapChart.vue'
-import bubbleChart from '@/components/charts/bubbleChart.vue'
-import scatterChart from '@/components/charts/scatterChart.vue'
-import multiSankey from '@/components/charts/multiSankey.vue'
-import basicTable from '@/components/ui-elements/basicTable.vue'
+import corpusInfoJumbotron from '@/components/ui-elements/corpusInfoJumbotron.vue';
+import areaChart from '@/components/charts/areaChart.vue';
+import lineChart from '@/components/charts/lineChart.vue';
+import barChart from '@/components/charts/barChart.vue';
+import kwicTable from '@/components/ui-elements/kwicTable.vue';
+import multiMap from '@/components/charts/multiMap.vue';
+import multiWordcloud from '@/components/charts/multiWordcloud.vue';
+import treemapChart from '@/components/charts/treemapChart.vue';
+import bubbleChart from '@/components/charts/bubbleChart.vue';
+import scatterChart from '@/components/charts/scatterChart.vue';
+import multiSankey from '@/components/charts/multiSankey.vue';
+import basicTable from '@/components/ui-elements/basicTable.vue';
 
 export default {
   name: 'info',
   components: {
-    corpusInfoJumbotron, areaChart, lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, scatterChart, bubbleChart, multiSankey, basicTable
+    corpusInfoJumbotron, areaChart, lineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, scatterChart, bubbleChart, multiSankey, basicTable,
   },
   data() {
     return {
     };
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
   },
   watch: {
   },
   computed: {
     infoData() {
-      return this.$store.getters.infoData
+      return this.$store.getters.infoData;
     },
     infoElements() {
-      return this.$store.getters.infoElements
+      return this.$store.getters.infoElements;
     },
   },
   methods: {

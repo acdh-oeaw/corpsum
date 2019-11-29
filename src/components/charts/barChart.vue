@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -48,7 +47,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: `chart-info-modal-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
@@ -65,17 +64,17 @@ export default {
         title: false,
         xAxis: {
           type: this.chartProp.xAxisType,
-          categories: this.chartProp.categoriesX
+          categories: this.chartProp.categoriesX,
         },
         yAxis: {
           min: 0,
           title: {
-            text: this.chartProp.yAxisText
+            text: this.chartProp.yAxisText,
           },
           labels: {
-              // align: 'left',
-              // x: 0,
-          }
+            // align: 'left',
+            // x: 0,
+          },
         },
         legend: {
           enabled: this.chartProp.legendEnabled,
@@ -88,7 +87,7 @@ export default {
         tooltip: {
           pointFormat:
             '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-          shared: true
+          shared: true,
         },
         plotOptions: {
           column: {
@@ -97,12 +96,12 @@ export default {
               inside: true,
               align: 'center',
               verticalAlign: 'top',
-              format: '{point.y}'
+              format: '{point.y}',
             },
           },
         },
         series: this.chartProp.series,
-      }
+      },
     };
   },
   methods: {

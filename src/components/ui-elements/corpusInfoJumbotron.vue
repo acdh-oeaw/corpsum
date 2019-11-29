@@ -16,21 +16,21 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        logo: this.chartProp.logo,
-        desc: this.chartProp.desc,
-      }
-    },
-    computed: {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-  }
+export default {
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      logo: this.chartProp.logo,
+      desc: this.chartProp.desc,
+    };
+  },
+  computed: {
+  },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>

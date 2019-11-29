@@ -9,378 +9,18 @@ Vue.prototype.axios = axios;
 Vue.use(Vuex);
 
 function getObjectKey(object, value, property) {
-  if (property) return Object.keys(object).find(key => object[key][property] === value);
-  return Object.keys(object).find(key => object[key] === value);
+  if (property) return Object.keys(object).find((key) => object[key][property] === value);
+  return Object.keys(object).find((key) => object[key] === value);
 }
 
-export const state = {
-  engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
-  engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
-  subcorpusName: 'none',
-  subcorporaList: [
-    { value: 'none', text: 'None' },
-  ],
-  rawResults: [],
-  modalTextContent: '',
-  loadingStatus: false,
-  toggleIntroSection: true,
-  toggleVisSection: false,
-  corpusInfo: {
-    docsrcSizes: [],
-    ressortSizes: [],
-  },
-  chartElements: [
-    {
-      component: 'barChart',
-      class: 'col-md-4 vis-component',
-      chartProp: 'queryRelSummary',
-    },
-    {
-      component: 'treemapChart',
-      class: 'col-md-8 vis-component',
-      chartProp: 'wordFreqSummary',
-    },
-    {
-      component: 'multiSankey',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'wordTree',
-    },
-    {
-      component: 'kwicTable',
-      class: 'col-md-12 vis-component',
-      chartProp: 'kwic',
-    },
-    {
-      component: 'lineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'relative',
-    },
-    {
-      component: 'lineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'absolute',
-    },
-    {
-      component: 'multiMap',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
-      component: 'barChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sources',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sections',
-    },
-    {
-      component: 'multiWordcloud',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'collocations',
-    },
-  ],
-  infoElements: [
-    {
-      component: 'corpusInfoJumbotron',
-      class: 'col-md-12 vis-component vis-intro-component',
-      chartProp: 'corpusBasicInfo',
-    },
-    {
-      component: 'areaChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'docsYears',
-    },
-    {
-      component: 'barChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'docsRegions',
-    },
-    {
-      component: 'basicTable',
-      class: 'col-md-6 vis-component no-min-height',
-      chartProp: 'corpInfoTable',
-    },
-    {
-      component: 'scatterChart',
-      class: 'col-md-6 vis-component no-min-height',
-      chartProp: 'topLemmas',
-    },
-    {
-      component: 'treemapChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'docsSources',
-    },
-    {
-      component: 'treemapChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'docsRessorts',
-    },
-    /*
-    {
-      component: 'scatterChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'topLCs',
-    },*/
-  ],
-  infoData: {
-    corpusBasicInfo: {
-      logo: 'https://www.oeaw.ac.at/fileadmin/_processed_/6/8/csm_acdh_projects_amc_logo_web_a92e4e1d33.png',
-      desc: 'The Austrian Media Corpus (amc), created as part of a cooperation between the Austrian Academy of Sciences and the Austrian Press Agency (APA), covers the entire Austrian media landscape of the past decades, comprising a wide range of text types which can be classified as journalistic prose. Altogether, the corpus contains 40 million texts, constituting more than 10 billion tokens. In comparison to other contemporary German language corpora, the amc ranks among the largest collection of its kind.',
-    },
-    docsYears: {
-      title: 'Number of Documents per Year',
-      subtitle: 'This chart displays the yearly distribution of documents in the selected corpus.',
-      yAxisText: 'Number of Documents',
-      data: [],
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-    },
-    docsRegions: {
-      title: 'Number of Documents per Region',
-      subtitle: 'This chart displays the regional distribution of documents in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
-      yAxisText: 'Number of Documents',
-      categoriesX: [
-        'AT-Nationwide',
-        'AT-Ost',
-        'AT-Südost',
-        'AT-Mitte',
-        'AT-West',
-        'Specific',
-      ],
-      series: [],
-    },
-    corpInfoTable: {
-      title: 'Unit Sizes of the Corpus',
-      subtitle: 'An annotated text corpus consists of structured elements such as documents, paragraphs, sentences, words and tokens. Tokens are the smallest units, which are symbols, numbers and lemmas. The size of a corpus is generally described by its total count of tokens and documents.',
-      items: [],
-      fields: [
-        { key: 'unit', label: 'Unit', sortable: true },
-        { key: 'count', label: 'Count', sortable: true },
-      ],
-      height: 360,
-    },
-    topLemmas: {
-      title: 'The Most Frequent Lemmas',
-      subtitle: "This chart displays the most frequent lemmas in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
-      legendEnabled: true,
-      series: [],
-      yAxisText: 'Absolute Frequency',
-      xAxisText: 'Ranking',
-      height: 315,
-    },
-    docsSources: {
-      title: 'Number of Documents per Media Source',
-      subtitle: 'This chart displays the distribution of documents in the selected corpus per media source.',
-      data: [],
-    },
-    docsRessorts: {
-      title: 'Number of Documents per Newspaper Section',
-      subtitle: 'This chart displays the distribution of documents in the selected corpus per newspaper section / ressort.',
-      data: [],
-    },
-    /*
-    topLCs: {
-      title: 'The Most Frequent Word Forms',
-      subtitle: "This chart displays the most frequent word forms (case insensitive) in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
-      legendEnabled: true,
-      series: [],
-      yAxisText: 'Absolute Frequency',
-      xAxisText: 'Ranking',
-    },*/
-  },
-  chartData: {
-    queryTerms: [],
-    separatorQuery: {
-      title: 'Query Summary',
-    },
-    separatorYearly: {
-      title: 'Diachronic Analysis',
-    },
-    separatorKWIC: {
-      title: 'Keyword in Context (KWIC)',
-    },
-    separatorRegional: {
-      title: 'Regional Analysis',
-    },
-    separatorDiscourse: {
-      title: 'Discourse Analysis',
-    },
-    querySummary: {
-      title: 'Total Absolute Frequency and Word Forms',
-      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
-      yAxisText: 'Number of Hits',
-      xAxisType: 'category',
-      legendEnabled: false,
-      series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
-    },
-    queryRelSummary: {
-      title: 'Total Relative Frequency',
-      subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
-      yAxisText: 'Frequency per million tokens',
-      xAxisType: 'category',
-      legendEnabled: false,
-      series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
-    },
-    wordFreqSummary: {
-      title: 'Total Absolute Frequency and Word Forms',
-      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
-      data: [],
-    },
-    wordTree: {
-      charts: [],
-    },
-    absolute: {
-      title: 'Yearly Absolute Frequency',
-      subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
-      yAxisText: 'Number of Hits',
-      data: [],
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-    },
-    relative: {
-      title: 'Yearly Relative Frequency (%)',
-      subtitle: 'Relative comparison to the baseline (100%) for the query in years is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
-      yAxisText: 'Relative Frequency (%)',
-      data: [],
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
-      plotLinesY: [{
-        color: 'red',
-        dashStyle: 'dot',
-        width: 2,
-        value: 100,
-        label: {
-          rotation: 0,
-          x: 0,
-          style: {
-            fontStyle: 'italic',
-            fontSize: '10',
-          },
-          text: 'Baseline (100%)',
-        },
-        zIndex: 3,
-      }],
-    },
-    sources: {
-      title: 'Distribution of Media Sources',
-      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
-      yAxisText: 'Absolute Frequency',
-      xAxisText: 'Relative Frequency (%)',
-      plotLinesX: [{
-        color: 'red',
-        dashStyle: 'dot',
-        width: 2,
-        value: 100,
-        label: {
-          rotation: 0,
-          y: -5,
-          style: {
-            fontStyle: 'italic',
-            fontSize: '10',
-          },
-          textAlign: 'center',
-          text: 'Baseline (100%)',
-        },
-        zIndex: 3,
-      }],
-      series: [],
-    },
-    sections: {
-      title: 'Distribution of Newspaper Sections',
-      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
-      yAxisText: 'Absolute Frequency',
-      xAxisText: 'Relative Frequency (%)',
-      plotLinesX: [{
-        color: 'red',
-        dashStyle: 'dot',
-        width: 2,
-        value: 100,
-        label: {
-          rotation: 0,
-          y: -5,
-          style: {
-            fontStyle: 'italic',
-            fontSize: '10',
-          },
-          textAlign: 'center',
-          text: 'Baseline (100%)',
-        },
-        zIndex: 3,
-      }],
-      series: [],
-    },
-    collocations: {
-      clouds: [],
-    },
-    regions: {
-      mapTitle: 'Regional Relative Frequency (%)',
-      mapSubtitle: 'Relative comparison to the baseline (100%) for the query in regions is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
-      title: 'Regional Absolute Frequency',
-      subtitle: 'This chart displays the absolute number of occurences (hits) of a given query per regions in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
-      yAxisText: 'Number of Hits',
-      height: 480,
-      legendEnabled: true,
-      categoriesX: [
-        'AT-Nationwide',
-        'AT-Ost',
-        'AT-Südost',
-        'AT-Mitte',
-        'AT-West',
-        'Specific',
-      ],
-      series: [],
-      maps: [],
-    },
-    narrative: {
-      title: 'Narrative Forms',
-      type: 'column',
-      yAxisText: 'Percentage of Absolute Frequencies',
-      stacking: 'percent',
-      categories: [],
-      series: [
-        {
-          name: 'Fiction',
-          data: [],
-        },
-        {
-          name: 'Non-Fiction',
-          data: [],
-        },
-      ],
-    },
-    kwic: {
-      items: [],
-      fields: [
-        { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
-        { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
-        { key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' } },
-        { key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' } },
-        { key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' } },
-        { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
-        { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
-        { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
-      ],
-      height: 600,
-    },
-  },
-};
-
-// initial state
-const defaultState = JSON.parse(JSON.stringify(state));
-
-export const mutations = {
+const mutations = {
   resetQueryTerms(state, payload) {
     state.chartData.queryTerms = payload;
-    console.log(payload)
+    console.log(payload);
   },
   resetChartData(state, payload) {
     state.chartData = payload;
-    console.log(payload)
+    console.log(payload);
   },
   updateRawResults(state, payload) {
     state.rawResults.push(payload);
@@ -389,25 +29,26 @@ export const mutations = {
     state.chartData.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
-    for (let i = state.chartData.queryTerms.length - 1; i >= 0; i--) {
+    for (let i = state.chartData.queryTerms.length - 1; i >= 0; i -= 1) {
       if (state.chartData.queryTerms[i].text === queryTerm.text) {
         state.chartData.queryTerms.splice(i, 1);
         state.chartData.querySummary.series[0].data.splice(i, 1);
         state.chartData.queryRelSummary.series[0].data.splice(i, 1);
         state.chartData.wordTree.charts.splice(i, 1);
-        state.chartData.absolute.data.splice(i, 1);
-        state.chartData.relative.data.splice(i, 1);
-        state.chartData.regions.maps.splice(i, 1);
+        state.chartData.temporal.absolute.data.splice(i, 1);
+        state.chartData.temporal.relative.data.splice(i, 1);
+        state.chartData.regions.relativeMaps.splice(i, 1);
+        state.chartData.regions.absoluteMaps.splice(i, 1);
         state.chartData.regions.series.splice(i, 1);
         state.chartData.sources.series.splice(i, 1);
         state.chartData.sections.series.splice(i, 1);
         state.chartData.collocations.clouds.splice(i, 1);
-        for (let k = state.chartData.wordFreqSummary.data.length - 1; k >= 0; k--) {
+        for (let k = state.chartData.wordFreqSummary.data.length - 1; k >= 0; k -= 1) {
           if (state.chartData.wordFreqSummary.data[k].parent === queryTerm.text || state.chartData.wordFreqSummary.data[k].id === queryTerm.text) {
             state.chartData.wordFreqSummary.data.splice(k, 1);
           }
         }
-        for (let j = state.chartData.kwic.items.length - 1; j >= 0; j--) {
+        for (let j = state.chartData.kwic.items.length - 1; j >= 0; j -= 1) {
           if (state.chartData.kwic.items[j].queryTerm === queryTerm.text) {
             state.chartData.kwic.items.splice(j, 1);
           }
@@ -427,7 +68,7 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.queryTerms.push({ text: items[i].name, tiClasses: ['ti-valid'] });
     }
-  },*/
+  }, */
   changeLoadingStatus(state, payload) {
     state.loadingStatus = payload.status;
     if (payload.status === false && payload.type !== 'intro') {
@@ -438,7 +79,7 @@ export const mutations = {
   /*
   processSum(state, payload) {
     state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.result });
-  },*/
+  }, */
   processWordFreqSum(state, payload) {
     // processSum
     state.chartData.querySummary.series[0].data.push({ name: payload.term, y: payload.processSumResp });
@@ -483,8 +124,8 @@ export const mutations = {
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
     relative.data.sort((a, b) => a[0] - b[0]);
-    state.chartData.absolute.data.push(absolute);
-    state.chartData.relative.data.push(relative);
+    state.chartData.temporal.absolute.data.push(absolute);
+    state.chartData.temporal.relative.data.push(relative);
   },
   processSources(state, payload) {
     const items = payload.result;
@@ -493,7 +134,9 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       for (let j = 0; j < docsrcSizeItems.length; j += 1) {
         if (docsrcSizeItems[j].str === items[i].Word[0].n) {
-          series.data.push({ x: items[i].rel, y: items[i].freq, z: docsrcSizeItems[j].freq, source: items[i].Word[0].n });
+          series.data.push({
+            x: items[i].rel, y: items[i].freq, z: docsrcSizeItems[j].freq, source: items[i].Word[0].n,
+          });
           break;
         }
       }
@@ -507,7 +150,9 @@ export const mutations = {
     for (let i = 0; i < items.length; i += 1) {
       for (let j = 0; j < ressortSizeItems.length; j += 1) {
         if (ressortSizeItems[j].str === items[i].Word[0].n) {
-          series.data.push({ x: items[i].rel, y: items[i].freq, z: ressortSizeItems[j].freq, source: items[i].Word[0].n });
+          series.data.push({
+            x: items[i].rel, y: items[i].freq, z: ressortSizeItems[j].freq, source: items[i].Word[0].n,
+          });
           break;
         }
       }
@@ -526,16 +171,23 @@ export const mutations = {
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
-    const map = {
+    const relativeMap = {
       mapData: {
         title: 'Regional Relative Frequency (%)',
         queryTerm: payload.term,
+        valueTypeLabel: 'Relevative Frequency (%)',
+        valueTypeUnit: '%',
         data: [],
       },
     };
-    const seriesData = {
-      name: payload.term,
-      data: [0, 0, 0, 0, 0, 0],
+    const absoluteMap = {
+      mapData: {
+        title: 'Regional Absolute Frequency',
+        queryTerm: payload.term,
+        valueTypeLabel: 'Absolute Frequency (Hits)',
+        valueTypeUnit: '',
+        data: [],
+      },
     };
     for (let i = 0; i < itemsRegions.length; i += 1) {
       const regionName = itemsRegions[i].Word[0].n;
@@ -543,35 +195,32 @@ export const mutations = {
       switch (regionName) {
         case 'aost':
           regionPrettyName = 'AT-Ost';
-          seriesData.data[1] = itemsRegions[i].freq;
           break;
         case 'asuedost':
           regionPrettyName = 'AT-Südost';
-          seriesData.data[2] = itemsRegions[i].freq;
           break;
         case 'amitte':
           regionPrettyName = 'AT-Mitte';
-          seriesData.data[3] = itemsRegions[i].freq;
           break;
         case 'awest':
           regionPrettyName = 'AT-West';
-          seriesData.data[4] = itemsRegions[i].freq;
           break;
         case 'agesamt':
           regionPrettyName = 'AT-Nationwide';
-          seriesData.data[0] = itemsRegions[i].freq;
           break;
         case 'spezifisch':
           regionPrettyName = 'Specific';
-          seriesData.data[5] = itemsRegions[i].freq;
           break;
         default:
           regionPrettyName = '';
       }
-      map.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].rel });
+      if (regionName !== 'agesamt' && regionName !== 'spezifisch') {
+        relativeMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].rel });
+        absoluteMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].freq });
+      }
     }
-    state.chartData.regions.maps.push(map);
-    state.chartData.regions.series.push(seriesData);
+    state.chartData.regions.relativeMaps.push(relativeMap);
+    state.chartData.regions.absoluteMaps.push(absoluteMap);
   },
   processDispersion(state, payload) {
     const data = payload.result;
@@ -810,23 +459,23 @@ export const mutations = {
   },
 };
 
-export const getters = {
-  chartData: state => state.chartData,
-  queryTerms: state => state.chartData.queryTerms,
-  chartElements: state => state.chartElements,
-  modalTextContent: state => state.modalTextContent,
-  corpusName: state => state.corpusName,
-  subcorpusName: state => state.subcorpusName,
-  subcorporaList: state => state.subcorporaList,
-  loadingStatus: state => state.loadingStatus,
-  toggleIntroSection: state => state.toggleIntroSection,
-  toggleVisSection: state => state.toggleVisSection,
-  infoData: state => state.infoData,
-  infoElements: state => state.infoElements,
+const getters = {
+  chartData: (state) => state.chartData,
+  queryTerms: (state) => state.chartData.queryTerms,
+  chartElements: (state) => state.chartElements,
+  modalTextContent: (state) => state.modalTextContent,
+  corpusName: (state) => state.corpusName,
+  subcorpusName: (state) => state.subcorpusName,
+  subcorporaList: (state) => state.subcorporaList,
+  loadingStatus: (state) => state.loadingStatus,
+  toggleIntroSection: (state) => state.toggleIntroSection,
+  toggleVisSection: (state) => state.toggleVisSection,
+  infoData: (state) => state.infoData,
+  infoElements: (state) => state.infoElements,
 };
 
-export const actions = {
-  async corpusQuery({ state, commit, dispatch }, queryTerm) {
+const actions = {
+  async corpusQuery({ state, commit }, queryTerm) {
     try {
       commit('changeLoadingStatus', { status: true });
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
@@ -866,7 +515,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async modalTextQuery({ state, commit, dispatch }, item) {
+  async modalTextQuery({ state, commit }, item) {
     try {
       const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
       commit('updateModalTextContent', { term: item.word, result: response.data });
@@ -874,7 +523,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async createSubcorpus({ state, commit, dispatch }, params) {
+  async createSubcorpus({ state, dispatch }, params) {
     try {
       const { docs, title } = params;
 
@@ -888,7 +537,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async getSubcorporaList({ state, commit, dispatch }) {
+  async getSubcorporaList({ state, commit }) {
     try {
       const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
       commit('updateSubcorporaList', { result: response.data.subcorpora });
@@ -896,7 +545,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async queryCorpusInfo({ state, commit, dispatch }) {
+  async queryCorpusInfo({ state, commit }) {
     try {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
       const requestURIs = {};
@@ -929,7 +578,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async corpusQueryData({ state, commit, dispatch }, params) {
+/*   async corpusQueryData({ state, commit, dispatch }, params) {
     try {
 
       // commit('processRegional', { term: params.term, result: response.data });
@@ -939,6 +588,371 @@ export const actions = {
     } catch (error) {
       console.log(error);
     }
+  }, */
+};
+
+const state = {
+  engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
+  engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
+  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
+  subcorpusName: 'none',
+  subcorporaList: [
+    { value: 'none', text: 'None' },
+  ],
+  rawResults: [],
+  modalTextContent: '',
+  loadingStatus: false,
+  toggleIntroSection: true,
+  toggleVisSection: false,
+  corpusInfo: {
+    docsrcSizes: [],
+    ressortSizes: [],
+  },
+  chartElements: [
+    {
+      component: 'barChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'queryRelSummary',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-8 vis-component',
+      chartProp: 'wordFreqSummary',
+    },
+    {
+      component: 'multiSankey',
+      class: 'container-fluid p-0 d-flex',
+      chartProp: 'wordTree',
+    },
+    {
+      component: 'kwicTable',
+      class: 'col-md-12 vis-component',
+      chartProp: 'kwic',
+    },
+    {
+      component: 'wrapperLineChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'temporal',
+    },
+    {
+      component: 'multiMap',
+      class: 'col-md-6 vis-component',
+      chartProp: 'regions',
+    },
+    {
+      component: 'bubbleChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'sources',
+    },
+    {
+      component: 'bubbleChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'sections',
+    },
+    {
+      component: 'multiWordcloud',
+      class: 'container-fluid p-0 d-flex',
+      chartProp: 'collocations',
+    },
+  ],
+  infoElements: [
+    {
+      component: 'corpusInfoJumbotron',
+      class: 'col-md-12 vis-component vis-intro-component',
+      chartProp: 'corpusBasicInfo',
+    },
+    {
+      component: 'areaChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsYears',
+    },
+    {
+      component: 'barChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsRegions',
+    },
+    {
+      component: 'basicTable',
+      class: 'col-md-6 vis-component no-min-height',
+      chartProp: 'corpInfoTable',
+    },
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component no-min-height',
+      chartProp: 'topLemmas',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsSources',
+    },
+    {
+      component: 'treemapChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'docsRessorts',
+    },
+    /*
+    {
+      component: 'scatterChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'topLCs',
+    }, */
+  ],
+  infoData: {
+    corpusBasicInfo: {
+      logo: 'https://www.oeaw.ac.at/fileadmin/_processed_/6/8/csm_acdh_projects_amc_logo_web_a92e4e1d33.png',
+      desc: 'The Austrian Media Corpus (amc), created as part of a cooperation between the Austrian Academy of Sciences and the Austrian Press Agency (APA), covers the entire Austrian media landscape of the past decades, comprising a wide range of text types which can be classified as journalistic prose. Altogether, the corpus contains 40 million texts, constituting more than 10 billion tokens. In comparison to other contemporary German language corpora, the amc ranks among the largest collection of its kind.',
+    },
+    docsYears: {
+      title: 'Number of Documents per Year',
+      subtitle: 'This chart displays the yearly distribution of documents in the selected corpus.',
+      yAxisText: 'Number of Documents',
+      data: [],
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+    },
+    docsRegions: {
+      title: 'Number of Documents per Region',
+      subtitle: 'This chart displays the regional distribution of documents in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
+      yAxisText: 'Number of Documents',
+      categoriesX: [
+        'AT-Nationwide',
+        'AT-Ost',
+        'AT-Südost',
+        'AT-Mitte',
+        'AT-West',
+        'Specific',
+      ],
+      series: [],
+    },
+    corpInfoTable: {
+      title: 'Unit Sizes of the Corpus',
+      subtitle: 'An annotated text corpus consists of structured elements such as documents, paragraphs, sentences, words and tokens. Tokens are the smallest units, which are symbols, numbers and lemmas. The size of a corpus is generally described by its total count of tokens and documents.',
+      items: [],
+      fields: [
+        { key: 'unit', label: 'Unit', sortable: true },
+        { key: 'count', label: 'Count', sortable: true },
+      ],
+      height: 360,
+    },
+    topLemmas: {
+      title: 'The Most Frequent Lemmas',
+      subtitle: "This chart displays the most frequent lemmas in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
+      legendEnabled: true,
+      series: [],
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Ranking',
+      height: 315,
+    },
+    docsSources: {
+      title: 'Number of Documents per Media Source',
+      subtitle: 'This chart displays the distribution of documents in the selected corpus per media source.',
+      data: [],
+    },
+    docsRessorts: {
+      title: 'Number of Documents per Newspaper Section',
+      subtitle: 'This chart displays the distribution of documents in the selected corpus per newspaper section / ressort.',
+      data: [],
+    },
+    /*
+    topLCs: {
+      title: 'The Most Frequent Word Forms',
+      subtitle: "This chart displays the most frequent word forms (case insensitive) in this corpus. On the y-axis the the absolute frequency and on the x-axis the ranking of this word form is displayed. This type of distribution is also known as the <a target='_blank' href='https://en.wikipedia.org/wiki/Zipf%27s_law'>Zipf's Curve / Law</a>, where the ranking of the most frequent words are disproportional with their absolute frequencies.",
+      legendEnabled: true,
+      series: [],
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Ranking',
+    }, */
+  },
+  chartData: {
+    queryTerms: [],
+    separatorQuery: {
+      title: 'Query Summary',
+    },
+    separatorYearly: {
+      title: 'Diachronic Analysis',
+    },
+    separatorKWIC: {
+      title: 'Keyword in Context (KWIC)',
+    },
+    separatorRegional: {
+      title: 'Regional Analysis',
+    },
+    separatorDiscourse: {
+      title: 'Discourse Analysis',
+    },
+    querySummary: {
+      title: 'Total Absolute Frequency and Word Forms',
+      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
+      yAxisText: 'Number of Hits',
+      xAxisType: 'category',
+      legendEnabled: false,
+      series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
+    },
+    queryRelSummary: {
+      title: 'Total Relative Frequency',
+      subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
+      yAxisText: 'Frequency per million tokens',
+      xAxisType: 'category',
+      legendEnabled: false,
+      series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
+    },
+    wordFreqSummary: {
+      title: 'Total Absolute Frequency and Word Forms',
+      subtitle: 'Total absolute number of occurences (hits) of a given query is displayed. If the query has multiple words in results these are displayed in the second level with a click.',
+      data: [],
+    },
+    wordTree: {
+      charts: [],
+    },
+    temporal: {
+      absolute: {
+        title: 'Yearly Absolute Frequency',
+        subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
+        yAxisText: 'Number of Hits',
+        data: [],
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+      },
+      relative: {
+        title: 'Yearly Relative Frequency (%)',
+        subtitle: 'Relative comparison to the baseline (100%) for the query in years is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+        yAxisText: 'Relative Frequency (%)',
+        data: [],
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
+        plotLinesY: [{
+          color: 'red',
+          dashStyle: 'dot',
+          width: 2,
+          value: 100,
+          label: {
+            rotation: 0,
+            x: 0,
+            style: {
+              fontStyle: 'italic',
+              fontSize: '10',
+            },
+            text: 'Baseline (100%)',
+          },
+          zIndex: 3,
+        }],
+      },
+    },
+    sources: {
+      title: 'Distribution of Media Sources',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Relative Frequency (%)',
+      plotLinesX: [{
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: 100,
+        label: {
+          rotation: 0,
+          y: -5,
+          style: {
+            fontStyle: 'italic',
+            fontSize: '10',
+          },
+          textAlign: 'center',
+          text: 'Baseline (100%)',
+        },
+        zIndex: 3,
+      }],
+      series: [],
+    },
+    sections: {
+      title: 'Distribution of Newspaper Sections',
+      subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      yAxisText: 'Absolute Frequency',
+      xAxisText: 'Relative Frequency (%)',
+      plotLinesX: [{
+        color: 'red',
+        dashStyle: 'dot',
+        width: 2,
+        value: 100,
+        label: {
+          rotation: 0,
+          y: -5,
+          style: {
+            fontStyle: 'italic',
+            fontSize: '10',
+          },
+          textAlign: 'center',
+          text: 'Baseline (100%)',
+        },
+        zIndex: 3,
+      }],
+      series: [],
+    },
+    collocations: {
+      clouds: [],
+    },
+    regions: {
+      mapTitle: 'Regional Relative Frequency (%)',
+      mapSubtitle: 'Relative comparison to the baseline (100%) for the query in regions is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
+      title: 'Regional Absolute Frequency',
+      subtitle: 'This chart displays the absolute number of occurences (hits) of a given query per regions in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
+      yAxisText: 'Number of Hits',
+      height: 480,
+      legendEnabled: true,
+      categoriesX: [
+        'AT-Nationwide',
+        'AT-Ost',
+        'AT-Südost',
+        'AT-Mitte',
+        'AT-West',
+        'Specific',
+      ],
+      relativeMaps: [],
+      absoluteMaps: [],
+    },
+    narrative: {
+      title: 'Narrative Forms',
+      type: 'column',
+      yAxisText: 'Percentage of Absolute Frequencies',
+      stacking: 'percent',
+      categories: [],
+      series: [
+        {
+          name: 'Fiction',
+          data: [],
+        },
+        {
+          name: 'Non-Fiction',
+          data: [],
+        },
+      ],
+    },
+    kwic: {
+      items: [],
+      fields: [
+        {
+          key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center',
+        },
+        {
+          key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center',
+        },
+        {
+          key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' },
+        },
+        {
+          key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' },
+        },
+        {
+          key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' },
+        },
+        {
+          key: 'left', label: 'Left', sortable: true, class: 'text-right',
+        },
+        {
+          key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word',
+        },
+        {
+          key: 'right', label: 'Right', sortable: true, class: 'text-left',
+        },
+      ],
+      height: 600,
+    },
   },
 };
 

@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -50,7 +49,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: `chart-info-modal-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
@@ -64,7 +63,7 @@ export default {
               inside: true,
               align: 'center',
               verticalAlign: 'middle',
-              format: '<span>{point.name}</span>: {point.value}'
+              format: '<span>{point.name}</span>: {point.value}',
             },
           },
         },
@@ -75,19 +74,19 @@ export default {
           allowDrillToNode: true,
           animationLimit: 1000,
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
           levelIsConstant: false,
           levels: [{
             level: 1,
             dataLabels: {
-              enabled: true
+              enabled: true,
             },
-            borderWidth: 3
+            borderWidth: 3,
           }],
           data: this.chartProp.data,
         }],
-      }
+      },
     };
   },
   methods: {
@@ -112,13 +111,13 @@ export default {
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
     },
     forceRerender() {
-      this.componentKey += 1;  
+      this.componentKey += 1;
     },
   },
   watch: {
     seriesData(val) {
       this.forceRerender();
-    }
+    },
   },
 };
 </script>

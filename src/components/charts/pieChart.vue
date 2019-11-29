@@ -5,46 +5,46 @@
 <script>
 export default {
   props: {
-    chartProp: Object
+    chartProp: Object,
   },
   data() {
     return {
       chartOptions: {
         chart: {
-          type: "pie",
+          type: 'pie',
           height: this.chartProp.height,
           options3d: {
             enabled: true,
             alpha: 45,
-            beta: 0
-          }
+            beta: 0,
+          },
         },
         title: {
-          text: this.chartProp.title
+          text: this.chartProp.title,
         },
         tooltip: {
-          pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
         },
         plotOptions: {
           pie: {
             allowPointSelect: true,
-            cursor: "pointer",
+            cursor: 'pointer',
             depth: 35,
             dataLabels: {
               enabled: true,
-              format: "{point.name}"
-            }
-          }
+              format: '{point.name}',
+            },
+          },
         },
         series: [
           {
-            type: "pie",
-            name: "Browser share",
-            data: this.chartProp.data
-          }
-        ]
-      }
+            type: 'pie',
+            name: 'Browser share',
+            data: this.chartProp.data,
+          },
+        ],
+      },
     };
-  }
+  },
 };
 </script>

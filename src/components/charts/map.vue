@@ -45,12 +45,12 @@ export default {
           .data(topojson.feature(world, world.objects.countries).features)
           .enter()
           .append('g')
-          .attr('id', d => `country-${d.id}`)
-          .attr('class', d => 'country-group')
+          .attr('id', (d) => `country-${d.id}`)
+          .attr('class', (d) => 'country-group')
           .append('path')
           .attr('stroke', 'white')
           .attr('stroke-width', 1)
-          .attr('fill', d => '#ddd')
+          .attr('fill', (d) => '#ddd')
           .attr('d', path);
         return paths;
       });
@@ -95,7 +95,7 @@ export default {
         }
       }
 
-      const maxValue = d3.max(mapData, d => d.value);
+      const maxValue = d3.max(mapData, (d) => d.value);
 
       const colorScale = d3.scaleLinear().domain([0, maxValue]).range(['beige', 'red']);
       const sizeScale = d3.scaleLinear().domain([0, maxValue]).range([6, 12]);
@@ -161,14 +161,14 @@ export default {
 
       const pie = d3.pie()
         .sort(null)
-        .value(d => d.relValue);
+        .value((d) => d.relValue);
 
 
       const countryPies = d3.select('.map-group').selectAll('.country-pie')
         .data(mapData2)
         .enter()
         .append('g')
-        .attr('class', d => `country-pie country-pie-${d[0].id}`)
+        .attr('class', (d) => `country-pie country-pie-${d[0].id}`)
         // using the map data
         // position a circle for matches in mapData array
         .attr('transform', (d) => {
@@ -210,14 +210,14 @@ export default {
 
         const slice = d3.select(this)
           .selectAll('.country-arc')
-          .data(d => pie(d))
+          .data((d) => pie(d))
           .enter()
           .append('g')
           .attr('class', (d, i) => `arc arc-${d.data.group}`);
 
         slice.append('path')
           .attr('d', arc)
-          .attr('fill', d => ordinalColorScale(d.data.group))
+          .attr('fill', (d) => ordinalColorScale(d.data.group))
           .on('mouseover', function (d) {
             d3.select(this.parentNode).selectAll('text')
               .style('display', 'block');
@@ -228,10 +228,10 @@ export default {
           });
 
         slice.append('text')
-          .attr('transform', d => `translate(${labelArc.centroid(d)})`)
+          .attr('transform', (d) => `translate(${labelArc.centroid(d)})`)
           .attr('dy', '.35em')
           .style('display', 'none')
-          .text(d => d.data.group);
+          .text((d) => d.data.group);
       });
 
 

@@ -26,7 +26,7 @@ export default {
         },
         legend: {
           title: {
-              text: this.chartProp.queryTerm + '<br/><span style="font-size: 9px; color: #666; font-weight: normal">Relevative Frequency (%)</span>',
+              text: this.chartProp.queryTerm + '<br/><span style="font-size: 9px; color: #666; font-weight: normal">' + this.chartProp.valueTypeLabel + '</span>',
               style: {
                   fontStyle: 'italic'
               }
@@ -45,7 +45,7 @@ export default {
           data: this.chartProp.data,
           keys: ['query', 'name', 'value'],
           joinBy: 'name',
-          name: 'Relative Frequency (%)',
+          name: this.chartProp.valueTypeLabel,
           states: {
             hover: {
               color: '#a4edba'
@@ -59,7 +59,7 @@ export default {
         }],
         tooltip: {
           pointFormat:
-            '<span>{point.name}</span>: <b>{point.value}%</b><br/>',
+            '<span>{point.name}</span>: <b>{point.value}' + this.chartProp.valueTypeUnit + '</b><br/>',
           shared: true
         },
       }

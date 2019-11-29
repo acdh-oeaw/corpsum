@@ -108,60 +108,58 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        items: this.chartProp.items,
-        fields: this.chartProp.fields,
-        height: this.chartProp.height + 'px',
-        currentPage: 1,
-        perPage: 15,
-        pageOptions: [10, 15, 20],
-        sortBy: null,
-        sortDesc: false,
-        sortDirection: 'asc',
-        filter: null,
-        infoModal: {
-          id: 'info-modal',
-          title: '',
-          content: ''
-        }
-      }
-    },
-    computed: {
-      sortOptions() {
-        // Create an options list from our fields
-        return this.fields
-          .filter(f => f.sortable)
-          .map(f => {
-            return { text: f.label, value: f.key }
-          })
+export default {
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      items: this.chartProp.items,
+      fields: this.chartProp.fields,
+      height: `${this.chartProp.height}px`,
+      currentPage: 1,
+      perPage: 15,
+      pageOptions: [10, 15, 20],
+      sortBy: null,
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: '',
       },
-      totalRows() {
-        return this.chartProp.items.length;
-        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-      }
+    };
+  },
+  computed: {
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter((f) => f.sortable)
+        .map((f) => ({ text: f.label, value: f.key }));
     },
-    mounted() {
+    totalRows() {
+      return this.chartProp.items.length;
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
-    methods: {
-      info(item, index, button) {
-        this.infoModal.title = `Row index: ${index}`
-        this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-      },
-      resetInfoModal() {
-        this.infoModal.title = ''
-        this.infoModal.content = ''
-      },
-      onFiltered(filteredItems) {
-        // Trigger pagination to update the number of buttons/pages due to filtering
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
-      }
-    }
-  }
+  },
+  mounted() {
+  },
+  methods: {
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`;
+      this.infoModal.content = JSON.stringify(item, null, 2);
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button);
+    },
+    resetInfoModal() {
+      this.infoModal.title = '';
+      this.infoModal.content = '';
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
+    },
+  },
+};
 </script>

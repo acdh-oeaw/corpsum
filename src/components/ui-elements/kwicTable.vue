@@ -167,186 +167,183 @@
 </template>
 
 <script>
-  import { FileTextIcon } from 'vue-feather-icons'
+import { FileTextIcon } from 'vue-feather-icons';
 
-  export default {
-    props: {
-      chartProp: Object
+export default {
+  props: {
+    chartProp: Object,
+  },
+  components: {
+    FileTextIcon,
+  },
+  data() {
+    return {
+      selectedDocs: [],
+      items: this.chartProp.items,
+      fields: this.chartProp.fields,
+      height: `${this.chartProp.height}px`,
+      currentPage: 1,
+      perPage: 15,
+      pageOptions: [10, 15, 20],
+      sortBy: null,
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: '',
+        rowId: 0,
+      },
+      subcorpusModal: {
+        id: 'create-subcorpus-modal',
+        title: 'Create a subcorpus',
+        content: '',
+      },
+      totalVisibleRows: this.chartProp.items.length,
+      subcorpusTitle: '',
+    };
+  },
+  computed: {
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter((f) => f.sortable)
+        .map((f) => ({ text: f.label, value: f.key }));
     },
-    components: {
-      FileTextIcon
+    totalRows() {
+      return this.chartProp.items.length;
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
-    data() {
-      return {
-        selectedDocs: [],
-        items: this.chartProp.items,
-        fields: this.chartProp.fields,
-        height: this.chartProp.height + 'px',
-        currentPage: 1,
-        perPage: 15,
-        pageOptions: [10, 15, 20],
-        sortBy: null,
-        sortDesc: false,
-        sortDirection: 'asc',
-        filter: null,
-        infoModal: {
-          id: 'info-modal',
-          title: '',
-          content: '',
-          rowId: 0,
-        },
-        subcorpusModal: {
-          id: 'create-subcorpus-modal',
-          title: 'Create a subcorpus',
-          content: ''
-        },
-        totalVisibleRows: this.chartProp.items.length,
-        subcorpusTitle: '',
+    modalTextContent() {
+      return this.$store.getters.modalTextContent;
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
+    },
+    tags() {
+      return this.$store.getters.queryTerms;
+    },
+    subcorpusTitleState() {
+      return this.subcorpusTitle.length >= 4;
+    },
+    invalidFeedback() {
+      if (this.subcorpusTitle.length > 4) {
+        return '';
+      } if (this.subcorpusTitle.length > 0) {
+        return 'Enter at least 4 characters';
+      }
+      return 'This field is required';
+    },
+    validFeedback() {
+      return this.subcorpusTitleState === true ? '' : '';
+    },
+  },
+  mounted() {
+  },
+  watch: {
+    items(val) {
+      this.totalVisibleRows = val.length;
+    },
+  },
+  methods: {
+    createSubcorpus() {
+      this.$store.dispatch('createSubcorpus', { docs: this.selectedDocs, title: this.subcorpusTitle });
+      if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
+        this.$root.$emit('bv::hide::modal', this.subcorpusModal.id);
+      } else {
+        // Not validated
       }
     },
-    computed: {
-      sortOptions() {
-        // Create an options list from our fields
-        return this.fields
-          .filter(f => f.sortable)
-          .map(f => {
-            return { text: f.label, value: f.key }
-          })
-      },
-      totalRows() {
-        return this.chartProp.items.length;
-        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-      },
-      modalTextContent() {
-        return this.$store.getters.modalTextContent;
-        set: (value) => console.log(value) // this.$state.commit('someMutation', value )
-      },
-      tags() {
-        return this.$store.getters.queryTerms;
-      },
-      subcorpusTitleState() {
-        return this.subcorpusTitle.length >= 4 ? true : false
-      },
-      invalidFeedback() {
-        if (this.subcorpusTitle.length > 4) {
-          return ''
-        } else if (this.subcorpusTitle.length > 0) {
-          return 'Enter at least 4 characters'
-        } else {
-          return 'This field is required'
-        }
-      },
-      validFeedback() {
-        return this.subcorpusTitleState === true ? '' : ''
+    nextDoc() {
+      const curRow = this.infoModal.rowId;
+      let nextRow = curRow;
+      do {
+        nextRow++;
       }
+      while (this.items[[nextRow]].docid == this.items[[curRow]].docid);
+      const item = this.items[[nextRow]];
+      this.infoModal.title = `${item.source} - ${item.date}`;
+      this.infoModal.rowId = nextRow;
+      this.modalTextContent = '';
+      this.$store.dispatch('modalTextQuery', item);
+      this.infoModal.content = JSON.stringify(item, null, 2);
     },
-    mounted() {
+    prevDoc() {
+      const curRow = this.infoModal.rowId;
+      let prevRow = curRow;
+      do {
+        prevRow--;
+      }
+      while (this.items[[prevRow]].docid == this.items[[curRow]].docid);
+      const item = this.items[[prevRow]];
+      this.infoModal.title = `${item.source} - ${item.date}`;
+      this.infoModal.rowId = prevRow;
+      this.modalTextContent = '';
+      this.$store.dispatch('modalTextQuery', item);
+      this.infoModal.content = JSON.stringify(item, null, 2);
     },
-    watch: {
-      items(val) {
-        this.totalVisibleRows = val.length;
-      },
+    info(item, index, button) {
+      // this.infoModal.title = `Row index: ${index}`
+      this.infoModal.title = `${item.source} - ${item.date}`;
+      this.infoModal.rowId = index;
+      this.modalTextContent = '';
+      this.$store.dispatch('modalTextQuery', item);
+      this.infoModal.content = JSON.stringify(item, null, 2);
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button);
     },
-    methods: {
-      createSubcorpus() {
-        this.$store.dispatch('createSubcorpus', {docs: this.selectedDocs, title: this.subcorpusTitle} );
-        if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
-          this.$root.$emit('bv::hide::modal', this.subcorpusModal.id);
-        } else {
-          // Not validated
-        }
-      },
-      nextDoc() {
-        const curRow = this.infoModal.rowId;
-        let nextRow = curRow;
-        do {
-          nextRow++;
-        }
-        while (this.items[[nextRow]].docid == this.items[[curRow]].docid);
-        const item = this.items[[nextRow]];
-        this.infoModal.title = item.source + ' - ' + item.date;
-        this.infoModal.rowId = nextRow;
-        this.modalTextContent = '';
-        this.$store.dispatch('modalTextQuery', item);
-        this.infoModal.content = JSON.stringify(item, null, 2)
-      },
-      prevDoc() {
-        const curRow = this.infoModal.rowId;
-        let prevRow = curRow;
-        do {
-          prevRow--;
-        }
-        while (this.items[[prevRow]].docid == this.items[[curRow]].docid);
-        const item = this.items[[prevRow]];
-        this.infoModal.title = item.source + ' - ' + item.date;
-        this.infoModal.rowId = prevRow;
-        this.modalTextContent = '';
-        this.$store.dispatch('modalTextQuery', item);
-        this.infoModal.content = JSON.stringify(item, null, 2)
-      },
-      info(item, index, button) {
-        // this.infoModal.title = `Row index: ${index}`
-        this.infoModal.title = item.source + ' - ' + item.date;
-        this.infoModal.rowId = index;
-        this.modalTextContent = '';
-        this.$store.dispatch('modalTextQuery', item);
-        this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-      },
-      resetInfoModal() {
-        this.infoModal.title = ''
-        this.infoModal.content = ''
-      },
-      onFiltered(filteredItems) {
-        this.totalVisibleRows = filteredItems.length;
-        // Trigger pagination to update the number of buttons/pages due to filtering
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
-      },
-      subcorpus(button) {
-        this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button)
-      },
-      toggleSelectAllDocs(checked) {
-        console.log(checked)
-        if(!checked) {
-          this.selectedDocs = [];
-          // Loop all items and deselect
-          for (let i = 0; i < this.items.length; i += 1) {
-            this.items[i].selected = false;
-          }
-        } else {
-          // Loop all items and add them to selectedDocs (ignore duplicates)
-          for (let i = 0; i < this.items.length; i += 1) {
-            if (!this.selectedDocs.includes(this.items[i].docid)) {
-              this.selectedDocs.push(this.items[i].docid)
-            }
-          }
-          // Loop all items and select
-          for (let i = 0; i < this.items.length; i += 1) {
-            this.items[i].selected = true;
-          }
-        }
-      },
-      toggleSelectedDocs(item) {
-        // Add or remove docid from the selectedDocs array
-        if (item.selected) {
-          this.selectedDocs.push(item.docid)
-        } else {
-          for (let i = this.selectedDocs.length - 1; i >= 0; i--) {
-            if (this.selectedDocs[i] === item.docid) {
-              this.selectedDocs.splice(i, 1);
-            }
-          } 
-        }
-        // Loop all items and toggle other items with the same doc id
+    resetInfoModal() {
+      this.infoModal.title = '';
+      this.infoModal.content = '';
+    },
+    onFiltered(filteredItems) {
+      this.totalVisibleRows = filteredItems.length;
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
+    },
+    subcorpus(button) {
+      this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button);
+    },
+    toggleSelectAllDocs(checked) {
+      console.log(checked);
+      if (!checked) {
+        this.selectedDocs = [];
+        // Loop all items and deselect
         for (let i = 0; i < this.items.length; i += 1) {
-          if (this.items[i].docid == item.docid) {
-            this.items[i].selected = item.selected;
+          this.items[i].selected = false;
+        }
+      } else {
+        // Loop all items and add them to selectedDocs (ignore duplicates)
+        for (let i = 0; i < this.items.length; i += 1) {
+          if (!this.selectedDocs.includes(this.items[i].docid)) {
+            this.selectedDocs.push(this.items[i].docid);
           }
         }
-      },
-    }
-  }
+        // Loop all items and select
+        for (let i = 0; i < this.items.length; i += 1) {
+          this.items[i].selected = true;
+        }
+      }
+    },
+    toggleSelectedDocs(item) {
+      // Add or remove docid from the selectedDocs array
+      if (item.selected) {
+        this.selectedDocs.push(item.docid);
+      } else {
+        for (let i = this.selectedDocs.length - 1; i >= 0; i--) {
+          if (this.selectedDocs[i] === item.docid) {
+            this.selectedDocs.splice(i, 1);
+          }
+        }
+      }
+      // Loop all items and toggle other items with the same doc id
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i].docid == item.docid) {
+          this.items[i].selected = item.selected;
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss">

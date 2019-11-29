@@ -5,42 +5,42 @@
 <script>
 
 export default {
-  data () {
+  data() {
     return {
       chartOptions: {
         chart: {
           map: 'myMapName',
           events: {
-              load: function () {
-                this.mapZoom(0.25, 0, 0, -150, 0)
-              }
-          }
+            load() {
+              this.mapZoom(0.25, 0, 0, -150, 0);
+            },
+          },
         },
         title: {
-          text: 'Regions basic demo'
+          text: 'Regions basic demo',
         },
         subtitle: {
-          text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world.js">World, Miller projection, medium resolution</a>'
+          text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world.js">World, Miller projection, medium resolution</a>',
         },
         mapNavigation: {
           enabled: true,
           buttonOptions: {
-            alignTo: 'spacingBox'
-          }
+            alignTo: 'spacingBox',
+          },
         },
         colorAxis: {
-          min: 0
+          min: 0,
         },
         series: [{
           name: 'Random data',
           states: {
             hover: {
-              color: '#BADA55'
-            }
+              color: '#BADA55',
+            },
           },
           dataLabels: {
             enabled: true,
-            format: '{point.name}'
+            format: '{point.name}',
           },
           allAreas: false,
           data: [
@@ -256,13 +256,13 @@ export default {
             ['is', 209],
             ['eg', 210],
             ['kg', 211],
-            ['np', 212]
-          ]
-        }]
-      }
-    }
-  }
-}
+            ['np', 212],
+          ],
+        }],
+      },
+    };
+  },
+};
 </script>
  <style scoped>
 .map {

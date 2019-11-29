@@ -7,20 +7,20 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Array
-    },
-    data() {
-      return {
-        queryTerms: this.chartProp,
-      }
-    },
-    computed: {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-  }
+export default {
+  props: {
+    chartProp: Array,
+  },
+  data() {
+    return {
+      queryTerms: this.chartProp,
+    };
+  },
+  computed: {
+  },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>

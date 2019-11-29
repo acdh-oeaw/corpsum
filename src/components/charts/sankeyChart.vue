@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -51,7 +50,7 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.parentKey+'-'+this.elKey,
+        id: `chart-info-modal-${this.parentKey}-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
@@ -65,7 +64,7 @@ export default {
           data: this.chartProp.data,
           nodes: this.chartProp.nodes,
         }],
-      }
+      },
     };
   },
   methods: {

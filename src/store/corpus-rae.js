@@ -75,9 +75,15 @@ export const state = {
         { key: 'year', label: 'Year', sortable: true },
         { key: 'doc', label: 'Document ID', sortable: true },
         { key: 'country', label: 'Country', sortable: true },
-        { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
-        { key: 'term', label: 'Term', sortable: true, class: 'text-center' },
-        { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
+        {
+          key: 'left', label: 'Left', sortable: true, class: 'text-right',
+        },
+        {
+          key: 'term', label: 'Term', sortable: true, class: 'text-center',
+        },
+        {
+          key: 'right', label: 'Right', sortable: true, class: 'text-left',
+        },
       ],
       height: 600,
     },
@@ -87,11 +93,11 @@ export const state = {
 export const mutations = {
   resetQueryTerms(state, payload) {
     state.queryTerms = payload;
-    console.log(payload)
+    console.log(payload);
   },
   resetChartData(state, payload) {
     state.chartData = payload;
-    console.log(payload)
+    console.log(payload);
   },
   updateRawResults(state, payload) {
     state.rawResults.push(payload);
@@ -100,7 +106,7 @@ export const mutations = {
     state.queryTerms.push(queryTerm);
   },
   queryTermRemoved(state, queryTerm) {
-    state.queryTerms.filter(value => value !== queryTerm);
+    state.queryTerms.filter((value) => value !== queryTerm);
   },
   processTemporal(state, payload) {
     const items = payload.result.data;
@@ -123,10 +129,10 @@ export const mutations = {
       name: payload.term,
       data: [],
     };
-    const countries = state.chartData.regional.countries;
+    const { countries } = state.chartData.regional;
     const itemsCountries = payload.result[1].data;
     for (let i = 0; i < itemsCountries.length; i += 1) {
-      const categoriesKey = Object.keys(countries.categories).find(key => countries.categories[key] === itemsCountries[i][0]);
+      const categoriesKey = Object.keys(countries.categories).find((key) => countries.categories[key] === itemsCountries[i][0]);
       series1D.data[categoriesKey] = itemsCountries[i][1];
       series2D.data[categoriesKey] = [itemsCountries[i][1], itemsCountries[i][2]];
     }
@@ -134,13 +140,13 @@ export const mutations = {
     state.chartData.regional.countries.series2D.push(series2D);
 
     /* Update Linguistic Regions Data */
-    const regions = state.chartData.regional.regions;
+    const { regions } = state.chartData.regional;
     regions.categoriesY.push(payload.term);
-    const categoriesYKey = Object.keys(regions.categoriesY).find(key => regions.categoriesY[key] === payload.term);
+    const categoriesYKey = Object.keys(regions.categoriesY).find((key) => regions.categoriesY[key] === payload.term);
     const itemsRegions = payload.result[7].data;
     for (let i = 0; i < itemsRegions.length; i += 1) {
       const regionName = itemsRegions[i][0];
-      const categoriesXKey = Object.keys(regions.categoriesX).find(key => regions.categoriesX[key] === regionName);
+      const categoriesXKey = Object.keys(regions.categoriesX).find((key) => regions.categoriesX[key] === regionName);
       if (categoriesXKey) {
         regions.data.push([Number(categoriesXKey), Number(categoriesYKey), Math.round(itemsRegions[i][1])]);
       }
@@ -170,15 +176,17 @@ export const mutations = {
     const items = payload.result.values;
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.kwic.items.push(
-        { year: items[i].year, doc: items[i].doc, country: items[i].country, left: items[i].left, term: items[i].center, right: items[i].right }
+        {
+          year: items[i].year, doc: items[i].doc, country: items[i].country, left: items[i].left, term: items[i].center, right: items[i].right,
+        },
       );
     }
   },
 };
 
 export const getters = {
-  chartData: state => state.chartData,
-  queryTerms: state => state.queryTerms,
+  chartData: (state) => state.chartData,
+  queryTerms: (state) => state.queryTerms,
 };
 
 export const actions = {

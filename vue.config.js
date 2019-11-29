@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
           },
         },
       },
-      plugins: [/* new BundleAnalyzerPlugin() */ new CompressionPlugin ],
+      plugins: [new CompressionPlugin()],
     },
   };
 } else {

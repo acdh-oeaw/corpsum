@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -49,14 +48,14 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.parentKey+'-'+this.elKey,
+        id: `chart-info-modal-${this.parentKey}-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
           enabled: false,
         },
         chart: {
-          height: this.chartProp.height
+          height: this.chartProp.height,
         },
         title: false,
         series: [{
@@ -73,14 +72,14 @@ export default {
           placementStrategy: 'center',
         }],
         legend: {
-            enabled: this.chartProp.legendEnabled
+          enabled: this.chartProp.legendEnabled,
         },
         tooltip: {
           pointFormat:
             '<span style="color:{series.color}">{series.name}</span>: <b>{point.weight}</b><br/>',
-          shared: true
+          shared: true,
         },
-      }
+      },
     };
   },
   methods: {

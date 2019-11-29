@@ -28,15 +28,14 @@
 </template>
 
 <script>
-import { DownloadIcon } from 'vue-feather-icons'
-import { ImageIcon } from 'vue-feather-icons'
-import { ListIcon } from 'vue-feather-icons'
-import { BarChart2Icon } from 'vue-feather-icons'
-import { InfoIcon } from 'vue-feather-icons'
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+
 
 export default {
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   props: {
     chartProp: Object,
@@ -50,39 +49,39 @@ export default {
       showChartIcon: false,
       showChartElement: true,
       chartInfoModal: {
-        id: 'chart-info-modal-'+this.elKey,
+        id: `chart-info-modal-${this.elKey}`,
       },
       chartOptions: {
         exporting: {
           enabled: false,
         },
         chart: {
-          type: "bubble",
-          zoomType: "xy",
+          type: 'bubble',
+          zoomType: 'xy',
           spacingBottom: 20,
           spacingTop: 20,
           spacingLeft: 10,
           spacingRight: 20,
           style: {
-            cursor: 'crosshair'
+            cursor: 'crosshair',
           },
         },
         title: false,
         xAxis: {
           title: {
             enabled: true,
-            text: this.chartProp.xAxisText
+            text: this.chartProp.xAxisText,
           },
           startOnTick: true,
           endOnTick: true,
           showLastLabel: true,
-          plotLines: this.chartProp.plotLinesX
+          plotLines: this.chartProp.plotLinesX,
         },
         yAxis: {
           title: {
-            text: this.chartProp.yAxisText
+            text: this.chartProp.yAxisText,
           },
-          plotLines: this.chartProp.plotLinesY
+          plotLines: this.chartProp.plotLinesY,
         },
         legend: {
           layout: 'horizontal',
@@ -95,40 +94,40 @@ export default {
           series: {
             dataLabels: {
               enabled: true,
-              format: '{point.source}'
-            }
+              format: '{point.source}',
+            },
           },
           scatter: {
             dataLabels: {
-              format: "{point.source}",
-              enabled: true
+              format: '{point.source}',
+              enabled: true,
             },
             marker: {
               radius: 8,
-              fillOpacity:0.3,
+              fillOpacity: 0.3,
               states: {
                 hover: {
                   enabled: true,
-                  lineColor: "rgb(100,100,100)"
-                }
-              }
+                  lineColor: 'rgb(100,100,100)',
+                },
+              },
             },
             states: {
               hover: {
                 marker: {
-                  enabled: false
-                }
-              }
+                  enabled: false,
+                },
+              },
             },
-          }
+          },
         },
         tooltip: {
           pointFormat:
             '<span><b>{point.source}</b></span>:<br/>Relative freq: {point.x}%<br/> Absolute freq:: {point.y}<br/> Partition size: {point.z}<br/>',
-          shared: true
+          shared: true,
         },
         series: this.chartProp.series,
-      }
+      },
     };
   },
   methods: {
@@ -153,13 +152,13 @@ export default {
       this.$el.querySelector('.highcharts-data-table').style.display = 'none';
     },
     forceRerender() {
-      this.componentKey += 1;  
+      this.componentKey += 1;
     },
   },
   watch: {
     seriesData(val) {
       this.forceRerender();
-    }
+    },
   },
 };
 </script>

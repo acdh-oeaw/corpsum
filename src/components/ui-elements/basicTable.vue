@@ -16,24 +16,24 @@
 </template>
 
 <script>
-import { InfoIcon } from 'vue-feather-icons'
+import { InfoIcon } from 'vue-feather-icons';
 
-  export default {
-    components: {
-      InfoIcon
-    },
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        items: this.chartProp.items,
-        fields: this.chartProp.fields,
-        height: this.chartProp.height + 'px',
-        chartInfoModal: {
-          id: 'chart-info-modal-'+this.elKey,
-        },
-      }
-    }
-  }
+export default {
+  components: {
+    InfoIcon,
+  },
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      items: this.chartProp.items,
+      fields: this.chartProp.fields,
+      height: `${this.chartProp.height}px`,
+      chartInfoModal: {
+        id: `chart-info-modal-${this.elKey}`,
+      },
+    };
+  },
+};
 </script>

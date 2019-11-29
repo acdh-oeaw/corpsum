@@ -102,7 +102,7 @@ export default {
       return output;
     },
     getKeyByValue(array, value) {
-      return Object.keys(array).find(key => array[key] === value);
+      return Object.keys(array).find((key) => array[key] === value);
     },
   },
 };

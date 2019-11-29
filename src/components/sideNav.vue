@@ -60,12 +60,14 @@
 </template>
 
 <script>
-import { HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon } from 'vue-feather-icons'
+import {
+  HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon,
+} from 'vue-feather-icons';
 
 export default {
   name: 'sideNav',
   components: {
-    HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon
+    HardDriveIcon, ActivityIcon, UserIcon, SettingsIcon, RotateCcwIcon,
   },
   data() {
     return {
@@ -79,7 +81,7 @@ export default {
         { value: 'amc_60M', text: 'AMC3 (60M)' },
         { value: 'amc_3.1', text: 'AMC3 (Full)' },
       ],
-    }
+    };
   },
   mounted() {
     if (localStorage.selectedCorpus) {
@@ -108,7 +110,7 @@ export default {
   },
   methods: {
     changeProvider(val) {
-      this.$router.push({ name: 'info', params: { id: val } })
+      this.$router.push({ name: 'info', params: { id: val } });
     },
     changeCorpus(val) {
       this.$store.commit('changeSelectedCorpus', val);
@@ -117,8 +119,8 @@ export default {
     changeSubcorpus(val) {
       this.$store.commit('changeSelectedSubcorpus', val);
       localStorage.selectedSubcorpus = val;
-    }
-  }
+    },
+  },
 };
 </script>
 

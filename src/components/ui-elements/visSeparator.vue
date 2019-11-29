@@ -5,20 +5,20 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        title: this.chartProp.title,
-      }
-    },
-    computed: {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-  }
+export default {
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      title: this.chartProp.title,
+    };
+  },
+  computed: {
+  },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>

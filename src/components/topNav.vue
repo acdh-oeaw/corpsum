@@ -10,7 +10,7 @@
       :show-labels="false"
       :allow-empty="false"
       track-by="name"
-      label="name" 
+      label="name"
       placeholder="Query attribute"
       @close="moveFocusToInput"
     >
@@ -31,7 +31,7 @@
       :max-tags="6"
       @before-adding-tag="tagAdded"
       @before-deleting-tag="tagRemoved"/>
-    
+
 <!--     <ul class="navbar-nav px-3 topbar-rightnav">
       <li class="nav-item text-nowrap">
         <b-link href="https://github.com/asilcetin/corpsum">
@@ -72,17 +72,16 @@
 
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
-import { SearchIcon } from 'vue-feather-icons'
-import { GithubIcon } from 'vue-feather-icons'
-import { HelpCircleIcon } from 'vue-feather-icons'
+import { SearchIcon, GithubIcon, HelpCircleIcon } from 'vue-feather-icons';
+
 
 export default {
   name: 'topNav',
   props: {
-    tags: Array
+    tags: Array,
   },
   components: {
-    VueTagsInput, SearchIcon, GithubIcon, HelpCircleIcon
+    VueTagsInput, SearchIcon, GithubIcon, HelpCircleIcon,
   },
   data() {
     return {
@@ -98,8 +97,8 @@ export default {
         { name: 'Custom query', value: 'custom', desc: 'Write your own query in CQL' },
         { name: '[word="keyword"]', value: 'word', desc: 'A word form, case sensitive' },
         { name: '[lemma="keyword"]', value: 'lemma', desc: 'A lemma, case sensitive' },
-        { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve', },
-        { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve', },
+        { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve' },
+        { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve' },
       ],
     };
   },
@@ -110,11 +109,11 @@ export default {
       this.$refs.searchInput.$el.querySelector('.ti-new-tag-input').focus();
     },
     restartTour() {
-      this.$tours['myTour'].start()
+      this.$tours.myTour.start();
     },
     startQueryOnClick() {
       // this.tagAdded(tag)
-      console.log(this.$refs.searchInput)
+      console.log(this.$refs.searchInput);
       this.$refs.searchInput.performAddTags(this.tag);
     },
     tagAdded(val) {
@@ -155,7 +154,7 @@ export default {
   computed: {
     loadingStatus() {
       return this.$store.getters.loadingStatus;
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
   },
   watch: {

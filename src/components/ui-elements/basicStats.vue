@@ -7,21 +7,21 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      chartProp: Object
-    },
-    data() {
-      return {
-        statName: this.chartProp.statName,
-        statValue: this.chartProp.statValue,
-      }
-    },
-    computed: {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-  }
+export default {
+  props: {
+    chartProp: Object,
+  },
+  data() {
+    return {
+      statName: this.chartProp.statName,
+      statValue: this.chartProp.statValue,
+    };
+  },
+  computed: {
+  },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>

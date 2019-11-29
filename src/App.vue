@@ -19,7 +19,7 @@ import sideNav from '@/components/sideNav.vue';
 export default {
   name: 'App',
   components: {
-    topNav, sideNav
+    topNav, sideNav,
   },
   mixins: [],
   data() {
@@ -30,49 +30,49 @@ export default {
       steps: [
         {
           target: '.v-step-0',
-          content: `Using this search bar you can make queries in the corpus by typing your query and hitting enter to search.`
+          content: 'Using this search bar you can make queries in the corpus by typing your query and hitting enter to search.',
         },
         {
           target: '.query-type-selector',
-          content: `The selected query type will be applied to your search. You can click this selector to see the descriptions of different type of queries.`
+          content: 'The selected query type will be applied to your search. You can click this selector to see the descriptions of different type of queries.',
         },
         {
           target: '.sidebar-sticky',
-          content: `Using selectors on this sidebar you can select your active corpus and subcorpus. You can also switch between different pages such as Corpus Info and Corpus Analysis.`,
+          content: 'Using selectors on this sidebar you can select your active corpus and subcorpus. You can also switch between different pages such as Corpus Info and Corpus Analysis.',
           params: {
-            placement: 'left-start'
-          }
+            placement: 'left-start',
+          },
         },
         {
           target: '.feather-info',
-          content: `If you want to more know about a component click this info button to open the information window.`,
+          content: 'If you want to more know about a component click this info button to open the information window.',
           params: {
-            enableScrolling: false
-          }
+            enableScrolling: false,
+          },
         },
         {
           target: '.feather-list',
-          content: `You can click this button to see the data behind the chart as a table.`,
+          content: 'You can click this button to see the data behind the chart as a table.',
           params: {
-            enableScrolling: false
-          }
+            enableScrolling: false,
+          },
         },
         {
           target: '.feather-download',
-          content: `You can click this button to download the data as CSV.`,
+          content: 'You can click this button to download the data as CSV.',
           params: {
-            enableScrolling: false
-          }
+            enableScrolling: false,
+          },
         },
         {
           target: '.feather-image',
-          content: `You can click this button to download the chart as an SVG.`,
+          content: 'You can click this button to download the chart as an SVG.',
           params: {
-            enableScrolling: false
-          }
+            enableScrolling: false,
+          },
         },
-      ]
-    }
+      ],
+    };
   },
   created() {
   },
@@ -80,7 +80,7 @@ export default {
     this.$store.dispatch('getSubcorporaList');
     this.$store.dispatch('queryCorpusInfo');
     if (!localStorage.tourCompleted) {
-      this.$tours['myTour'].start()
+      this.$tours.myTour.start();
     }
   },
   computed: {
@@ -93,7 +93,7 @@ export default {
   methods: {
     onTourComplete() {
       localStorage.tourCompleted = true;
-    }
+    },
   },
 };
 </script>

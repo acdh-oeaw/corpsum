@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import store from '@/store/store';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue';
 import HighchartsVue from 'highcharts-vue';
@@ -13,7 +12,8 @@ import sankey from 'highcharts/modules/sankey';
 import mapInit from 'highcharts/modules/map';
 import TextHighlight from 'vue-text-highlight';
 import Multiselect from 'vue-multiselect';
-import VueTour from 'vue-tour'
+import VueTour from 'vue-tour';
+import store from '@/store/store';
 import mapAustria from './mapAustria';
 
 import './scss/bootstrap.scss';

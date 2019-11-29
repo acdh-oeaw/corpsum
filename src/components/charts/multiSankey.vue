@@ -11,15 +11,15 @@
 </template>
 
 <script>
-import sankeyChart from '@/components/charts/sankeyChart.vue'
+import sankeyChart from '@/components/charts/sankeyChart.vue';
 
 export default {
   props: {
     chartProp: Object,
-    elKey: Number
+    elKey: Number,
   },
   components: {
-    sankeyChart
+    sankeyChart,
   },
   data() {
     return {
@@ -34,14 +34,14 @@ export default {
   watch: {
     charts(val) {
       this.forceRerender();
-    }
+    },
   },
   computed: {
   },
   methods: {
     forceRerender() {
-      this.componentKey += 1;  
-    }
+      this.componentKey += 1;
+    },
   },
 };
 </script>
