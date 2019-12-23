@@ -14,7 +14,7 @@ import TextHighlight from 'vue-text-highlight';
 import Multiselect from 'vue-multiselect';
 import VueTour from 'vue-tour';
 import store from '@/store/store';
-import mapAustria from './mapAustria';
+import mapAustria from './mapAustriaCorpsum';
 
 import './scss/bootstrap.scss';
 
