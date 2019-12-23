@@ -88,25 +88,15 @@ export default {
       this.componentKey += 1;
     },
     exportImage() {
-      for (let i = 0; i < this.$refs.chart.length; i += 1) {
-        this.$refs.chart[i].$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
-      }
+      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
     },
     exportCSV() {
-      for (let i = 0; i < this.$refs.chart.length; i += 1) {
-        this.$refs.chart[i].$children[0].chart.downloadCSV();
-      }
+      this.$refs.chart.$children[0].chart.downloadCSV();
     },
     showTable() {
-      for (let i = 0; i < this.$refs.chart.length; i += 1) {
-        this.$refs.chart[i].$children[0].chart.viewData();
-      }
-      const tables = this.$el.querySelectorAll('.highcharts-data-table');
-      for (let i = 0; i < tables.length; i += 1) {
-        tables[i].childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
-        tables[i].style.display = 'block';
-        tables[i].style.height = `${480 / this.maps.length}px`;
-      }
+      this.$refs.chart.$children[0].chart.viewData();
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
       this.showChartIcon = true;
       this.showChartElement = false;

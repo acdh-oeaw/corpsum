@@ -22,7 +22,7 @@ export default {
           enabled: false,
         },
         chart: {
-          type: 'line',
+          type: 'spline',
           zoomType: 'x',
           height: this.chartProp.height,
           spacingBottom: 20,
