@@ -214,7 +214,7 @@ const mutations = {
         default:
           regionPrettyName = '';
       }
-      if (regionName !== 'agesamt' && regionName !== 'spezifisch') {
+      if (regionName !== 'spezifisch') {
         relativeMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].rel });
         absoluteMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: itemsRegions[i].freq });
       }
