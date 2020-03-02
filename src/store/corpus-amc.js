@@ -475,42 +475,101 @@ const getters = {
 };
 
 const actions = {
-  async corpusQuery({ state, commit }, queryTerm) {
+  async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
       commit('changeLoadingStatus', { status: true });
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
-      const requestURIs = {};
+      // const requestURIs = {};
       let useSubCorp = '';
       if (state.subcorpusName !== 'none') {
         useSubCorp = `usesubcorp=${state.subcorpusName};`;
       }
+
+      /*
       requestURIs.freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fttattr=doc.region;fttattr=doc.docsrc_name;fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
-      requestURIs.freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
-      requestURIs.wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;format=json`;
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
-      responses.freqttURI = await axios.get(requestURIs.freqttURI);
-      responses.freqsURI = await axios.get(requestURIs.freqsURI);
-      responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
-      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
-      responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
-      responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
-      responses.collxURI = await axios.get(requestURIs.collxURI);
+      */
 
+      dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
       commit('changeLoadingStatus', { status: false });
-      // commit('processSum', { term: queryTerm, result: response.data.fullsize });
-      commit('processWordFreqSum', { term: queryTerm, result: responses.freqsURI.data, processSumResp: responses.freqttURI.data.fullsize });
-      commit('processTemporal', { term: queryTerm, result: responses.freqttURI.data.Blocks[0].Items });
-      commit('processRegional', { term: queryTerm, result: responses.freqttURI.data.Blocks[1].Items });
-      commit('processKWIC', { term: queryTerm, result: responses.viewattrsxURI.data });
-      commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
-      commit('processSources', { term: queryTerm, result: responses.freqttURI.data.Blocks[2].Items, docsrcSize: responses.wordlistDocsrcURI.data });
-      commit('processSections', { term: queryTerm, result: responses.freqttURI.data.Blocks[3].Items, ressortSize: responses.wordlistRessortURI.data });
-      commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
-      commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
+
+      //commit('processSum', { term: queryTerm, result: response.data.fullsize });
+      //commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
+      //commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
+      //commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for total rel. freq. and KWIC results
+  async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
+    try {
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;format=json`;
+      const response = await axios.get(viewattrsxURI);
+      commit('processKWIC', { term: queryTerm, result: response.data });
+      // Request word forms freq. using the needed total abs. freq data
+      const totalAbsFreq = response.data.Desc[0].size;
+      dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp, totalAbsFreq });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for word form freq. results
+  async requestWordForms({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, totalAbsFreq }) {
+    try {
+      const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
+      const response = await axios.get(freqsURI);
+      commit('processWordFreqSum', { term: queryTerm, result: response.data, processSumResp: totalAbsFreq });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for temporal freq. results
+  async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
+    try {
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
+      const response = await axios.get(freqttURI);
+      commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for regional freq. results
+  async requestRegional({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
+    try {
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.region;fcrit=doc.id;flimit=0;format=json`;
+      const response = await axios.get(freqttURI);
+      commit('processRegional', { term: queryTerm, result: response.data.Blocks[0].Items });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for media sources freq. results
+  async requestMediaSources({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
+    try {
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.docsrc_name;fcrit=doc.id;flimit=0;format=json`;
+      const response = await axios.get(freqttURI);
+      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
+      commit('processSources', { term: queryTerm, result: response.data.Blocks[0].Items, docsrcSize: wordlistDocsrcResponse.data });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // API request used for ressorts freq. results
+  async requestSections({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
+    try {
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
+      const response = await axios.get(freqttURI);
+      const wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      const wordlistRessortResponse = await axios.get(wordlistRessortURI);
+      commit('processSections', { term: queryTerm, result: response.data.Blocks[0].Items, ressortSize: wordlistRessortResponse.data });
     } catch (error) {
       console.log(error);
     }
@@ -611,49 +670,50 @@ const state = {
   chartElements: [
     {
       component: 'barChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-3 vis-component',
       chartProp: 'queryRelSummary',
     },
     {
+      component: 'wrapperLineChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'temporal',
+    },
+    {
+      component: 'multiMap',
+      class: 'col-md-5 vis-component',
+      chartProp: 'regions',
+    },
+    {
       component: 'treemapChart',
-      class: 'col-md-8 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'wordFreqSummary',
     },
     {
-      component: 'multiSankey',
-      class: 'container-fluid p-0 d-flex',
-      chartProp: 'wordTree',
+      component: 'bubbleChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'sources',
+    },
+    {
+      component: 'bubbleChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'sections',
     },
     {
       component: 'kwicTable',
       class: 'col-md-12 vis-component',
       chartProp: 'kwic',
     },
+    /*
     {
-      component: 'wrapperLineChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'temporal',
-    },
-    {
-      component: 'multiMap',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sources',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sections',
+      component: 'multiSankey',
+      class: 'container-fluid p-0 d-flex',
+      chartProp: 'wordTree',
     },
     {
       component: 'multiWordcloud',
       class: 'container-fluid p-0 d-flex',
       chartProp: 'collocations',
-    },
+    },*/
   ],
   infoElements: [
     {
