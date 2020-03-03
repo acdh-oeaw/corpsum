@@ -669,8 +669,13 @@ const state = {
   },
   chartElements: [
     {
+      component: 'corpsumBarChart',
+      class: 'col-md-6 vis-component',
+      chartProp: 'queryRelSummary',
+    },
+    {
       component: 'barChart',
-      class: 'col-md-3 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'queryRelSummary',
     },
     {
@@ -680,7 +685,7 @@ const state = {
     },
     {
       component: 'multiMap',
-      class: 'col-md-5 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'regions',
     },
     {
@@ -690,12 +695,12 @@ const state = {
     },
     {
       component: 'bubbleChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'sources',
     },
     {
       component: 'bubbleChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'sections',
     },
     {
