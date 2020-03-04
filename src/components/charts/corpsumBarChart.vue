@@ -2,11 +2,30 @@
   <div>
     <div class="vis-component-inner">
       <div class="head d-flex">
+        <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
+          <info-icon></info-icon>
+        </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
+        Relative
+        <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
+        Absolute
         <div class="actions ml-auto">
+          <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+            <list-icon></list-icon>
+          </b-button>
+          <b-button variant="info" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
+            <bar-chart-2-icon></bar-chart-2-icon>
+          </b-button>
+          <b-button variant="info" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
+            <download-icon></download-icon>
+          </b-button>
+          <b-button variant="info" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
+            <image-icon></image-icon>
+          </b-button>
         </div>
       </div>
-      <div class="corpsum-bar-chart" ref="chart">
+      <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
+      <div class="corpsum-bar-chart" ref="chart" :key="componentKey">
         <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
@@ -21,6 +40,10 @@
 </template>
 
 <script>
+import {
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+} from 'vue-feather-icons';
+import { ToggleButton } from 'vue-js-toggle-button';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { max, min } from 'd3-array';
 import { selectAll } from 'd3-selection';
@@ -33,6 +56,9 @@ export default {
     chartProp: Object,
     elKey: Number,
   },
+  components: {
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton,
+  },
   mounted() {
     // this.svgWidth = document.getElementById('container').offsetWidth * 0.75;
     console.log('chart mounted');
@@ -42,16 +68,27 @@ export default {
     this.AnimateLoad();
     this.renderWordForms();
   },
-  data: () => ({
-    svgWidth: 0,
-    svgHeight: 400,
-    svgPadding: {
-      top: 20, right: 20, bottom: 30, left: 40,
-    },
-    redrawToggle: true,
-    xKey: 'name',
-    yKey: 'y',
-  }),
+  data() {
+    return {
+      svgWidth: 0,
+      svgHeight: 400,
+      svgPadding: {
+        top: 20, right: 20, bottom: 30, left: 40,
+      },
+      redrawToggle: true,
+      xKey: 'name',
+      yKey: 'y',
+      valueType: 'relValue',
+      componentKey: 0,
+      showTableIcon: true,
+      showChartIcon: false,
+      showChartElement: true,
+      chartInfoModal: {
+        id: `chart-info-modal-${this.elKey}`,
+      },
+      frequencyValueTypeAbsolute: false,
+    };
+  },
   watch: {
     'chartProp.series.0.data': {
       handler() {
@@ -98,7 +135,7 @@ export default {
 
       axisX.call(d3.axisBottom(this.xScale));
 
-      axisY.call(d3.axisLeft(this.yScale).ticks(10));
+      axisY.call(d3.axisLeft(this.yScale).ticks(10).tickFormat(d3.format('.0f')));
 
       const yGridlines = d3
         .select('#gridlines-y')
@@ -144,19 +181,18 @@ export default {
       const barsGroup = d3.select('#bars-group');
       const bars = barsGroup.selectAll('.bar-block').data(this.chartProp.series[0].data);
 
-      // Remove deleted ones
-      bars
-        .exit()
-        .remove();
-
       const chartPropSeries = this.chartProp.series[0];
 
       const component = this;
 
       bars.each(function (dbar) {
-        console.log(dbar)
         const bar = d3.select(this);
+
         const data = chartPropSeries.wordForms.filter((el) => el.query === dbar.name);
+
+        bar
+          .selectAll('.bar-piece')
+          .remove();
 
         bar
           .selectAll('.bar-piece')
@@ -164,7 +200,7 @@ export default {
             const xPos = component.xScale(dbar[component.xKey]);
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            let thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            let thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
             if (thisHeight < 20) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
@@ -176,25 +212,25 @@ export default {
             }
             return `translate(${xPos},${yPos})`;
           })
+          .style('display', (d, i) => {
+            const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
+            const barY = component.yScale(dbar[component.yKey]);
+            if (data[i].yEndPos - barY > barHeight) return 'none';
+            return 'block';
+          })
           .selectAll('rect')
           .attr('height', (d) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            return barHeight / (dbar.absTotal / d.absValue);
+            return barHeight / (dbar[component.yKey] / d[component.valueType]);
           })
           .attr('width', () => component.xScale.bandwidth())
-          .attr('fill', () => component.colors(dbar[component.xKey]))
+          .attr('fill', 'none')
           .style('display', (d, i) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            const thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            const thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
             if (thisHeight < 20) return 'none';
             return 'block';
           });
-
-        // Remove deleted ones
-        bar
-          .selectAll('.bar-piece')
-          .exit()
-          .remove();
 
         const gS = bar
           .selectAll('.bar-piece')
@@ -206,7 +242,7 @@ export default {
             const xPos = component.xScale(dbar[component.xKey]);
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            let thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            let thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
             if (thisHeight < 20) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
@@ -217,16 +253,22 @@ export default {
               yPos = data[i - 1].yEndPos;
             }
             return `translate(${xPos},${yPos})`;
+          })
+          .style('display', (d, i) => {
+            const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
+            const barY = component.yScale(dbar[component.yKey]);
+            if (data[i].yEndPos - barY > barHeight) return 'none';
+            return 'block';
           });
 
         const rects = gS
           .append('rect')
           .attr('height', (d) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            return barHeight / (dbar.absTotal / d.absValue);
+            return barHeight / (dbar[component.yKey] / d[component.valueType]);
           })
           .attr('width', () => component.xScale.bandwidth())
-          .attr('fill', () => component.colors(dbar[component.xKey]))
+          .attr('fill', () => 'none')
           .style('display', (d, i) => {
             if (data[i].thisHeight < 20) return 'none';
             return 'block';
@@ -243,6 +285,13 @@ export default {
             //return 'block';
           });
 
+        const textsVal = gS
+          .append('text')
+          .text((d) => d[component.valueType])
+          .attr('fill', '#ffffff')
+          .attr('x', () => { return component.xScale.bandwidth() - 10; } )
+          .attr('y', 20)
+          .attr('text-anchor', 'end')
 
       });
 
@@ -283,6 +332,43 @@ export default {
     getObjectKey(object, value, property) {
       if (property) return Object.keys(object).find((key) => object[key][property] === value);
       return Object.keys(object).find((key) => object[key] === value);
+    },
+    onFrequencyValueTypeChange() {
+      if (this.frequencyValueTypeAbsolute) {
+        this.valueType = 'absValue';
+        this.yKey = 'absTotal';
+      } else {
+        this.valueType = 'relValue';
+        this.yKey = 'y';
+      }
+      this.AnimateLoad();
+      this.renderWordForms();
+    },
+    forceRerender() {
+      this.componentKey += 1;
+    },
+    exportImage() {
+      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+    },
+    exportCSV() {
+      this.$refs.chart.$children[0].chart.downloadCSV();
+    },
+    showTable() {
+      this.$refs.chart.$children[0].chart.viewData();
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').style.display = 'block';
+      this.showTableIcon = false;
+      this.showChartIcon = true;
+      this.showChartElement = false;
+    },
+    showChart() {
+      this.showTableIcon = true;
+      this.showChartIcon = false;
+      this.showChartElement = true;
+      const tables = this.$el.querySelectorAll('.highcharts-data-table');
+      for (let i = 0; i < tables.length; i += 1) {
+        tables[i].style.display = 'none';
+      }
     },
   },
   computed: {

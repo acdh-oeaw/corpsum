@@ -106,18 +106,22 @@ const mutations = {
     items = payload.result.Blocks[0].Items;
 
 
+
     const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
 
-    state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
+    //state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
 
-    for (let i = 0; i < items.length; i += 1) {
+    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+
+    for (let i = 0; i < items.length && i < 20; i += 1) {
+      const relValue = (items[i].freq * 1000000) / corpusTokenSize;
       state.chartData.queryRelSummary.series[0].wordForms.push({
         query: payload.term,
         word: items[i].Word[0].n,
         absValue: items[i].freq,
+        relValue: Math.round((relValue + Number.EPSILON) * 100) / 100,
       });
     }
-
 
     state.chartData.wordFreqSummary.data.push({
       id: payload.term,
@@ -293,7 +297,16 @@ const mutations = {
     }
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.Desc[0].rel;
-    state.chartData.queryRelSummary.series[0].data.push({ name: payload.term, y: overallRel });
+
+    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+
+    const absTotal = (overallRel * corpusTokenSize) / 1000000;
+
+    state.chartData.queryRelSummary.series[0].data.push({
+      name: payload.term,
+      y: overallRel,
+      absTotal: Math.round((absTotal + Number.EPSILON) * 100) / 100,
+    });
   },
   processWordTree(state, payload) {
     const chart = {
