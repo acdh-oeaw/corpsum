@@ -138,6 +138,7 @@ export default {
         .attr('fill', (d) => this.colors(d[this.xKey]));
     },
     renderWordForms() {
+
       // Define container groups for bars
       const barsGroup = d3.select('#bars-group');
       const bars = barsGroup.selectAll('.bar-block').data(this.chartProp.series[0].data);
@@ -152,13 +153,9 @@ export default {
         .remove();
 
       bars.each(function (dbar) {
+        console.log(dbar)
         const bar = d3.select(this);
         const data = chartPropSeries.wordForms.filter((el) => el.query === dbar.name);
-
-        // Remove deleted ones
-        bar
-          .exit()
-          .remove();
 
         bar
           .selectAll('.bar-piece')
@@ -166,7 +163,8 @@ export default {
             const xPos = component.xScale(dbar[component.xKey]);
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            const thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            let thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            if (thisHeight < 20) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
             if (i === 0) {
@@ -201,7 +199,8 @@ export default {
             const xPos = component.xScale(dbar[component.xKey]);
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
-            const thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            let thisHeight = barHeight / (dbar.absTotal / d.absValue);
+            if (thisHeight < 20) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
             if (i === 0) {

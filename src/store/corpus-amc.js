@@ -39,7 +39,7 @@ const mutations = {
         state.chartData.temporal.relative.data.splice(i, 1);
         state.chartData.regions.relativeMaps.splice(i, 1);
         state.chartData.regions.absoluteMaps.splice(i, 1);
-        state.chartData.regions.series.splice(i, 1);
+        //state.chartData.regions.series.splice(i, 1);
         state.chartData.sources.series.splice(i, 1);
         state.chartData.sections.series.splice(i, 1);
         state.chartData.collocations.clouds.splice(i, 1);
@@ -51,6 +51,11 @@ const mutations = {
         for (let j = state.chartData.kwic.items.length - 1; j >= 0; j -= 1) {
           if (state.chartData.kwic.items[j].queryTerm === queryTerm.text) {
             state.chartData.kwic.items.splice(j, 1);
+          }
+        }
+        for (let l = state.chartData.queryRelSummary.series[0].wordForms.length - 1; l >= 0; l -= 1) {
+          if (state.chartData.queryRelSummary.series[0].wordForms[l].query === queryTerm.text) {
+            state.chartData.queryRelSummary.series[0].wordForms.splice(l, 1);
           }
         }
         break;
