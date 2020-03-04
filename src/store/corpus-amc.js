@@ -99,6 +99,21 @@ const mutations = {
       }
     }
     items = payload.result.Blocks[0].Items;
+
+
+    const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
+
+    state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
+
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.queryRelSummary.series[0].wordForms.push({
+        query: payload.term,
+        word: items[i].Word[0].n,
+        absValue: items[i].freq,
+      });
+    }
+
+
     state.chartData.wordFreqSummary.data.push({
       id: payload.term,
       name: payload.term,
@@ -859,7 +874,7 @@ const state = {
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
       legendEnabled: false,
-      series: [{ name: 'Normalised Frequency', data: [], colorByPoint: true }],
+      series: [{ name: 'Normalised Frequency', data: [], wordForms: [], colorByPoint: true }],
     },
     wordFreqSummary: {
       title: 'Total Absolute Frequency and Word Forms',
