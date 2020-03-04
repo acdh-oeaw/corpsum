@@ -108,7 +108,7 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Signika&display=swap');
 
 body {
-  font-size: .875rem;
+  font-size: .8rem;
   font-family: 'Barlow', sans-serif;
   background-color: #f5f6f9;
 }
@@ -203,16 +203,15 @@ main, .navbar {
 }
 
 .vis-component {
-  padding: .5rem !important;
+  padding: .25rem !important;
 
   .multi-map-child:nth-child(n+2) {
     margin-top: 15px;
   }
 
   .vis-component-inner {
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     background-color: #fff;
-    box-shadow: 0 0 0 0 rgba(90, 113, 207, 0.11), 0 4px 15px 0 rgba(167, 175, 182, 0.31);
     border: solid 1px #dde4ea;
     min-height: 445px;
     overflow: hidden;

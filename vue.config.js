@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   module.exports = {
     css: {
-      sourceMap: true,
+      // sourceMap: true,
       loaderOptions: {
         sass: {
           data: `

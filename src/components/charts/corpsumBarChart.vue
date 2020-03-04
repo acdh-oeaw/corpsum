@@ -118,15 +118,12 @@ export default {
     };
   },
   watch: {
-    'chartProp.series.0.data': {
+    'chartProp.series': {
       handler() {
         this.AnimateLoad();
-      },
-    },
-    'chartProp.series.0.wordForms': {
-      handler() {
         this.renderWordForms();
       },
+      deep: true,
     },
   },
   methods: {
@@ -163,7 +160,12 @@ export default {
 
       axisX.call(d3.axisBottom(this.xScale));
 
-      axisY.call(d3.axisLeft(this.yScale).ticks(10).tickFormat(d3.format('.0f')));
+      axisY.call(d3.axisLeft(this.yScale).ticks(10)
+        .tickFormat((d) => {
+          if (d > 1000) { return d3.format('.2s')(d); }
+          if (d > 10) { return d3.format('d')(d); }
+          return d3.format('.2f')(d);
+        }));
 
       const yGridlines = d3
         .select('#gridlines-y')
@@ -194,7 +196,7 @@ export default {
         .attr('data-index', (d, i) => i)
         .attr('class', 'bar-block')
         .on('mouseover', this.handleMouseOver)
-        .on('mouseout', this.handleMouseOut)
+        .on('mouseout', this.handleMouseOut);
 
       // Create a new single bar for new data
       newBars
@@ -324,10 +326,9 @@ export default {
           .attr('fill', '#ffffff')
           .attr('x', () => component.xScale.bandwidth() - 10)
           .attr('y', 18)
-          .attr('text-anchor', 'end')
+          .attr('text-anchor', 'end');
 
         d3.selectAll('.bar-hover-text').remove();
-
       });
 
       this.onWordFormToggle();
@@ -379,8 +380,8 @@ export default {
         .attr('fill', '#ffffff')
         .attr('class', 'bar-hover-text')
         .attr('id', `t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`)
-        .attr('x', () => { return this.xScale(d[this.xKey]) + this.xScale.bandwidth() + 30; })
-        .attr('y', () => { return this.yScale(d[this.yKey]) + 20; })
+        .attr('x', () => this.xScale(d[this.xKey]) + this.xScale.bandwidth() + 30)
+        .attr('y', () => this.yScale(d[this.yKey]) + 20)
         .transition()
         .duration(150)
         .ease(d3.easeLinear)
