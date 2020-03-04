@@ -6,10 +6,34 @@
           <info-icon></info-icon>
         </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
-        Relative
+
+        <b-form-group class="head-buttons ml-auto mr-2">
+          <b-button
+            :pressed.sync="showWordForms"
+            variant="outline-primary"
+            size="sm"
+            @click="onWordFormToggle()"
+          >
+            Word Forms
+          </b-button>
+        </b-form-group>
+
+        <b-form-group class="head-buttons">
+          <b-form-radio-group
+            v-model="valueType"
+            :options="freqOptions"
+            buttons
+            button-variant="outline-primary"
+            size="sm"
+            name="radio-btn-outline"
+            @change="onFrequencyValueTypeChange($event)"
+          ></b-form-radio-group>
+        </b-form-group>
+
+        <!-- Relative
         <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
-        Absolute
-        <div class="actions ml-auto">
+        Absolute -->
+        <div class="actions">
           <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
@@ -73,7 +97,7 @@ export default {
       svgWidth: 0,
       svgHeight: 400,
       svgPadding: {
-        top: 20, right: 20, bottom: 30, left: 40,
+        top: 25, right: 20, bottom: 30, left: 40,
       },
       redrawToggle: true,
       xKey: 'name',
@@ -86,7 +110,11 @@ export default {
       chartInfoModal: {
         id: `chart-info-modal-${this.elKey}`,
       },
-      frequencyValueTypeAbsolute: false,
+      freqOptions: [
+        { text: 'Relative', value: 'relValue' },
+        { text: 'Absolute', value: 'absValue' },
+      ],
+      showWordForms: true,
     };
   },
   watch: {
@@ -164,7 +192,9 @@ export default {
         .enter()
         .append('g')
         .attr('data-index', (d, i) => i)
-        .attr('class', 'bar-block');
+        .attr('class', 'bar-block')
+        .on('mouseover', this.handleMouseOver)
+        .on('mouseout', this.handleMouseOut)
 
       // Create a new single bar for new data
       newBars
@@ -176,7 +206,6 @@ export default {
         .attr('fill', (d) => this.colors(d[this.xKey]));
     },
     renderWordForms() {
-
       // Define container groups for bars
       const barsGroup = d3.select('#bars-group');
       const bars = barsGroup.selectAll('.bar-block').data(this.chartProp.series[0].data);
@@ -191,17 +220,21 @@ export default {
         const data = chartPropSeries.wordForms.filter((el) => el.query === dbar.name);
 
         bar
-          .selectAll('.bar-piece')
+          .selectAll('.word-forms-group')
           .remove();
 
-        bar
+        const wordFormsGroup = bar
+          .append('g')
+          .attr('class', 'word-forms-group');
+
+        wordFormsGroup
           .selectAll('.bar-piece')
           .attr('transform', (d, i) => {
             const xPos = component.xScale(dbar[component.xKey]);
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
             let thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
-            if (thisHeight < 20) thisHeight = 15;
+            if (thisHeight < 22) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
             if (i === 0) {
@@ -215,7 +248,7 @@ export default {
           .style('display', (d, i) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
             const barY = component.yScale(dbar[component.yKey]);
-            if (data[i].yEndPos - barY > barHeight) return 'none';
+            if (i !== 0 && data[i].yEndPos - barY > barHeight - 10) return 'none';
             return 'block';
           })
           .selectAll('rect')
@@ -228,11 +261,11 @@ export default {
           .style('display', (d, i) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
             const thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
-            if (thisHeight < 20) return 'none';
+            if (thisHeight < 22) return 'none';
             return 'block';
           });
 
-        const gS = bar
+        const gS = wordFormsGroup
           .selectAll('.bar-piece')
           .data(data)
           .enter()
@@ -243,7 +276,7 @@ export default {
             const barY = component.yScale(dbar[component.yKey]);
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
             let thisHeight = barHeight / (dbar[component.yKey] / d[component.valueType]);
-            if (thisHeight < 20) thisHeight = 15;
+            if (thisHeight < 22) thisHeight = 15;
             data[i].thisHeight = thisHeight;
             let yPos = barY;
             if (i === 0) {
@@ -257,7 +290,7 @@ export default {
           .style('display', (d, i) => {
             const barHeight = component.svgHeight - component.svgPadding.top - component.svgPadding.bottom - component.yScale(dbar[component.yKey]);
             const barY = component.yScale(dbar[component.yKey]);
-            if (data[i].yEndPos - barY > barHeight) return 'none';
+            if (i !== 0 && data[i].yEndPos - barY > barHeight - 10) return 'none';
             return 'block';
           });
 
@@ -270,7 +303,7 @@ export default {
           .attr('width', () => component.xScale.bandwidth())
           .attr('fill', () => 'none')
           .style('display', (d, i) => {
-            if (data[i].thisHeight < 20) return 'none';
+            if (data[i].thisHeight < 22) return 'none';
             return 'block';
           });
 
@@ -279,21 +312,25 @@ export default {
           .text((d) => d.word)
           .attr('fill', '#ffffff')
           .attr('x', 10)
-          .attr('y', 20)
+          .attr('y', 18)
           .style('display', (d, i) => {
-            //if (data[i].thisHeight < 20) return 'none';
-            //return 'block';
+            // if (data[i].thisHeight < 20) return 'none';
+            // return 'block';
           });
 
         const textsVal = gS
           .append('text')
           .text((d) => d[component.valueType])
           .attr('fill', '#ffffff')
-          .attr('x', () => { return component.xScale.bandwidth() - 10; } )
-          .attr('y', 20)
+          .attr('x', () => component.xScale.bandwidth() - 10)
+          .attr('y', 18)
           .attr('text-anchor', 'end')
 
+        d3.selectAll('.bar-hover-text').remove();
+
       });
+
+      this.onWordFormToggle();
 
       /*
       bars
@@ -333,16 +370,44 @@ export default {
       if (property) return Object.keys(object).find((key) => object[key][property] === value);
       return Object.keys(object).find((key) => object[key] === value);
     },
-    onFrequencyValueTypeChange() {
-      if (this.frequencyValueTypeAbsolute) {
+    handleMouseOver(d, i) {
+      d3.select('#main-svg')
+        .append('text')
+        .text(() => d[this.yKey])
+        .attr('text-anchor', 'end')
+        .attr('font-weight', 'bold')
+        .attr('fill', '#ffffff')
+        .attr('class', 'bar-hover-text')
+        .attr('id', `t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`)
+        .attr('x', () => { return this.xScale(d[this.xKey]) + this.xScale.bandwidth() + 30; })
+        .attr('y', () => { return this.yScale(d[this.yKey]) + 20; })
+        .transition()
+        .duration(150)
+        .ease(d3.easeLinear)
+        .attr('fill', '#000000');
+    },
+    handleMouseOut(d, i) {
+      d3.select(`#t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`).remove();
+    },
+    onFrequencyValueTypeChange(checked) {
+      if (checked === 'absValue') {
         this.valueType = 'absValue';
         this.yKey = 'absTotal';
-      } else {
+      } else if (checked === 'relValue') {
         this.valueType = 'relValue';
         this.yKey = 'y';
       }
       this.AnimateLoad();
       this.renderWordForms();
+    },
+    onWordFormToggle() {
+      if (this.showWordForms === false) {
+        d3.selectAll('.word-forms-group')
+          .style('display', 'none');
+      } else {
+        d3.selectAll('.word-forms-group')
+          .style('display', 'block');
+      }
     },
     forceRerender() {
       this.componentKey += 1;
@@ -398,14 +463,32 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.head-buttons {
+  margin-bottom: 0;
+
+  .btn-sm, .btn-group-sm > .btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-outline-primary:not(:disabled):not(.disabled):active:focus, .btn-outline-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-primary.dropdown-toggle:focus, .btn-outline-primary:focus, .btn-outline-primary.focus {
+    box-shadow: none;
+  }
+
+.btn-group:focus {
+  outline: none;
+}
+
+}
+
 .bar-block {
   /*fill: steelblue;*/
-  /*transition: r 0.2s ease-in-out;*/
+  transition: opacity 0.15s ease-in-out;
 }
 
 .bar-block:hover {
-  /*fill: brown;*/
+  opacity: 0.92;
 }
 
 .bar-piece rect {

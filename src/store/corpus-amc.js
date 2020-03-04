@@ -113,7 +113,7 @@ const mutations = {
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
-    for (let i = 0; i < items.length && i < 20; i += 1) {
+    for (let i = 0; i < items.length && i < 25; i += 1) {
       const relValue = (items[i].freq * 1000000) / corpusTokenSize;
       state.chartData.queryRelSummary.series[0].wordForms.push({
         query: payload.term,
@@ -706,24 +706,26 @@ const state = {
       class: 'col-md-6 vis-component',
       chartProp: 'queryRelSummary',
     },
+    /*
     {
       component: 'barChart',
       class: 'col-md-6 vis-component',
       chartProp: 'queryRelSummary',
     },
+    */
     {
       component: 'wrapperLineChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'temporal',
     },
     {
       component: 'multiMap',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'regions',
     },
     {
       component: 'treemapChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'wordFreqSummary',
     },
     {
@@ -887,7 +889,7 @@ const state = {
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
     },
     queryRelSummary: {
-      title: 'Total Relative Frequency',
+      title: 'Total Frequency and Word Forms',
       subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
