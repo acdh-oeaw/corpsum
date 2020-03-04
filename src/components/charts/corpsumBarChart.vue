@@ -40,6 +40,7 @@ export default {
     // this.AddResizeListener();
     this.initChart();
     this.AnimateLoad();
+    this.renderWordForms();
   },
   data: () => ({
     svgWidth: 0,
@@ -143,14 +144,14 @@ export default {
       const barsGroup = d3.select('#bars-group');
       const bars = barsGroup.selectAll('.bar-block').data(this.chartProp.series[0].data);
 
-      const chartPropSeries = this.chartProp.series[0];
-
-      const component = this;
-
       // Remove deleted ones
       bars
         .exit()
         .remove();
+
+      const chartPropSeries = this.chartProp.series[0];
+
+      const component = this;
 
       bars.each(function (dbar) {
         console.log(dbar)
@@ -188,6 +189,12 @@ export default {
             if (thisHeight < 20) return 'none';
             return 'block';
           });
+
+        // Remove deleted ones
+        bar
+          .selectAll('.bar-piece')
+          .exit()
+          .remove();
 
         const gS = bar
           .selectAll('.bar-piece')
