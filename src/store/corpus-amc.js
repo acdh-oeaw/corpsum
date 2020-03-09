@@ -141,15 +141,25 @@ const mutations = {
     const items = payload.result;
     const absolute = { name: payload.term, data: [] };
     const relative = { name: payload.term, data: [] };
+    //const skeRelative = { name: payload.term, data: [] };
+
+    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+
     for (let i = 0; i < items.length; i += 1) {
+      const yearKey = getObjectKey(state.infoData.docsYears.data[0].data, Number(items[i].Word[0].n), [0]);
+      const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
+      const relValue = (items[i].freq * 1000000) / yearTokenSize;
       absolute.data.push([Number(items[i].Word[0].n), items[i].freq]);
-      relative.data.push([Number(items[i].Word[0].n), items[i].rel]);
+      relative.data.push([Number(items[i].Word[0].n),  Math.round((relValue + Number.EPSILON) * 100) / 100]);
+      //skeRelative.data.push([Number(items[i].Word[0].n), items[i].rel]);
     }
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
     relative.data.sort((a, b) => a[0] - b[0]);
+    //skeRelative.data.sort((a, b) => a[0] - b[0]);
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
+    //state.chartData.temporal.skeRelative.data.push(skeRelative);
   },
   processSources(state, payload) {
     const items = payload.result;
@@ -641,7 +651,7 @@ const actions = {
     try {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
       const requestURIs = {};
-      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
@@ -804,9 +814,9 @@ const state = {
       desc: 'The Austrian Media Corpus (amc), created as part of a cooperation between the Austrian Academy of Sciences and the Austrian Press Agency (APA), covers the entire Austrian media landscape of the past decades, comprising a wide range of text types which can be classified as journalistic prose. Altogether, the corpus contains 40 million texts, constituting more than 10 billion tokens. In comparison to other contemporary German language corpora, the amc ranks among the largest collection of its kind.',
     },
     docsYears: {
-      title: 'Number of Documents per Year',
-      subtitle: 'This chart displays the yearly distribution of documents in the selected corpus.',
-      yAxisText: 'Number of Documents',
+      title: 'Number of Tokens per Year',
+      subtitle: 'This chart displays the yearly distribution of tokens in the selected corpus.',
+      yAxisText: 'Number of Tokens',
       data: [],
       pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
     },
