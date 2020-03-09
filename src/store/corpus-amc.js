@@ -137,6 +137,43 @@ const mutations = {
       });
     }
   },
+
+
+  processMetaFreq(state, payload) {
+    const metaAttr = payload.metaAttr;
+    const metaVal = payload.metaVal;
+    const queryTerm = payload.term;
+    const absFreq = payload.absFreq;
+    const relFreq = payload.relFreq;
+
+    const absDataKey = getObjectKey(state.chartData.temporal.absolute.data, queryTerm, 'name');
+    const relDataKey = getObjectKey(state.chartData.temporal.relative.data, queryTerm, 'name');
+
+    const yearKey = getObjectKey(state.infoData.docsYears.data[0].data, Number(metaVal), [0]);
+    const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
+    const relNormValue = (absFreq * 1000000) / yearTokenSize;
+
+    const absData = [Number(metaVal), absFreq];
+    const relData = [Number(metaVal), Math.round((relNormValue + Number.EPSILON) * 100) / 100];
+
+    if (absDataKey) {
+      state.chartData.temporal.absolute.data[absDataKey].data.push(absData);
+      // Sort by year
+      state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a[0] - b[0]);
+    } else {
+      state.chartData.temporal.absolute.data.push({ name: queryTerm, data: [absData] });
+    }
+
+    if (relDataKey) {
+      state.chartData.temporal.relative.data[relDataKey].data.push(relData);
+      // Sort by year
+      state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a[0] - b[0]);
+    } else {
+      state.chartData.temporal.relative.data.push({ name: queryTerm, data: [relData] });
+    }
+  },
+
+
   processTemporal(state, payload) {
     const items = payload.result;
     const absolute = { name: payload.term, data: [] };
@@ -536,10 +573,18 @@ const actions = {
       */
 
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
-      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
-      dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
-      dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
-      dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
+      //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
+
+      const metaAttr = 'year';
+      const metaRange = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018];
+
+      for (let i = 0; (i < metaRange.length); i += 1) {
+        const metaVal = metaRange[i];
+        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp });
+      }
+      //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+      //dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
+      //dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
       commit('changeLoadingStatus', { status: false });
 
       //commit('processSum', { term: queryTerm, result: response.data.fullsize });
@@ -563,6 +608,25 @@ const actions = {
       console.log(error);
     }
   },
+
+
+
+  // API request used for metal rel. freq. and abs. freq. results
+  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp }) {
+    try {
+      const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;pagesize=10;newctxsize=20;async=0;format=json`;
+      const response = await axios.get(viewattrsxURI);
+      const absFreq = response.data.Desc[0].size;
+      const relFreq = response.data.Desc[0].rel;
+      commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  
+
   // API request used for word form freq. results
   async requestWordForms({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, totalAbsFreq }) {
     try {
@@ -728,6 +792,7 @@ const state = {
       class: 'col-md-6 vis-component',
       chartProp: 'temporal',
     },
+    /*
     {
       component: 'multiMap',
       class: 'col-md-6 vis-component',
@@ -747,7 +812,7 @@ const state = {
       component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sections',
-    },
+    },*/
     {
       component: 'kwicTable',
       class: 'col-md-12 vis-component',
@@ -915,6 +980,7 @@ const state = {
       charts: [],
     },
     temporal: {
+      title: 'Yearly Frequencies',
       absolute: {
         title: 'Yearly Absolute Frequency',
         subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
@@ -923,27 +989,11 @@ const state = {
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
       },
       relative: {
-        title: 'Yearly Relative Frequency (%)',
+        title: 'Yearly Relative Frequency',
         subtitle: 'Relative comparison to the baseline (100%) for the query in years is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
-        yAxisText: 'Relative Frequency (%)',
+        yAxisText: 'Relative Frequency per Million Tokens',
         data: [],
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
-        plotLinesY: [{
-          color: 'red',
-          dashStyle: 'dot',
-          width: 2,
-          value: 100,
-          label: {
-            rotation: 0,
-            x: 0,
-            style: {
-              fontStyle: 'italic',
-              fontSize: '10',
-            },
-            text: 'Baseline (100%)',
-          },
-          zIndex: 3,
-        }],
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} per mil.</b><br/>',
       },
     },
     sources: {

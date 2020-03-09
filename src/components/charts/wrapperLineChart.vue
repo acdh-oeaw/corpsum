@@ -6,10 +6,20 @@
           <info-icon></info-icon>
         </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
-        Relative
-        <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
-        Absolute
-        <div class="actions ml-auto">
+
+        <b-form-group class="head-buttons ml-auto">
+          <b-form-radio-group
+            v-model="valueType"
+            :options="freqOptions"
+            buttons
+            button-variant="outline-primary"
+            size="sm"
+            name="radio-btn-outline"
+            @change="onFrequencyValueTypeChange($event)"
+          ></b-form-radio-group>
+        </b-form-group>
+
+        <div class="actions">
           <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
@@ -61,7 +71,11 @@ export default {
       chartInfoModal: {
         id: `chart-info-modal-${this.elKey}`,
       },
-      frequencyValueTypeAbsolute: false,
+      valueType: 'relValue',
+      freqOptions: [
+        { text: 'Relative', value: 'relValue' },
+        { text: 'Absolute', value: 'absValue' },
+      ],
     };
   },
   created() {
@@ -76,10 +90,10 @@ export default {
   computed: {
   },
   methods: {
-    onFrequencyValueTypeChange() {
-      if (this.frequencyValueTypeAbsolute) {
+    onFrequencyValueTypeChange(checked) {
+      if (checked === 'absValue') {
         this.selectedChartData = this.chartProp.absolute;
-      } else {
+      } else if (checked === 'relValue') {
         this.selectedChartData = this.chartProp.relative;
       }
       this.forceRerender();
