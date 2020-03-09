@@ -149,27 +149,29 @@ const mutations = {
     const absDataKey = getObjectKey(state.chartData.temporal.absolute.data, queryTerm, 'name');
     const relDataKey = getObjectKey(state.chartData.temporal.relative.data, queryTerm, 'name');
 
-    const yearKey = getObjectKey(state.infoData.docsYears.data[0].data, Number(metaVal), [0]);
-    const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
-    const relNormValue = (absFreq * 1000000) / yearTokenSize;
+    const yearKey = getObjectKey(state.infoData.docsYYMM.data[0].data, metaVal, [0]);
+    if (yearKey) {
+      const yearTokenSize = state.infoData.docsYYMM.data[0].data[yearKey][1];
+      const relNormValue = (absFreq * 1000000) / yearTokenSize;
 
-    const absData = [Number(metaVal), absFreq];
-    const relData = [Number(metaVal), Math.round((relNormValue + Number.EPSILON) * 100) / 100];
+      const absData = [metaVal, absFreq];
+      const relData = [metaVal, Math.round((relNormValue + Number.EPSILON) * 100) / 100];
 
-    if (absDataKey) {
-      state.chartData.temporal.absolute.data[absDataKey].data.push(absData);
-      // Sort by year
-      state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a[0] - b[0]);
-    } else {
-      state.chartData.temporal.absolute.data.push({ name: queryTerm, data: [absData] });
-    }
+      if (absDataKey) {
+        state.chartData.temporal.absolute.data[absDataKey].data.push(absData);
+        // Sort by year
+        state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a[0] - b[0]);
+      } else {
+        state.chartData.temporal.absolute.data.push({ name: queryTerm, data: [absData] });
+      }
 
-    if (relDataKey) {
-      state.chartData.temporal.relative.data[relDataKey].data.push(relData);
-      // Sort by year
-      state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a[0] - b[0]);
-    } else {
-      state.chartData.temporal.relative.data.push({ name: queryTerm, data: [relData] });
+      if (relDataKey) {
+        state.chartData.temporal.relative.data[relDataKey].data.push(relData);
+        // Sort by year
+        state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a[0] - b[0]);
+      } else {
+        state.chartData.temporal.relative.data.push({ name: queryTerm, data: [relData] });
+      }
     }
   },
 
@@ -439,6 +441,16 @@ const mutations = {
     absolute.data.sort((a, b) => a[0] - b[0]);
     state.infoData.docsYears.data.push(absolute);
   },
+  processDocsYYMM(state, payload) {
+    const items = payload.result.Items;
+    const absolute = { name: 'Number of Documents', data: [] };
+    for (let i = 0; i < items.length; i += 1) {
+      absolute.data.push([items[i].str, items[i].freq]);
+    }
+    // Sort by year
+    absolute.data.sort((a, b) => a[0] - b[0]);
+    state.infoData.docsYYMM.data.push(absolute);
+  },
   processDocsRegions(state, payload) {
     const itemsRegions = payload.result.Items;
     const seriesData = {
@@ -575,9 +587,14 @@ const actions = {
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
       //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
-      const metaAttr = 'year';
-      const metaRange = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018];
-
+      const metaAttr = 'yymm';
+      const metaRange = [];
+      for (let i = 2000; i < 2019; i += 1) {
+        for (let j = 1; j < 13; j += 1) {
+          if (j < 10) metaRange.push(`${i}-0${j}`);
+          else metaRange.push(`${i}-${j}`);
+        }
+      }
       for (let i = 0; (i < metaRange.length); i += 1) {
         const metaVal = metaRange[i];
         dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp });
@@ -716,6 +733,9 @@ const actions = {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
       const requestURIs = {};
       requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
+
+      requestURIs.docsYYMM = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.yymm;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
+
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
@@ -725,6 +745,7 @@ const actions = {
 
       const responses = {};
       responses.docsYears = await axios.get(requestURIs.docsYears);
+      responses.docsYYMM = await axios.get(requestURIs.docsYYMM);
       responses.docsRegions = await axios.get(requestURIs.docsRegions);
       responses.docsSources = await axios.get(requestURIs.docsSources);
       responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
@@ -734,6 +755,7 @@ const actions = {
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
+      commit('processDocsYYMM', { result: responses.docsYYMM.data });
       commit('processDocsRegions', { result: responses.docsRegions.data });
       commit('processDocsSources', { result: responses.docsSources.data });
       commit('processDocsRessorts', { result: responses.docsRessorts.data });
@@ -880,6 +902,13 @@ const state = {
     },
     docsYears: {
       title: 'Number of Tokens per Year',
+      subtitle: 'This chart displays the yearly distribution of tokens in the selected corpus.',
+      yAxisText: 'Number of Tokens',
+      data: [],
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+    },
+    docsYYMM: {
+      title: 'Number of Tokens per YYMM',
       subtitle: 'This chart displays the yearly distribution of tokens in the selected corpus.',
       yAxisText: 'Number of Tokens',
       data: [],
