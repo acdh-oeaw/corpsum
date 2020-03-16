@@ -2,7 +2,7 @@
   <div id="app">
     <div class="container-fluid">
       <div class="row">
-        <sideNav/>
+        <!--<sideNav/>-->
         <topNav v-bind:tags="tags" class="v-step-0"/>
         <router-view name="Content"></router-view>
       </div>
@@ -191,7 +191,7 @@ body {
 }
 
 main {
-  max-width: calc(100% - 135px) !important;
+  /*max-width: calc(100% - 135px) !important;*/
 }
 
 main {
@@ -199,7 +199,7 @@ main {
 }
 
 main, .navbar {
-  width: calc(100% - 145px) !important;
+  /*width: calc(100% - 145px) !important;*/
 }
 
 .vis-component {
@@ -213,7 +213,7 @@ main, .navbar {
     border-radius: 0.25rem;
     background-color: #fff;
     border: solid 1px #dde4ea;
-    min-height: 445px;
+    min-height: 370px;
     overflow: hidden;
 
     .actions {

@@ -13,7 +13,7 @@ export default new Router({
       name: 'root',
       redirect: (to) => {
         if (to.params.id !== 'rae' || to.params.id !== 'acdh') {
-          return '/acdh/info';
+          return '/acdh/analysis';
         }
         return to.fullPath;
       },
@@ -24,24 +24,45 @@ export default new Router({
       // Children to the root path '/'
       children: [
         {
-          path: 'info',
-          name: 'info',
-          components: {
-            Content: Info,
-          },
-        },
-        {
           path: 'analysis',
           name: 'analysis',
           components: {
             Content: Analysis,
           },
         },
+        {
+          path: 'analysis/:corpus/:subcorpus/:query',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
+        {
+          path: 'analysis/:corpus/:subcorpus',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
+        {
+          path: 'analysis/:corpus',
+          name: 'analysis',
+          components: {
+            Content: Analysis,
+          },
+        },
+        {
+          path: 'info',
+          name: 'info',
+          components: {
+            Content: Info,
+          },
+        },
       ],
     },
     {
       path: '',
-      redirect: { name: 'info' },
+      redirect: { name: 'analysis' },
     },
   ],
 });

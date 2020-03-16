@@ -58,6 +58,10 @@
             <g id="bars-group"></g>
           </g>
         </svg>
+        <b-button variant="info" class="go-to-upper-chart-btn" v-show="activeDrilldownQuery" @click="goToUpperChart" v-b-tooltip.hover title="Go to previous chart">
+          <corner-up-left-icon></corner-up-left-icon>
+          Go Back
+        </b-button>
       </div>
     </div>
   </div>
@@ -65,7 +69,7 @@
 
 <script>
 import {
-  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, CornerUpLeftIcon
 } from 'vue-feather-icons';
 import { ToggleButton } from 'vue-js-toggle-button';
 import { scaleLinear, scaleBand } from 'd3-scale';
@@ -81,7 +85,7 @@ export default {
     elKey: Number,
   },
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton,
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton, CornerUpLeftIcon
   },
   mounted() {
     // this.svgWidth = document.getElementById('container').offsetWidth * 0.75;
@@ -95,13 +99,13 @@ export default {
   data() {
     return {
       svgWidth: 0,
-      svgHeight: 400,
+      svgHeight: 325,
       svgPadding: {
         top: 25, right: 20, bottom: 30, left: 40,
       },
       redrawToggle: true,
       xKey: 'name',
-      yKey: 'y',
+      yKey: 'relValue',
       valueType: 'relValue',
       componentKey: 0,
       showTableIcon: true,
@@ -115,6 +119,7 @@ export default {
         { text: 'Absolute', value: 'absValue' },
       ],
       showWordForms: true,
+      activeDrilldownQuery: false,
     };
   },
   watch: {
@@ -195,6 +200,7 @@ export default {
         .append('g')
         .attr('data-index', (d, i) => i)
         .attr('class', 'bar-block')
+        .on('click', this.handleBarClick)
         .on('mouseover', this.handleMouseOver)
         .on('mouseout', this.handleMouseOut);
 
@@ -311,7 +317,7 @@ export default {
 
         const texts = gS
           .append('text')
-          .text((d) => d.word)
+          .text((d) => d.name)
           .attr('fill', '#ffffff')
           .attr('x', 10)
           .attr('y', 18)
@@ -390,13 +396,99 @@ export default {
     handleMouseOut(d, i) {
       d3.select(`#t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`).remove();
     },
+    handleBarClick(d, i) {
+      const barsData = this.chartProp.series[0].wordForms.filter((el) => el.query === d.name).slice(0, 15);
+      if (barsData) {
+        this.activeDrilldownQuery = d.name;
+        this.createBars(barsData);
+      }
+    },
+    goToUpperChart() {
+      const barsGroup = d3.select('#bars-group');
+      barsGroup.selectAll('.bar-block').remove();
+      this.activeDrilldownQuery = false;
+      this.AnimateLoad();
+      this.renderWordForms();
+    },
+    createBars(barsData) {
+
+      const axisX = d3.select('#axis-x');
+      const axisY = d3.select('#axis-y');
+
+      const axisBottom = axisX.call(d3.axisBottom(this.xScale));
+
+      axisBottom.selectAll('text').remove();
+      axisBottom.selectAll('line').remove();
+
+      axisY.call(d3.axisLeft(this.yScale).ticks(10)
+        .tickFormat((d) => {
+          if (d > 1000) { return d3.format('.2s')(d); }
+          if (d > 10) { return d3.format('d')(d); }
+          return d3.format('.2f')(d);
+        }));
+
+      const yGridlines = d3
+        .select('#gridlines-y')
+        .call(d3.axisLeft(this.yScale).ticks(5).tickSize(-this.svgWidth + this.svgPadding.left + this.svgPadding.right).tickFormat(''));
+
+      console.log(barsData);
+
+      // Define container groups for bars
+      const barsGroup = d3.select('#bars-group');
+
+      // for drill down
+      barsGroup.selectAll('.bar-block').remove();
+
+      const bars = barsGroup.selectAll('.bar-block').data(barsData);
+
+      // Remove deleted ones
+      /* bars
+        .exit()
+        .remove(); */
+
+      // Create bar-blocks for new data
+      const newBars = bars
+        .enter()
+        .append('g')
+        .attr('data-index', (d, i) => i)
+        .attr('class', 'bar-block')
+        // .on('click', this.handleBarClick)
+        .on('mouseover', this.handleMouseOver)
+        .on('mouseout', this.handleMouseOut);
+
+      // Create a new single bar for new data
+      newBars
+        .append('rect')
+        .attr('x', (d) => this.xScale(d[this.xKey]))
+        .attr('y', (d) => this.yScale(d[this.yKey]))
+        .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
+        .attr('width', this.xScale.bandwidth())
+        .attr('fill', (d) => this.colors(d[this.xKey]));
+
+
+      // Add labels on top of new bars
+      newBars
+        .append('text')
+        .text((d) => d.name)
+        .attr('text-anchor', 'start')
+        .attr('font-weight', 'bold')
+        .attr('class', 'bar-top-label-text')
+        .attr('x', (d) => this.xScale(d[this.xKey]) + this.xScale.bandwidth() - 15)
+        .attr('y', (d) => this.yScale(d[this.yKey]) - 5)
+        .attr('transform', (d) => {
+          const cx = this.xScale(d[this.xKey]) + this.xScale.bandwidth() - 15;
+          const cy = this.yScale(d[this.yKey]) - 5;
+          return `rotate(-45,${cx},${cy})`;
+        })
+
+    },
     onFrequencyValueTypeChange(checked) {
       if (checked === 'absValue') {
         this.valueType = 'absValue';
-        this.yKey = 'absTotal';
+        this.yKey = 'absValue';
       } else if (checked === 'relValue') {
         this.valueType = 'relValue';
-        this.yKey = 'y';
+        this.yKey = 'relValue';
       }
       this.AnimateLoad();
       this.renderWordForms();
@@ -442,17 +534,29 @@ export default {
       return d3.scaleOrdinal(d3.schemeTableau10);
     },
     dataMax() {
-      return max(this.chartProp.series[0].data, (d) => d[this.yKey]);
+      let domainData = this.chartProp.series[0].data;
+      if (this.activeDrilldownQuery) {
+        domainData = this.chartProp.series[0].wordForms.filter((el) => el.query === this.activeDrilldownQuery).slice(0, 15);
+      }
+      return max(domainData, (d) => d[this.yKey]);
     },
     dataMin() {
-      return min(this.chartProp.series[0].data, (d) => d[this.yKey]);
+      let domainData = this.chartProp.series[0].data;
+      if (this.activeDrilldownQuery) {
+        domainData = this.chartProp.series[0].wordForms.filter((el) => el.query === this.activeDrilldownQuery).slice(0, 15);
+      }
+      return min(domainData, (d) => d[this.yKey]);
     },
     xScale() {
+      let domainData = this.chartProp.series[0].data;
+      if (this.activeDrilldownQuery) {
+        domainData = this.chartProp.series[0].wordForms.filter((el) => el.query === this.activeDrilldownQuery).slice(0, 15);
+      }
       return scaleBand()
         .rangeRound([0, this.svgWidth - this.svgPadding.left - this.svgPadding.right])
         .padding(0.1)
         .domain(
-          this.chartProp.series[0].data.map((d) => d[this.xKey]),
+          domainData.map((d) => d[this.xKey]),
         );
     },
     yScale() {
@@ -495,6 +599,20 @@ export default {
 .bar-piece rect {
   stroke: white;
   stroke-width: 1px;
+}
+
+.bar-top-label-text {
+  font-size: 0.65rem;
+}
+
+.corpsum-bar-chart {
+  position: relative;
+}
+
+.go-to-upper-chart-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .gridlines line {

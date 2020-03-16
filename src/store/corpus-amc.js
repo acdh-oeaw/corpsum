@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import router from '../router';
 
 // Axios properties
 Vue.prototype.$http = axios;
@@ -117,7 +118,7 @@ const mutations = {
       const relValue = (items[i].freq * 1000000) / corpusTokenSize;
       state.chartData.queryRelSummary.series[0].wordForms.push({
         query: payload.term,
-        word: items[i].Word[0].n,
+        name: items[i].Word[0].n,
         absValue: items[i].freq,
         relValue: Math.round((relValue + Number.EPSILON) * 100) / 100,
       });
@@ -347,12 +348,12 @@ const mutations = {
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
-    const absTotal = (overallRel * corpusTokenSize) / 1000000;
+    const absValue = (overallRel * corpusTokenSize) / 1000000;
 
     state.chartData.queryRelSummary.series[0].data.push({
       name: payload.term,
-      y: overallRel,
-      absTotal: Math.round((absTotal + Number.EPSILON) * 100) / 100,
+      relValue: overallRel,
+      absValue: Math.round((absValue + Number.EPSILON) * 100) / 100,
     });
   },
   processWordTree(state, payload) {
@@ -558,6 +559,15 @@ const actions = {
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
       commit('changeLoadingStatus', { status: true });
+
+      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
+      if (router.currentRoute.params.subcorpus) state.subcorpusName = router.currentRoute.params.subcorpus;
+      if (router.currentRoute.params.query) {
+        queryTerm = router.currentRoute.params.query;
+        state.chartData.queryTerms = [];
+        commit('queryTermAdded', {"text": queryTerm, "tiClasses":["ti-valid"]});
+      }
+
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       // const requestURIs = {};
       let useSubCorp = '';
@@ -682,6 +692,7 @@ const actions = {
   },
   async modalTextQuery({ state, commit }, item) {
     try {
+      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
       const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
       commit('updateModalTextContent', { term: item.word, result: response.data });
     } catch (error) {
@@ -710,9 +721,10 @@ const actions = {
       console.log(error);
     }
   },
-  async queryCorpusInfo({ state, commit }) {
+  async queryCorpusInfo({ state, commit, dispatch }) {
     try {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
+      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
       const requestURIs = {};
       requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
       requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
@@ -739,6 +751,9 @@ const actions = {
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
       commit('processTopLemmas', { result: responses.topLemmas.data });
+      if (router.currentRoute.params.query) {
+        dispatch('corpusQuery', router.currentRoute.params.query);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -776,7 +791,7 @@ const state = {
   chartElements: [
     {
       component: 'corpsumBarChart',
-      class: 'col-md-6 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'queryRelSummary',
     },
     /*
@@ -788,7 +803,7 @@ const state = {
     */
     {
       component: 'wrapperLineChart',
-      class: 'col-md-6 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'temporal',
     },
     /*
@@ -814,7 +829,7 @@ const state = {
     },*/
     {
       component: 'kwicTable',
-      class: 'col-md-12 vis-component',
+      class: 'col-md-4 vis-component',
       chartProp: 'kwic',
     },
     /*
@@ -963,7 +978,7 @@ const state = {
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
     },
     queryRelSummary: {
-      title: 'Total Frequency and Word Forms',
+      title: 'Fr. and Forms',
       subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
@@ -986,6 +1001,7 @@ const state = {
         yAxisText: 'Number of Hits',
         data: [],
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+        height: 325,
       },
       relative: {
         title: 'Yearly Relative Frequency',
@@ -993,6 +1009,7 @@ const state = {
         yAxisText: 'Relative Frequency per Million Tokens',
         data: [],
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} per mil.</b><br/>',
+        height: 325,
       },
     },
     sources: {
@@ -1091,6 +1108,7 @@ const state = {
         {
           key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center',
         },
+        /*
         {
           key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' },
         },
@@ -1099,7 +1117,7 @@ const state = {
         },
         {
           key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' },
-        },
+        },*/
         {
           key: 'left', label: 'Left', sortable: true, class: 'text-right',
         },
