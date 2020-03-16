@@ -147,18 +147,23 @@ body {
 
 .bg-series-color-0 {
   background-color: #4e79a7;
+  fill: #4e79a7;
 }
 .bg-series-color-1 {
-  background-color: #edc948;
+  background-color: #f28e2b;
+  fill: #f28e2b;
 }
 .bg-series-color-2 {
   background-color: #e15759;
+  fill: #e15759;
 }
 .bg-series-color-3 {
   background-color: #76b7b2;
+  fill: #76b7b2;
 }
 .bg-series-color-4 {
-  background-color: #f28e2b;
+  background-color: #edc948;
+  fill: #edc948;
 }
 .bg-series-color-5 {
   background-color: #ff9da7;

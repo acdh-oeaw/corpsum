@@ -121,6 +121,8 @@ export default {
       ],
       showWordForms: true,
       activeDrilldownQuery: false,
+      activeDrilldownData: [],
+      activeDrilldownParentIndex: 0,
     };
   },
   watch: {
@@ -193,7 +195,8 @@ export default {
         .attr('y', (d) => this.yScale(d[this.yKey]))
         .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
         .attr('width', this.xScale.bandwidth())
-        .attr('fill', (d) => this.colors(d[this.xKey]));
+        //.attr('fill', (d) => this.colors(d[this.xKey]));
+        .attr('class', (d, i) => `bg-series-color-${i}`);
 
       // Create bar-blocks for new data
       const newBars = bars
@@ -212,7 +215,8 @@ export default {
         .attr('y', (d) => this.yScale(d[this.yKey]))
         .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
         .attr('width', this.xScale.bandwidth())
-        .attr('fill', (d) => this.colors(d[this.xKey]));
+        //.attr('fill', (d) => this.colors(d[this.xKey]));
+        .attr('class', (d, i) => `bg-series-color-${i}`);
     },
     renderWordForms() {
       // Define container groups for bars
@@ -320,7 +324,7 @@ export default {
           .append('text')
           .text((d) => d.name)
           .attr('fill', '#ffffff')
-          .attr('x', 10)
+          .attr('x', 5)
           .attr('y', 18)
           .style('display', (d, i) => {
             // if (data[i].thisHeight < 20) return 'none';
@@ -331,7 +335,7 @@ export default {
           .append('text')
           .text((d) => d[component.valueType])
           .attr('fill', '#ffffff')
-          .attr('x', () => component.xScale.bandwidth() - 10)
+          .attr('x', () => component.xScale.bandwidth() - 5)
           .attr('y', 18)
           .attr('text-anchor', 'end');
 
@@ -381,13 +385,17 @@ export default {
     handleMouseOver(d, i) {
       d3.select('#main-svg')
         .append('text')
-        .text(() => d[this.yKey])
+        .text(() => {
+          if (this.activeDrilldownQuery) {
+            return d3.format('d')(d[this.yKey]);
+          } return d[this.yKey];
+        })
         .attr('text-anchor', 'end')
         .attr('font-weight', 'bold')
         .attr('fill', '#ffffff')
         .attr('class', 'bar-hover-text')
         .attr('id', `t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`)
-        .attr('x', () => this.xScale(d[this.xKey]) + this.xScale.bandwidth() + 30)
+        .attr('x', () => this.xScale(d[this.xKey]) + this.xScale.bandwidth() + 35)
         .attr('y', () => this.yScale(d[this.yKey]) + 20)
         .transition()
         .duration(150)
@@ -401,7 +409,9 @@ export default {
       const barsData = this.chartProp.series[0].wordForms.filter((el) => el.query === d.name).slice(0, 15);
       if (barsData) {
         this.activeDrilldownQuery = d.name;
-        this.createBars(barsData);
+        this.activeDrilldownData = barsData;
+        this.activeDrilldownParentIndex = i;
+        this.createBars(barsData, i);
       }
     },
     goToUpperChart() {
@@ -413,7 +423,7 @@ export default {
       this.AnimateLoad();
       this.renderWordForms();
     },
-    createBars(barsData) {
+    createBars(barsData, parentIndex) {
       const axisX = d3.select('#axis-x');
       const axisY = d3.select('#axis-y');
 
@@ -473,7 +483,8 @@ export default {
         .attr('y', (d) => this.yScale(d[this.yKey]))
         .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
         .attr('width', this.xScale.bandwidth())
-        .attr('fill', (d) => this.colors(d[this.xKey]));
+        .attr('fill', (d, i) => this.pSBC( (i + 1) / 20, '#4e79a7', false, true) );
+        //.attr('class', (d, i) => `bg-series-color-${parentIndex}`);
 
 
       // Add labels on top of new bars
@@ -495,6 +506,35 @@ export default {
       d3.selectAll('.bar-hover-text').remove();
 
     },
+
+pSBC(p,c0,c1,l) {
+    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+    if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+    if(!this.pSBCr)this.pSBCr=(d)=>{
+        let n=d.length,x={};
+        if(n>9){
+            [r,g,b,a]=d=d.split(","),n=d.length;
+            if(n<3||n>4)return null;
+            x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+        }else{
+            if(n==8||n==6||n<4)return null;
+            if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+            d=i(d.slice(1),16);
+            if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+            else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+        }return x};
+    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+    if(!f||!t)return null;
+    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+    if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
+},
+
+
+
+
     onFrequencyValueTypeChange(checked) {
       if (checked === 'absValue') {
         this.valueType = 'absValue';
@@ -503,8 +543,12 @@ export default {
         this.valueType = 'relValue';
         this.yKey = 'relValue';
       }
-      this.AnimateLoad();
-      this.renderWordForms();
+      if (this.activeDrilldownQuery) {
+        this.createBars(this.activeDrilldownData, this.activeDrilldownParentIndex);
+      } else {
+        this.AnimateLoad();
+        this.renderWordForms();
+      }
     },
     onWordFormToggle() {
       if (this.showWordForms === false) {
@@ -606,8 +650,8 @@ export default {
 }
 
 .bar-block {
-  /*fill: steelblue;*/
   transition: opacity 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .bar-block:hover {
@@ -619,8 +663,8 @@ export default {
   stroke-width: 1px;
 }
 
-.bar-top-label-text {
-  font-size: 0.65rem;
+.bar-top-label-text, .bar-hover-text, .bar-piece > text {
+  font-size: 0.70rem;
 }
 
 .corpsum-bar-chart {
