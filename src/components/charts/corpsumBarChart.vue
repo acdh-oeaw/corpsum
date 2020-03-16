@@ -58,10 +58,11 @@
             <g id="bars-group"></g>
           </g>
         </svg>
-        <b-button variant="info" class="go-to-upper-chart-btn" v-show="activeDrilldownQuery" @click="goToUpperChart" v-b-tooltip.hover title="Go to previous chart">
+        <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
           <corner-up-left-icon></corner-up-left-icon>
           Go Back
         </b-button>
+
       </div>
     </div>
   </div>
@@ -407,18 +408,27 @@ export default {
       const barsGroup = d3.select('#bars-group');
       barsGroup.selectAll('.bar-block').remove();
       this.activeDrilldownQuery = false;
+      this.svgPadding.bottom = 30;
+      this.initChart();
       this.AnimateLoad();
       this.renderWordForms();
     },
     createBars(barsData) {
-
       const axisX = d3.select('#axis-x');
       const axisY = d3.select('#axis-y');
 
-      const axisBottom = axisX.call(d3.axisBottom(this.xScale));
+      const axisBottom = axisX.call(d3.axisBottom(this.xScale))
+        .selectAll('text')
+        .attr('y', 7)
+        .attr('x', -6)
+        .attr('dy', '.35em')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end');
 
-      axisBottom.selectAll('text').remove();
-      axisBottom.selectAll('line').remove();
+      if (axisX.node().getBBox().height > 25) {
+        this.svgPadding.bottom = 5 + axisX.node().getBBox().height;
+        this.initChart();
+      }
 
       axisY.call(d3.axisLeft(this.yScale).ticks(10)
         .tickFormat((d) => {
@@ -467,6 +477,7 @@ export default {
 
 
       // Add labels on top of new bars
+      /*
       newBars
         .append('text')
         .text((d) => d.name)
@@ -479,7 +490,9 @@ export default {
           const cx = this.xScale(d[this.xKey]) + this.xScale.bandwidth() - 15;
           const cy = this.yScale(d[this.yKey]) - 5;
           return `rotate(-45,${cx},${cy})`;
-        })
+        });*/
+
+      d3.selectAll('.bar-hover-text').remove();
 
     },
     onFrequencyValueTypeChange(checked) {
@@ -581,10 +594,15 @@ export default {
     box-shadow: none;
   }
 
-.btn-group:focus {
-  outline: none;
+  .btn-group:focus {
+    outline: none;
+  }
+
 }
 
+.chart-btn-sm {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.8rem;
 }
 
 .bar-block {
