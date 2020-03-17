@@ -154,13 +154,13 @@ const mutations = {
     const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
     const relNormValue = (absFreq * 1000000) / yearTokenSize;
 
-    const absData = [Number(metaVal), absFreq];
-    const relData = [Number(metaVal), Math.round((relNormValue + Number.EPSILON) * 100) / 100];
+    const absData = { year: Number(metaVal), value: absFreq };
+    const relData = { year: Number(metaVal), value: Math.round((relNormValue + Number.EPSILON) * 100) / 100 };
 
     if (absDataKey) {
       state.chartData.temporal.absolute.data[absDataKey].data.push(absData);
       // Sort by year
-      state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a[0] - b[0]);
+      state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a.year - b.year);
     } else {
       state.chartData.temporal.absolute.data.push({ name: queryTerm, data: [absData] });
     }
@@ -168,7 +168,7 @@ const mutations = {
     if (relDataKey) {
       state.chartData.temporal.relative.data[relDataKey].data.push(relData);
       // Sort by year
-      state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a[0] - b[0]);
+      state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a.year - b.year);
     } else {
       state.chartData.temporal.relative.data.push({ name: queryTerm, data: [relData] });
     }
@@ -583,6 +583,7 @@ const actions = {
       */
 
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp });
       //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
       const metaAttr = 'year';
@@ -610,9 +611,6 @@ const actions = {
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       commit('processKWIC', { term: queryTerm, result: response.data });
-      // Request word forms freq. using the needed total abs. freq data
-      const totalAbsFreq = response.data.Desc[0].size;
-      dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp, totalAbsFreq });
     } catch (error) {
       console.log(error);
     }
@@ -637,11 +635,21 @@ const actions = {
   
 
   // API request used for word form freq. results
-  async requestWordForms({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, totalAbsFreq }) {
+  async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
       const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
       const response = await axios.get(freqsURI);
-      commit('processWordFreqSum', { term: queryTerm, result: response.data, processSumResp: totalAbsFreq });
+      commit('processWordFreqSum', { term: queryTerm, result: response.data });
+
+      const items = response.data.Blocks[0].Items;
+      for (let i = 0; i < items.length && i < 16; i += 1) {
+        const metaAttr = 'year';
+        for (let j = 1990; j < 2019; j += 1) {
+          const metaVal = j;
+          dispatch('requestMetaFreq', { queryTerm: items[i].Word[0].n, metaAttr, metaVal, useSubCorp });
+        }
+      }
+
     } catch (error) {
       console.log(error);
     }
@@ -802,7 +810,7 @@ const state = {
     },
     */
     {
-      component: 'wrapperLineChart',
+      component: 'corpsumLineChart',
       class: 'col-md-4 vis-component',
       chartProp: 'temporal',
     },

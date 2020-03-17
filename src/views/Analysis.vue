@@ -52,11 +52,12 @@ import bubbleChart from '@/components/charts/bubbleChart.vue';
 import multiSankey from '@/components/charts/multiSankey.vue';
 
 import corpsumBarChart from '@/components/charts/corpsumBarChart.vue';
+import corpsumLineChart from '@/components/charts/corpsumLineChart.vue';
 
 export default {
   name: 'analysis',
   components: {
-    wrapperLineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey, corpsumBarChart,
+    wrapperLineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey, corpsumBarChart, corpsumLineChart
   },
   data() {
     return {
