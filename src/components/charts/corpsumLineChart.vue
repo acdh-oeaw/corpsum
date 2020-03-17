@@ -6,7 +6,19 @@
           <info-icon></info-icon>
         </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
-        <b-form-group class="head-buttons ml-auto">
+
+        <b-form-group class="head-buttons ml-auto mr-2">
+          <b-button
+            :pressed.sync="showWordForms"
+            variant="outline-primary"
+            size="sm"
+            @click="onWordFormToggle()"
+          >
+            Word Forms
+          </b-button>
+        </b-form-group>
+
+        <b-form-group class="head-buttons">
           <b-form-radio-group
             v-model="valueType"
             :options="freqOptions"
@@ -39,6 +51,7 @@
             <g class="focus-group" ref="focusGroup">
               <g class="axis axis-x" ref="axisX"></g>
               <g class="axis axis-y" ref="axisY"></g>
+              <g class="gridlines gridlines-y" ref="gridlinesY"></g>
             </g>
           </g>
         </svg>
@@ -49,13 +62,15 @@
 
 <script>
 import {
-  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
 } from 'vue-feather-icons';
-import { scaleLinear, scaleBand } from 'd3-scale';
-import { max, min } from 'd3-array';
-import { selectAll } from 'd3-selection';
-import { transition } from 'd3-transition';
-import * as d3 from 'd3';
+
+import { scaleLinear, scaleTime } from 'd3-scale';
+import { max, min, extent } from 'd3-array';
+import { select } from 'd3-selection';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { line, curveCardinal } from 'd3-shape';
+import { format } from 'd3-format';
 
 export default {
   name: 'corpsumLineChart',
@@ -91,7 +106,7 @@ export default {
         { text: 'Relative', value: 'relative' },
         { text: 'Absolute', value: 'absolute' },
       ],
-      showWordForms: true,
+      showWordForms: false,
     };
   },
   watch: {
@@ -105,20 +120,21 @@ export default {
   methods: {
     drawChart() {
       if (this.$refs.chart) this.svgWidth = this.$refs.chart.clientWidth;
-      d3.select(this.$refs.chartGroup)
+      select(this.$refs.chartGroup)
         .attr('transform', `translate(${this.svgPadding.left},${this.svgPadding.top})`);
       this.drawXAxis();
       this.drawYAxis();
       this.drawLines();
+      this.drawGridlines();
     },
     drawXAxis() {
-      d3.select(this.$refs.axisX)
+      select(this.$refs.axisX)
         .attr('transform', `translate( 0, ${this.svgHeight - this.svgPadding.top - this.svgPadding.bottom} )`)
-        .call(d3.axisBottom(this.xScale));
+        .call(axisBottom(this.xScale).tickFormat(format('d')));
     },
     drawYAxis() {
-      d3.select(this.$refs.axisY)
-        .call(d3.axisLeft(this.yScale))
+      select(this.$refs.axisY)
+        .call(axisLeft(this.yScale))
         .append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 6)
@@ -127,32 +143,65 @@ export default {
         .text('Frequency');
     },
     drawLines() {
-      const focusGroup = d3.select(this.$refs.focusGroup);
-      // Remove previous paths to redraw
-      focusGroup.selectAll('path').remove();
-      // Add the valueline path.
-      const valueline = d3.line()
+      const focusGroup = select(this.$refs.focusGroup);
+      focusGroup.selectAll('.line-path').remove();
+      const pathLine = line()
+        .curve(curveCardinal.tension(0.5))
         .x((d) => this.xScale(d.year))
         .y((d) => this.yScale(d.value));
-      // Draw the line for each set of data
-      for (let i = 0; i < this.chartProp[this.valueType].data.length; i += 1) {
+      for (let i = 0; i < this.chartData[this.valueType].data.length; i += 1) {
         focusGroup.append('path')
           .attr('fill', 'none')
-          .attr('class', () => `stroke-series-color-${i}`)
+          .attr('class', () => `line-path stroke-series-color-${i}`)
           .attr('stroke-width', 1.5)
           .attr('stroke-linejoin', 'round')
           .attr('stroke-linecap', 'round')
-          .attr('d', valueline(this.chartProp[this.valueType].data[i].data));
+          .attr('d', pathLine(this.chartData[this.valueType].data[i].data));
       }
+    },
+    drawGridlines() {
+      select(this.$refs.gridlinesY)
+        .call(axisLeft(this.yScale).ticks(5).tickSize(-this.svgWidth + this.svgPadding.left + this.svgPadding.right).tickFormat(''));
     },
     onFrequencyValueTypeChange(checked) {
       this.valueType = checked;
       this.drawChart();
     },
+    exportImage() {
+      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+    },
+    exportCSV() {
+      this.$refs.chart.$children[0].chart.downloadCSV();
+    },
+    showTable() {
+      this.$refs.chart.$children[0].chart.viewData();
+      this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
+      this.$el.querySelector('.highcharts-data-table').style.display = 'block';
+      this.showTableIcon = false;
+      this.showChartIcon = true;
+      this.showChartElement = false;
+    },
+    showChart() {
+      this.showTableIcon = true;
+      this.showChartIcon = false;
+      this.showChartElement = true;
+      const tables = this.$el.querySelectorAll('.highcharts-data-table');
+      for (let i = 0; i < tables.length; i += 1) {
+        tables[i].style.display = 'none';
+      }
+    },
+    onWordFormToggle() {
+      this.drawChart();
+    },
   },
   computed: {
+    chartData() {
+      if (this.showWordForms === false) {
+        return this.chartProp;
+      } return this.chartProp.wordForms;
+    },
     flatDomainItems() {
-      const domainData = this.chartProp[this.valueType].data;
+      const domainData = this.chartData[this.valueType].data;
       const domainItems = [];
       for (let i = 0; i < domainData.length; i += 1) {
         for (let j = 0; j < domainData[i].data.length; j += 1) {
@@ -168,12 +217,12 @@ export default {
       return min(this.flatDomainItems, (d) => d[this.yKey]);
     },
     xScale() {
-      return d3.scaleTime()
+      return scaleTime()
         .range([0, this.svgWidth - this.svgPadding.left - this.svgPadding.right])
-        .domain(d3.extent(this.flatDomainItems, (d) => d[this.xKey]));
+        .domain(extent(this.flatDomainItems, (d) => d[this.xKey]));
     },
     yScale() {
-      return d3.scaleLinear()
+      return scaleLinear()
         .range([this.svgHeight - this.svgPadding.top - this.svgPadding.bottom, 0])
         .domain([this.dataMin > 0 ? 0 : this.dataMin, this.dataMax]);
     },

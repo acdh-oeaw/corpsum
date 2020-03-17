@@ -141,36 +141,40 @@ const mutations = {
 
 
   processMetaFreq(state, payload) {
-    const metaAttr = payload.metaAttr;
+    const metaAttr = payload;
     const metaVal = payload.metaVal;
     const queryTerm = payload.term;
     const absFreq = payload.absFreq;
     const relFreq = payload.relFreq;
+    const storeObject = payload.storeObject;
 
-    const absDataKey = getObjectKey(state.chartData.temporal.absolute.data, queryTerm, 'name');
-    const relDataKey = getObjectKey(state.chartData.temporal.relative.data, queryTerm, 'name');
+    const absDataKey = getObjectKey(storeObject.absolute.data, queryTerm, 'name');
+    const relDataKey = getObjectKey(storeObject.relative.data, queryTerm, 'name');
 
     const yearKey = getObjectKey(state.infoData.docsYears.data[0].data, Number(metaVal), [0]);
-    const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
-    const relNormValue = (absFreq * 1000000) / yearTokenSize;
+    if (state.infoData.docsYears.data[0].data[yearKey]) {
+      const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
 
-    const absData = { year: Number(metaVal), value: absFreq };
-    const relData = { year: Number(metaVal), value: Math.round((relNormValue + Number.EPSILON) * 100) / 100 };
+      const relNormValue = (absFreq * 1000000) / yearTokenSize;
 
-    if (absDataKey) {
-      state.chartData.temporal.absolute.data[absDataKey].data.push(absData);
-      // Sort by year
-      state.chartData.temporal.absolute.data[absDataKey].data.sort((a, b) => a.year - b.year);
-    } else {
-      state.chartData.temporal.absolute.data.push({ name: queryTerm, data: [absData] });
-    }
+      const absData = { year: Number(metaVal), value: absFreq };
+      const relData = { year: Number(metaVal), value: Math.round((relNormValue + Number.EPSILON) * 100) / 100 };
 
-    if (relDataKey) {
-      state.chartData.temporal.relative.data[relDataKey].data.push(relData);
-      // Sort by year
-      state.chartData.temporal.relative.data[relDataKey].data.sort((a, b) => a.year - b.year);
-    } else {
-      state.chartData.temporal.relative.data.push({ name: queryTerm, data: [relData] });
+      if (absDataKey) {
+        storeObject.absolute.data[absDataKey].data.push(absData);
+        // Sort by year
+        storeObject.absolute.data[absDataKey].data.sort((a, b) => a.year - b.year);
+      } else {
+        storeObject.absolute.data.push({ name: queryTerm, data: [absData] });
+      }
+
+      if (relDataKey) {
+        storeObject.relative.data[relDataKey].data.push(relData);
+        // Sort by year
+        storeObject.relative.data[relDataKey].data.sort((a, b) => a.year - b.year);
+      } else {
+        storeObject.relative.data.push({ name: queryTerm, data: [relData] });
+      }
     }
   },
 
@@ -589,7 +593,7 @@ const actions = {
       const metaAttr = 'year';
       for (let i = 1990; i < 2019; i += 1) {
         const metaVal = i;
-        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp });
+        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
       }
 
       //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
@@ -619,14 +623,14 @@ const actions = {
 
 
   // API request used for metal rel. freq. and abs. freq. results
-  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp }) {
+  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;pagesize=10;newctxsize=20;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.Desc[0].size;
       const relFreq = response.data.Desc[0].rel;
-      commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq });
+      commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
     } catch (error) {
       console.log(error);
     }
@@ -641,12 +645,16 @@ const actions = {
       const response = await axios.get(freqsURI);
       commit('processWordFreqSum', { term: queryTerm, result: response.data });
 
+      //const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
+      // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
       const items = response.data.Blocks[0].Items;
       for (let i = 0; i < items.length && i < 16; i += 1) {
         const metaAttr = 'year';
+        const wordFormQueryTerm = `[word="${items[i].Word[0].n}"]`;
+        // wordFormSet.data.push({ absolute: { data: [] }, relative: { data: [] } });
         for (let j = 1990; j < 2019; j += 1) {
           const metaVal = j;
-          dispatch('requestMetaFreq', { queryTerm: items[i].Word[0].n, metaAttr, metaVal, useSubCorp });
+          dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms });
         }
       }
 
@@ -1008,16 +1016,20 @@ const state = {
         subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
         yAxisText: 'Number of Hits',
         data: [],
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-        height: 325,
       },
       relative: {
         title: 'Yearly Relative Frequency',
         subtitle: 'Relative comparison to the baseline (100%) for the query in years is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
         yAxisText: 'Relative Frequency per Million Tokens',
         data: [],
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} per mil.</b><br/>',
-        height: 325,
+      },
+      wordForms: {
+        absolute: {
+          data: [],
+        },
+        relative: {
+          data: [],
+        },
       },
     },
     sources: {
