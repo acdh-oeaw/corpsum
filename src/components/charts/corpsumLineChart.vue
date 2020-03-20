@@ -8,17 +8,6 @@
         <span class="vis-title">{{ chartProp.title }}</span>
 
         <b-form-group class="head-buttons ml-auto mr-2">
-          <b-button
-            :pressed.sync="showWordForms"
-            variant="outline-primary"
-            size="sm"
-            @click="onWordFormToggle()"
-          >
-            Word Forms
-          </b-button>
-        </b-form-group>
-
-        <b-form-group class="head-buttons">
           <b-form-radio-group
             v-model="valueType"
             :options="freqOptions"
@@ -30,16 +19,16 @@
           ></b-form-radio-group>
         </b-form-group>
         <div class="actions">
-          <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+          <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
-          <b-button variant="info" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
+          <b-button variant="primary" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
             <bar-chart-2-icon></bar-chart-2-icon>
           </b-button>
-          <b-button variant="info" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
+          <b-button variant="primary" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
             <download-icon></download-icon>
           </b-button>
-          <b-button variant="info" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
+          <b-button variant="primary" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
             <image-icon></image-icon>
           </b-button>
         </div>
@@ -82,8 +71,17 @@ export default {
     DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon,
   },
   mounted() {
-    console.log('chart mounted');
     this.drawChart();
+    this.bus.$on('onDrilldownClick', (payload) => {
+      this.wordFormsToShow = payload.barsData;
+      this.wordFormsBarIndex = payload.i;
+      this.drawChart(payload.i);
+    });
+    this.bus.$on('onDrilldownGoBack', () => {
+      this.wordFormsToShow = false;
+      this.wordFormsBarIndex = false;
+      this.drawChart();
+    });
   },
   data() {
     return {
@@ -106,7 +104,8 @@ export default {
         { text: 'Relative', value: 'relative' },
         { text: 'Absolute', value: 'absolute' },
       ],
-      showWordForms: false,
+      wordFormsToShow: false,
+      wordFormsBarIndex: false,
     };
   },
   watch: {
@@ -152,7 +151,7 @@ export default {
       for (let i = 0; i < this.chartData[this.valueType].data.length; i += 1) {
         focusGroup.append('path')
           .attr('fill', 'none')
-          .attr('class', () => `line-path stroke-series-color-${i}`)
+          .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-path stroke-series-color-${this.wordFormsBarIndex}`; } return `line-path stroke-series-color-${i}`; })
           .attr('stroke-width', 1.5)
           .attr('stroke-linejoin', 'round')
           .attr('stroke-linecap', 'round')
@@ -193,12 +192,23 @@ export default {
     onWordFormToggle() {
       this.drawChart();
     },
+    getObjectKey(object, value, property) {
+      if (property) return Object.keys(object).find((key) => object[key][property] === value);
+      return Object.keys(object).find((key) => object[key] === value);
+    },
   },
   computed: {
     chartData() {
-      if (this.showWordForms === false) {
-        return this.chartProp;
-      } return this.chartProp.wordForms;
+      if (this.wordFormsToShow) {
+        const wordFormsLines = { absolute: { data: [] }, relative: { data: [] } };
+        for (let i = 0; i < this.wordFormsToShow.length; i += 1) {
+          let key = this.getObjectKey(this.chartProp.wordForms.absolute.data, `[word="${this.wordFormsToShow[i].name}"]`, 'name');
+          wordFormsLines.absolute.data.push(this.chartProp.wordForms[this.valueType].data[key]);
+          key = this.getObjectKey(this.chartProp.wordForms.relative.data, `[word="${this.wordFormsToShow[i].name}"]`, 'name');
+          wordFormsLines.relative.data.push(this.chartProp.wordForms[this.valueType].data[key]);
+        }
+        return wordFormsLines;
+      } return this.chartProp;
     },
     flatDomainItems() {
       const domainData = this.chartData[this.valueType].data;

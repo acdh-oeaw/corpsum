@@ -161,17 +161,23 @@ const mutations = {
       const relData = { year: Number(metaVal), value: Math.round((relNormValue + Number.EPSILON) * 100) / 100 };
 
       if (absDataKey) {
-        storeObject.absolute.data[absDataKey].data.push(absData);
-        // Sort by year
-        storeObject.absolute.data[absDataKey].data.sort((a, b) => a.year - b.year);
+        // Avoid duplicating the same data
+        if (!getObjectKey(storeObject.absolute.data[absDataKey].data, absData.year, 'year')) {
+          storeObject.absolute.data[absDataKey].data.push(absData);
+          // Sort by year
+          storeObject.absolute.data[absDataKey].data.sort((a, b) => a.year - b.year);
+        }
       } else {
         storeObject.absolute.data.push({ name: queryTerm, data: [absData] });
       }
 
       if (relDataKey) {
-        storeObject.relative.data[relDataKey].data.push(relData);
-        // Sort by year
-        storeObject.relative.data[relDataKey].data.sort((a, b) => a.year - b.year);
+        // Avoid duplicating the same data
+        if (!getObjectKey(storeObject.relative.data[relDataKey].data, relData.year, 'year')) {
+          storeObject.relative.data[relDataKey].data.push(relData);
+          // Sort by year
+          storeObject.relative.data[relDataKey].data.sort((a, b) => a.year - b.year);
+        }
       } else {
         storeObject.relative.data.push({ name: queryTerm, data: [relData] });
       }
