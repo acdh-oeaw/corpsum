@@ -425,14 +425,14 @@ const mutations = {
   updateSubcorporaList(state, payload) {
     const items = payload.result;
     for (let i = 0; i < items.length; i += 1) {
-      state.subcorporaList.push({ value: items[i].n, text: items[i].n });
+      state.subcorporaList.push({ name: items[i].n, value: items[i].n, desc: `Query the subcorpus: ${items[i].n}` });
     }
   },
   changeSelectedCorpus(state, payload) {
-    state.corpusName = payload;
+    state.selectedCorpus = payload;
   },
   changeSelectedSubcorpus(state, payload) {
-    state.subcorpusName = payload;
+    state.selectedSubcorpus = payload;
   },
   resetState(state, payload) {
     // console.log(state.queryTerms)
@@ -555,9 +555,10 @@ const getters = {
   queryTerms: (state) => state.chartData.queryTerms,
   chartElements: (state) => state.chartElements,
   modalTextContent: (state) => state.modalTextContent,
-  corpusName: (state) => state.corpusName,
-  subcorpusName: (state) => state.subcorpusName,
+  selectedSubcorpus: (state) => state.selectedSubcorpus,
+  selectedCorpus: (state) => state.selectedCorpus,
   subcorporaList: (state) => state.subcorporaList,
+  corporaList: (state) => state.corporaList,
   loadingStatus: (state) => state.loadingStatus,
   toggleIntroSection: (state) => state.toggleIntroSection,
   toggleVisSection: (state) => state.toggleVisSection,
@@ -570,8 +571,14 @@ const actions = {
     try {
       commit('changeLoadingStatus', { status: true });
 
-      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
-      if (router.currentRoute.params.subcorpus) state.subcorpusName = router.currentRoute.params.subcorpus;
+      if (router.currentRoute.params.corpus) {
+        const corpusKey = getObjectKey(state.corporaList, router.currentRoute.params.corpus, 'value');
+        state.selectedcorpus = state.corporaList[corpusKey];
+      }
+      if (router.currentRoute.params.subcorpus) {
+        const subcorpusKey = getObjectKey(state.subcorporaList, router.currentRoute.params.subcorpus, 'value');
+        state.selectedSubcorpus = state.subcorporaList[subcorpusKey];
+      }
       if (router.currentRoute.params.query) {
         queryTerm = router.currentRoute.params.query;
         state.chartData.queryTerms = [];
@@ -581,8 +588,8 @@ const actions = {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       // const requestURIs = {};
       let useSubCorp = '';
-      if (state.subcorpusName !== 'none') {
-        useSubCorp = `usesubcorp=${state.subcorpusName};`;
+      if (state.selectedSubcorpus.value !== 'none') {
+        useSubCorp = `usesubcorp=${state.selectedSubcorpus.value};`;
       }
 
       /*
@@ -618,7 +625,7 @@ const actions = {
   // API request used for total rel. freq. and KWIC results
   async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       commit('processKWIC', { term: queryTerm, result: response.data });
     } catch (error) {
@@ -632,7 +639,7 @@ const actions = {
   async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;pagesize=10;newctxsize=20;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;pagesize=10;newctxsize=20;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.Desc[0].size;
       const relFreq = response.data.Desc[0].rel;
@@ -647,7 +654,7 @@ const actions = {
   // API request used for word form freq. results
   async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
+      const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
       const response = await axios.get(freqsURI);
       commit('processWordFreqSum', { term: queryTerm, result: response.data });
 
@@ -671,7 +678,7 @@ const actions = {
   // API request used for temporal freq. results
   async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
     } catch (error) {
@@ -681,7 +688,7 @@ const actions = {
   // API request used for regional freq. results
   async requestRegional({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.region;fcrit=doc.id;flimit=0;format=json`;
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.region;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
       commit('processRegional', { term: queryTerm, result: response.data.Blocks[0].Items });
     } catch (error) {
@@ -691,9 +698,9 @@ const actions = {
   // API request used for media sources freq. results
   async requestMediaSources({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.docsrc_name;fcrit=doc.id;flimit=0;format=json`;
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.docsrc_name;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
-      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
       commit('processSources', { term: queryTerm, result: response.data.Blocks[0].Items, docsrcSize: wordlistDocsrcResponse.data });
     } catch (error) {
@@ -703,9 +710,9 @@ const actions = {
   // API request used for ressorts freq. results
   async requestSections({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.ressort2;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
-      const wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      const wordlistRessortURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       const wordlistRessortResponse = await axios.get(wordlistRessortURI);
       commit('processSections', { term: queryTerm, result: response.data.Blocks[0].Items, ressortSize: wordlistRessortResponse.data });
     } catch (error) {
@@ -714,8 +721,11 @@ const actions = {
   },
   async modalTextQuery({ state, commit }, item) {
     try {
-      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
+      if (router.currentRoute.params.corpus) {
+        const corpusKey = getObjectKey(state.corporaList, router.currentRoute.params.corpus, 'value');
+        state.selectedcorpus = state.corporaList[corpusKey];
+      }
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.selectedCorpus.value};pos=${item.toknum};struct=doc;format=json`);
       commit('updateModalTextContent', { term: item.word, result: response.data });
     } catch (error) {
       console.log(error);
@@ -729,7 +739,7 @@ const actions = {
       for (let i = 0; i < docs.length; i += 1) {
         docsURIComp += `;sca_doc.id=${docs[i]}`;
       }
-      await axios.get(`${state.engineAPINoCache}subcorp?corpname=${state.corpusName};reload=;subcname=${title};create=True${docsURIComp}`);
+      await axios.get(`${state.engineAPINoCache}subcorp?corpname=${state.selectedCorpus.value};reload=;subcname=${title};create=True${docsURIComp}`);
       dispatch('getSubcorporaList');
     } catch (error) {
       console.log(error);
@@ -737,7 +747,7 @@ const actions = {
   },
   async getSubcorporaList({ state, commit }) {
     try {
-      const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.corpusName};subcorpora=1;format=json`);
+      const response = await axios.get(`${state.engineAPINoCache}corp_info?corpname=${state.selectedCorpus.value};subcorpora=1;format=json`);
       commit('updateSubcorporaList', { result: response.data.subcorpora });
     } catch (error) {
       console.log(error);
@@ -746,15 +756,18 @@ const actions = {
   async queryCorpusInfo({ state, commit, dispatch }) {
     try {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
-      if (router.currentRoute.params.corpus) state.corpusName = router.currentRoute.params.corpus;
+      if (router.currentRoute.params.corpus) {
+        const corpusKey = getObjectKey(state.corporaList, router.currentRoute.params.corpus, 'value');
+        state.selectedcorpus = state.corporaList[corpusKey];
+      }
       const requestURIs = {};
-      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
-      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
-      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.corpusName}&format=json`;
-      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
+      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.selectedCorpus.value}&format=json`;
+      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};
       responses.docsYears = await axios.get(requestURIs.docsYears);
@@ -796,10 +809,14 @@ const actions = {
 const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  corpusName: 'amc3_demo', // amc3_demo, amc_50M, amc_60M, amc_3.1
-  subcorpusName: 'none',
+  selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+  corporaList: [
+    { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+    { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+  ],
+  selectedSubcorpus: { name: 'None', value: 'none', desc: 'Use the original corpus' },
   subcorporaList: [
-    { value: 'none', text: 'None' },
+    { name: 'None', value: 'none', desc: 'Use the original corpus' },
   ],
   rawResults: [],
   modalTextContent: '',

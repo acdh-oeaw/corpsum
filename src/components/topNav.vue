@@ -3,8 +3,8 @@
 
     <multiselect
       class="ml-2 corpus-selector"
-      v-model="corpusAttribute"
-      :options="corpusAttributeOptions"
+      v-model="selectedCorpus"
+      :options="corporaList"
       :searchable="false"
       :close-on-select="true"
       :show-labels="false"
@@ -21,8 +21,8 @@
 
     <multiselect
       class="ml-2 subcorpus-selector"
-      v-model="subcorpusAttribute"
-      :options="subcorpusAttributeOptions"
+      v-model="selectedSubcorpus"
+      :options="subcorporaList"
       :searchable="false"
       :close-on-select="true"
       :show-labels="false"
@@ -136,19 +136,20 @@ export default {
         { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve' },
         { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve' },
       ],
-      corpusAttribute: { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+      corpusAttribute: { value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
       corpusAttributeOptions: [
         { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
         { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
       ],
-      subcorpusAttribute: { name: 'None', value: 'none', desc: 'Query the original corpus directly' },
-      subcorpusAttributeOptions: [
-        { name: 'None', value: 'none', desc: 'Query the original corpus directly' },
-        { name: 'Gutmensch-Test', value: 'Gutmensch-Test', desc: 'Query the subcorpus: Gutmensch-Test' },
-      ],
     };
   },
-  computed: {
+  mounted() {
+    if (localStorage.selectedCorpus) {
+      this.$store.commit('changeSelectedCorpus', JSON.parse(localStorage.selectedCorpus));
+    }
+    if (localStorage.selectedSubcorpus) {
+      this.$store.commit('changeSelectedSubcorpus', JSON.parse(localStorage.selectedSubcorpus));
+    }
   },
   methods: {
     moveFocusToInput() {
@@ -196,11 +197,42 @@ export default {
       }
       this.$store.commit('queryTermRemoved', val.tag);
     },
+    changeProvider(val) {
+      this.$router.push({ name: 'info', params: { id: val } });
+    },
+    changeCorpus(val) {
+      this.$store.commit('changeSelectedCorpus', val);
+      localStorage.selectedCorpus = val;
+    },
   },
   computed: {
     loadingStatus() {
       return this.$store.getters.loadingStatus;
-      (value) => console.log(value); // this.$state.commit('someMutation', value )
+      // (value) => console.log(value); // this.$state.commit('someMutation', value )
+    },
+    corporaList() {
+      return this.$store.getters.corporaList;
+    },
+    selectedCorpus: {
+      get() {
+        return this.$store.getters.selectedCorpus;
+      },
+      set(val) {
+        this.$store.commit('changeSelectedCorpus', val);
+        localStorage.selectedCorpus = JSON.stringify(val);
+      },
+    },
+    subcorporaList() {
+      return this.$store.getters.subcorporaList;
+    },
+    selectedSubcorpus: {
+      get() {
+        return this.$store.getters.selectedSubcorpus;
+      },
+      set(val) {
+        this.$store.commit('changeSelectedSubcorpus', val);
+        localStorage.selectedSubcorpus = JSON.stringify(val);
+      },
     },
   },
   watch: {
