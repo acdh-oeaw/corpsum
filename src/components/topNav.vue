@@ -2,6 +2,42 @@
   <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
 
     <multiselect
+      class="ml-2 corpus-selector"
+      v-model="corpusAttribute"
+      :options="corpusAttributeOptions"
+      :searchable="false"
+      :close-on-select="true"
+      :show-labels="false"
+      :allow-empty="false"
+      track-by="name"
+      label="name"
+      placeholder="Corpus"
+      @close="moveFocusToInput"
+    >
+      <template slot="option" slot-scope="{ option }">
+        {{ option.name }} <span class="ml-auto">{{ option.desc }}</span>
+      </template>
+    </multiselect>
+
+    <multiselect
+      class="ml-2 subcorpus-selector"
+      v-model="subcorpusAttribute"
+      :options="subcorpusAttributeOptions"
+      :searchable="false"
+      :close-on-select="true"
+      :show-labels="false"
+      :allow-empty="false"
+      track-by="name"
+      label="name"
+      placeholder="Subcorpus"
+      @close="moveFocusToInput"
+    >
+      <template slot="option" slot-scope="{ option }">
+        {{ option.name }} <span class="ml-auto">{{ option.desc }}</span>
+      </template>
+    </multiselect>
+
+    <multiselect
       class="ml-2 query-type-selector"
       v-model="queryAttribute"
       :options="queryAttributeOptions"
@@ -99,6 +135,16 @@ export default {
         { name: '[lemma="keyword"]', value: 'lemma', desc: 'A lemma, case sensitive' },
         { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve' },
         { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve' },
+      ],
+      corpusAttribute: { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+      corpusAttributeOptions: [
+        { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+        { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+      ],
+      subcorpusAttribute: { name: 'None', value: 'none', desc: 'Query the original corpus directly' },
+      subcorpusAttributeOptions: [
+        { name: 'None', value: 'none', desc: 'Query the original corpus directly' },
+        { name: 'Gutmensch-Test', value: 'Gutmensch-Test', desc: 'Query the subcorpus: Gutmensch-Test' },
       ],
     };
   },
@@ -209,6 +255,14 @@ export default {
  */
 .navbar {
   background-color: #fff;
+
+  .multiselect.corpus-selector {
+    flex-basis: 100px;
+  }
+
+  .multiselect.subcorpus-selector {
+    flex-basis: 100px;
+  }
 
   .multiselect {
     flex-basis: 150px;
