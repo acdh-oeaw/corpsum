@@ -425,7 +425,7 @@ const mutations = {
   updateSubcorporaList(state, payload) {
     const items = payload.result;
     for (let i = 0; i < items.length; i += 1) {
-      state.subcorporaList.push({ name: items[i].n, value: items[i].n, desc: `Query the subcorpus: ${items[i].n}` });
+      state.subcorporaList.push({ name: `Subcorpus: ${items[i].n}`, value: items[i].n, desc: `Query the subcorpus: ${items[i].n}` });
     }
   },
   changeSelectedCorpus(state, payload) {
@@ -811,12 +811,12 @@ const state = {
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
   selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   corporaList: [
-    { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
-    { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+    { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+    { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   ],
-  selectedSubcorpus: { name: 'None', value: 'none', desc: 'Use the original corpus' },
+  selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
   subcorporaList: [
-    { name: 'None', value: 'none', desc: 'Use the original corpus' },
+    { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
   ],
   rawResults: [],
   modalTextContent: '',

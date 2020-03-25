@@ -136,11 +136,6 @@ export default {
         { name: '[lc="keyword"]', value: 'lc', desc: 'Lowercase word form, case insensitve' },
         { name: '[lc=".*keyword.*"]', value: 'lc-comp', desc: 'Lc. keyword incl. compositions, case insensitve' },
       ],
-      corpusAttribute: { value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
-      corpusAttributeOptions: [
-        { name: 'AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
-        { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
-      ],
     };
   },
   mounted() {
@@ -289,11 +284,11 @@ export default {
   background-color: #fff;
 
   .multiselect.corpus-selector {
-    flex-basis: 100px;
+    flex-basis: 160px;
   }
 
   .multiselect.subcorpus-selector {
-    flex-basis: 100px;
+    flex-basis: 150px;
   }
 
   .multiselect {
