@@ -42,6 +42,7 @@
               <g class="axis axis-y" ref="axisY"></g>
               <g class="gridlines gridlines-y" ref="gridlinesY"></g>
             </g>
+            <g class="tooltips" ref="tooltips"></g>
           </g>
         </svg>
       </div>
@@ -143,19 +144,39 @@ export default {
     },
     drawLines() {
       const focusGroup = select(this.$refs.focusGroup);
-      focusGroup.selectAll('.line-path').remove();
+      focusGroup.selectAll('.line-group').remove();
       const pathLine = line()
         .curve(curveCardinal.tension(0.5))
         .x((d) => this.xScale(d.year))
         .y((d) => this.yScale(d.value));
       for (let i = 0; i < this.chartData[this.valueType].data.length; i += 1) {
-        focusGroup.append('path')
+
+        const pathGroup = focusGroup.append('g')
+          .attr('id', () => { return `line-group-${i}`; })
+          .attr('class', 'line-group');
+
+        pathGroup.append('path')
           .attr('fill', 'none')
           .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-path stroke-series-color-${this.wordFormsBarIndex}`; } return `line-path stroke-series-color-${i}`; })
           .attr('stroke-width', 1.5)
           .attr('stroke-linejoin', 'round')
           .attr('stroke-linecap', 'round')
           .attr('d', pathLine(this.chartData[this.valueType].data[i].data));
+
+        for (let j = 0; j < this.chartData[this.valueType].data[i].data.length; j += 1) {
+          pathGroup.append('circle')
+            .attr('class', 'line-data-circle')
+            .attr('cx', () => this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]))
+            .attr('cy', () => this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey]))
+            .attr('class', () => `line-end-circle-top bg-series-color-${i}`)
+            .attr('r', '4')
+            .style('cursor', 'pointer')
+            .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, {x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey])}, i)})
+            .on('mouseout', () => { this.onLineCircleMouseOut(); });
+            //.on('mouseover', () => { this.handleLineMouseOver(i, 1) })
+            //.on('mouseout', () => { this.handleLineMouseOver(i, 0) });
+        }
+
       }
     },
     drawGridlines() {
@@ -165,6 +186,54 @@ export default {
     onFrequencyValueTypeChange(checked) {
       this.valueType = checked;
       this.drawChart();
+    },
+    onLineCircleMouseOver(year, query, position, iParent) {
+      let collxData = [];
+      for (let i = 0; i < this.chartData.collocations.length; i += 1) {
+        const d = this.chartData.collocations[i];
+        if (d.year === year && d.query === query) {
+          collxData = d.data;
+          break;
+        }
+      }
+      let collxGroup;
+      if (collxData) {
+        collxGroup = select(this.$refs.tooltips).append('g')
+          .attr('class', 'line-collx-group');
+
+        collxGroup.append('rect')
+          .attr('class', () => `line-collx-rect line-path stroke-series-color-${iParent}`)
+          .attr('x', () => position.x + 8)
+          .attr('y', () => position.y - 8)
+          .attr('width', 100)
+          .attr('height', 132);
+      }
+      for (let j = 0; j < collxData.length; j += 1) {
+        collxGroup.append('text')
+          .text(() => {
+            if (collxData[j].name.length > 13) {
+              return `${collxData[j].name.slice(0, 10)}...`;
+            } return collxData[j].name;
+          })
+          .attr('class', 'line-collx-text')
+          .attr('x', () => position.x + 11)
+          .attr('y', () => position.y + 3 + j * 13)
+          .attr('text-anchor', 'start')
+          .attr('font-weight', 'bold')
+          .style('opacity', 1);
+
+        collxGroup.append('text')
+          .text(() => collxData[j].logDice)
+          .attr('class', 'line-collx-text')
+          .attr('x', () => position.x + 105)
+          .attr('y', () => position.y + 3 + j * 13)
+          .attr('text-anchor', 'end')
+          .attr('font-weight', 'bold')
+          .style('opacity', 1);
+      }
+    },
+    onLineCircleMouseOut() {
+      select(this.$refs.tooltips).select('.line-collx-group').remove();
     },
     exportImage() {
       this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
@@ -276,6 +345,14 @@ export default {
 
 .gridlines path {
   stroke-width: 0;
+}
+
+.line-collx-rect {
+  fill: #fff;
+}
+
+.line-collx-text {
+  font-size: 0.70rem;
 }
 
 </style>

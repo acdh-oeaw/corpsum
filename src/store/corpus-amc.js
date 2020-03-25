@@ -242,14 +242,18 @@ const mutations = {
     state.chartData.sections.series.push(series);
   },
   processCollocations(state, payload) {
-    const items = payload.result.Items;
-    const data = [];
+    const storeObject = payload.storeObject;
+    const metaVal = payload.metaVal;
+    const metaAttr = payload.metaAttr;
+    const items = payload.data.Items;
+    const collSet = { query: payload.term, [metaAttr]: metaVal, data: [] };
     for (let i = 0; i < items.length; i += 1) {
       if (items[i].str.length > 1) {
-        data.push({ name: items[i].str, weight: items[i].Stats[0].s });
+        const valueRounded = Math.round((Number(items[i].Stats[0].s) + Number.EPSILON) * 100) / 100;
+        collSet.data.push({ name: items[i].str, logDice: valueRounded });
       }
     }
-    state.chartData.collocations.clouds.push({ cloudData: { data, title: `Collocations Wordcloud: ${payload.term}`, subtitle: 'This word cloud displays the highest ranking collocations of this query sorted by the logDice score.' } });
+    if (items.length > 0) storeObject.collocations.push(collSet);
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
@@ -644,6 +648,16 @@ const actions = {
       const absFreq = response.data.Desc[0].size;
       const relFreq = response.data.Desc[0].rel;
       commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
+
+
+
+      const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
+      const responseColl = await axios.get(collxURI);
+
+      commit('processCollocations', { metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject });
+
+
+
     } catch (error) {
       console.log(error);
     }
@@ -842,7 +856,7 @@ const state = {
     */
     {
       component: 'corpsumLineChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-4 vis-component tooltip-overflow',
       chartProp: 'temporal',
     },
     /*
@@ -1054,6 +1068,7 @@ const state = {
           data: [],
         },
       },
+      collocations: [],
     },
     sources: {
       title: 'Distribution of Media Sources',

@@ -145,6 +145,20 @@ body {
 
 }
 
+.vis-component.tooltip-overflow {
+  z-index: 99;
+
+  .vis-component-inner {
+    overflow: visible;
+
+    .main-svg {
+      overflow: visible;
+    }
+
+  }
+
+}
+
 .bg-series-color-0 {
   background-color: #4e79a7;
   fill: #4e79a7;
