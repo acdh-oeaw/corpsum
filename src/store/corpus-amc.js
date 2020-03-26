@@ -340,6 +340,86 @@ const mutations = {
   },
   processKWIC(state, payload) {
     const items = payload.result.Lines;
+
+    /*
+    for (let i = 0; i < items.length; i += 1) {
+      state.chartData.kwic.items.push(
+        {
+          date: items[i].Tbl_refs[1],
+          source: items[i].Tbl_refs[4],
+          region: items[i].Tbl_refs[2],
+          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+          docid: items[i].Tbl_refs[0],
+          topic: items[i].Tbl_refs[3],
+          toknum: items[i].toknum,
+          selected: false,
+          queryTerm: payload.term,
+        },
+      );
+    }*/
+    // Use overall rel. freq. data for other charts
+    const overallRel = payload.result.Desc[0].rel;
+
+    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+
+    const absValue = (overallRel * corpusTokenSize) / 1000000;
+
+    state.chartData.queryRelSummary.series[0].data.push({
+      name: payload.term,
+      relValue: overallRel,
+      absValue: Math.round((absValue + Number.EPSILON) * 100) / 100,
+    });
+  },
+
+
+
+
+  processKWICYearly(state, payload) {
+    const items = payload.result.Lines;
+    for (let i = 0; i < items.length; i += 1) {
+      let docIdExists = false;
+      let docRowIndex;
+      for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
+        if (state.chartData.kwic.items[j].docid === items[i].Tbl_refs[0]) {
+          docIdExists = true;
+          docRowIndex = j;
+          break;
+        }
+      }
+      if (!docIdExists) {
+        const docRow = {
+          date: items[i].Tbl_refs[1],
+          source: items[i].Tbl_refs[2],
+          source_name: items[i].Tbl_refs[3],
+          region: items[i].Tbl_refs[4],
+          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+          docid: items[i].Tbl_refs[0],
+          topic: items[i].Tbl_refs[5],
+          toknum: items[i].toknum,
+          selected: false,
+          queryTerm: payload.term,
+          hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
+          hitsNo: 1,
+        };
+
+        state.chartData.kwic.items.push(docRow);
+      } else {
+        state.chartData.kwic.items[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+        state.chartData.kwic.items[docRowIndex].hitsNo++;
+      }
+    }
+    state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
+  },
+
+
+
+/*
+  processKWICYearly(state, payload) {
+    const items = payload.result.Lines;
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.kwic.items.push(
         {
@@ -357,19 +437,10 @@ const mutations = {
         },
       );
     }
-    // Use overall rel. freq. data for other charts
-    const overallRel = payload.result.Desc[0].rel;
+  },*/
 
-    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
-    const absValue = (overallRel * corpusTokenSize) / 1000000;
-
-    state.chartData.queryRelSummary.series[0].data.push({
-      name: payload.term,
-      relValue: overallRel,
-      absValue: Math.round((absValue + Number.EPSILON) * 100) / 100,
-    });
-  },
+  
   processWordTree(state, payload) {
     const chart = {
       chartData: {
@@ -640,23 +711,23 @@ const actions = {
 
 
   // API request used for metal rel. freq. and abs. freq. results
-  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject }) {
+  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;pagesize=10;newctxsize=20;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=18;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.Desc[0].size;
       const relFreq = response.data.Desc[0].rel;
       commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
 
+      if (!wordFormsQueryFlag) {
+        commit('processKWICYearly', { term: queryTerm, result: response.data });
 
-
-      const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
-      const responseColl = await axios.get(collxURI);
-
-      commit('processCollocations', { metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject });
-
-
+        const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
+        const responseColl = await axios.get(collxURI);
+  
+        commit('processCollocations', { metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject });
+      }
 
     } catch (error) {
       console.log(error);
@@ -681,7 +752,7 @@ const actions = {
         // wordFormSet.data.push({ absolute: { data: [] }, relative: { data: [] } });
         for (let j = 1990; j < 2019; j += 1) {
           const metaVal = j;
-          dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms });
+          dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms, wordFormsQueryFlag: true });
         }
       }
 
@@ -1047,7 +1118,7 @@ const state = {
       charts: [],
     },
     temporal: {
-      title: 'Yearly Frequencies',
+      title: 'Yearly Freq.',
       absolute: {
         title: 'Yearly Absolute Frequency',
         subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
@@ -1159,34 +1230,19 @@ const state = {
     },
     kwic: {
       items: [],
+      annotationOptions: [],
       fields: [
-        {
-          key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center',
-        },
-        {
-          key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center',
-        },
-        /*
-        {
-          key: 'date', label: 'Date', sortable: true, thStyle: { width: '100px' },
-        },
-        {
-          key: 'source', label: 'Source', sortable: true, thStyle: { width: '250px' },
-        },
-        {
-          key: 'region', label: 'Region', sortable: true, thStyle: { width: '80px' },
-        },*/
-        {
-          key: 'left', label: 'Left', sortable: true, class: 'text-right',
-        },
-        {
-          key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word',
-        },
-        {
-          key: 'right', label: 'Right', sortable: true, class: 'text-left',
-        },
+        { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
+        { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
+        { key: 'hitsNo', label: 'Hits', sortable: true, thStyle: { width: '40px' } },
+        { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
+        { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
+        { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
       ],
-      height: 600,
+      height: 720,
+      annotationFields: [],
+      isBusy: false,
+      totalRows: 0,
     },
   },
 };

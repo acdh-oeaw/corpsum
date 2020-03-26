@@ -401,9 +401,16 @@ export default {
         .duration(150)
         .ease(d3.easeLinear)
         .attr('fill', '#000000');
+
+      let lineName = d.name;
+      if (d.query) lineName = `[word="${d.name}"]`;
+      this.bus.$emit('onBarHover', { name: lineName, flag: true });
     },
     handleMouseOut(d, i) {
       d3.select(`#t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`).remove();
+      let lineName = d.name;
+      if (d.query) lineName = `[word="${d.name}"]`;
+      this.bus.$emit('onBarHover', { name: lineName, flag: false });
     },
     handleBarClick(d, i) {
       const barsData = this.chartProp.series[0].wordForms.filter((el) => el.query === d.name).slice(0, 15);

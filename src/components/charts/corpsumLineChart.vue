@@ -8,6 +8,16 @@
         <span class="vis-title">{{ chartProp.title }}</span>
 
         <b-form-group class="head-buttons ml-auto mr-2">
+          <b-button
+            :pressed.sync="showCollocations"
+            variant="outline-primary"
+            size="sm"
+          >
+            Collocations
+          </b-button>
+        </b-form-group>
+
+        <b-form-group class="head-buttons">
           <b-form-radio-group
             v-model="valueType"
             :options="freqOptions"
@@ -42,7 +52,7 @@
               <g class="axis axis-y" ref="axisY"></g>
               <g class="gridlines gridlines-y" ref="gridlinesY"></g>
             </g>
-            <g class="tooltips" ref="tooltips"></g>
+            <g class="tooltips" v-show="showCollocations" ref="tooltips"></g>
           </g>
         </svg>
       </div>
@@ -83,6 +93,9 @@ export default {
       this.wordFormsBarIndex = false;
       this.drawChart();
     });
+    this.bus.$on('onBarHover', (payload) => {
+      this.highlightLine(payload.name, payload.flag);
+    });
   },
   data() {
     return {
@@ -107,6 +120,7 @@ export default {
       ],
       wordFormsToShow: false,
       wordFormsBarIndex: false,
+      showCollocations: true,
     };
   },
   watch: {
@@ -157,7 +171,7 @@ export default {
 
         pathGroup.append('path')
           .attr('fill', 'none')
-          .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-path stroke-series-color-${this.wordFormsBarIndex}`; } return `line-path stroke-series-color-${i}`; })
+          .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-path stroke-series-color-${this.wordFormsBarIndex} line-id-${i}`; } return `line-path stroke-series-color-${i} line-id-${i}`; })
           .attr('stroke-width', 1.5)
           .attr('stroke-linejoin', 'round')
           .attr('stroke-linecap', 'round')
@@ -165,10 +179,9 @@ export default {
 
         for (let j = 0; j < this.chartData[this.valueType].data[i].data.length; j += 1) {
           pathGroup.append('circle')
-            .attr('class', 'line-data-circle')
             .attr('cx', () => this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]))
             .attr('cy', () => this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey]))
-            .attr('class', () => `line-end-circle-top bg-series-color-${i}`)
+            .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-data-circle bg-series-color-${this.wordFormsBarIndex}`; } return `line-data-circle bg-series-color-${i}`; })
             .attr('r', '4')
             .style('cursor', 'pointer')
             .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, {x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey])}, i)})
@@ -234,6 +247,10 @@ export default {
     },
     onLineCircleMouseOut() {
       select(this.$refs.tooltips).select('.line-collx-group').remove();
+    },
+    highlightLine(queryName, flag) {
+      const lineID = this.getObjectKey(this.chartData[this.valueType].data, queryName, 'name');
+      select(this.$refs.focusGroup).select(`.line-id-${lineID}`).classed('line-path-hovered', flag);
     },
     exportImage() {
       this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
@@ -353,6 +370,10 @@ export default {
 
 .line-collx-text {
   font-size: 0.70rem;
+}
+
+.line-path-hovered {
+  stroke-width: 3.5px;
 }
 
 </style>
