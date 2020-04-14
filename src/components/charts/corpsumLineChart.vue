@@ -185,7 +185,9 @@ export default {
             .attr('r', '4')
             .style('cursor', 'pointer')
             .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, {x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey])}, i)})
-            .on('mouseout', () => { this.onLineCircleMouseOut(); });
+            .on('mouseout', () => { this.onLineCircleMouseOut(); })
+            .on('click', () => { this.onLineCircleClick(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name); })
+
             //.on('mouseover', () => { this.handleLineMouseOver(i, 1) })
             //.on('mouseout', () => { this.handleLineMouseOver(i, 0) });
         }
@@ -199,6 +201,9 @@ export default {
     onFrequencyValueTypeChange(checked) {
       this.valueType = checked;
       this.drawChart();
+    },
+    onLineCircleClick(year, query) {
+      this.bus.$emit('onLineCircleClick', { year, query });
     },
     onLineCircleMouseOver(year, query, position, iParent) {
       let collxData = [];

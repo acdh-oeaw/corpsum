@@ -206,6 +206,17 @@ export default {
   components: {
     FileTextIcon, ExternalLinkIcon
   },
+  mounted() {
+    this.bus.$on('onLineCircleClick', (payload) => {
+      const items = this.chartProp.items;
+      this.filteredItemsByCharts = [];
+      for (let i = 0; i < items.length; i += 1) {
+        if (items[i].year == payload.year && items[i].queryTerm === payload.query) {
+          this.filteredItemsByCharts.push(items[i]);
+        }
+      }
+    });
+  },
   data() {
     return {
       selectedDocs: [],
@@ -232,6 +243,7 @@ export default {
       },
       totalVisibleRows: this.chartProp.items.length,
       subcorpusTitle: '',
+      filteredItemsByCharts: [],
     }
   },
   computed: {
@@ -248,7 +260,11 @@ export default {
         })
     },
     items() {
-      return this.chartProp.items;
+      if (this.filteredItemsByCharts.length > 1) {
+        return this.filteredItemsByCharts;
+      } else {
+        return this.chartProp.items;
+      }
       set: (value) => console.log(value) // this.$state.commit('someMutation', value )
     },
     isBusy() {
@@ -289,8 +305,6 @@ export default {
     validFeedback() {
       return this.subcorpusTitleState === true ? '' : ''
     }
-  },
-  mounted() {
   },
   watch: {
     items(val) {

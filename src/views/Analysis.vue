@@ -17,7 +17,7 @@
           </div>
         </div>
 
-        <div class="row vis-wrapper" v-show="toggleVisSection">
+        <div class="row vis-wrapper" v-show="toggleVisSection" ref="visWrapper">
           <component
             v-for="(element, index) in chartElements"
             v-bind:key="element.key"
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+// import Packery from 'packery';
+
 // @ is an alias to /src
 // import radarChart from '@/components/charts/radarChart.vue'
 import wrapperLineChart from '@/components/charts/wrapperLineChart.vue';
@@ -70,6 +72,20 @@ export default {
     console.log('mounted');
   },
   watch: {
+    /*
+    chartData: {
+      handler() {
+        var grid = this.$refs.visWrapper;
+        var pckry = new Packery( grid, {
+          itemSelector: '.vis-component',
+          columnWidth: ".vis-component.col-md-4",
+          gutter: 0,
+          percentPosition: true
+        });
+      },
+      deep: true,
+    },
+    */
   },
   computed: {
     chartData() {

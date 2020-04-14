@@ -378,11 +378,15 @@ const mutations = {
 
   processKWICYearly(state, payload) {
     const items = payload.result.Lines;
-    for (let i = 0; i < items.length; i += 1) {
+
+    const itemsSet = [];
+
+    for (let i = 0; (i < items.length) && (i < 100); i += 1) {
       let docIdExists = false;
       let docRowIndex;
-      for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
-        if (state.chartData.kwic.items[j].docid === items[i].Tbl_refs[0]) {
+      // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
+      for (let j = 0; j < itemsSet.length; j += 1) {
+        if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
           docIdExists = true;
           docRowIndex = j;
           break;
@@ -391,27 +395,29 @@ const mutations = {
       if (!docIdExists) {
         const docRow = {
           date: items[i].Tbl_refs[1],
-          source: items[i].Tbl_refs[2],
-          source_name: items[i].Tbl_refs[3],
-          region: items[i].Tbl_refs[4],
+          year: items[i].Tbl_refs[2],
+          source: items[i].Tbl_refs[5],
+          region: items[i].Tbl_refs[3],
           left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
           word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
           right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
           docid: items[i].Tbl_refs[0],
-          topic: items[i].Tbl_refs[5],
+          ressort: items[i].Tbl_refs[4],
           toknum: items[i].toknum,
           selected: false,
           queryTerm: payload.term,
           hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
           hitsNo: 1,
         };
-
-        state.chartData.kwic.items.push(docRow);
+        itemsSet.push(docRow);
       } else {
-        state.chartData.kwic.items[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
-        state.chartData.kwic.items[docRowIndex].hitsNo++;
+        itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+        itemsSet[docRowIndex].hitsNo++;
       }
     }
+
+    state.chartData.kwic.items.push(...itemsSet);
+
     state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
   },
 
@@ -654,11 +660,6 @@ const actions = {
         const subcorpusKey = getObjectKey(state.subcorporaList, router.currentRoute.params.subcorpus, 'value');
         state.selectedSubcorpus = state.subcorporaList[subcorpusKey];
       }
-      if (router.currentRoute.params.query) {
-        queryTerm = router.currentRoute.params.query;
-        state.chartData.queryTerms = [];
-        commit('queryTermAdded', {"text": queryTerm, "tiClasses":["ti-valid"]});
-      }
 
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       // const requestURIs = {};
@@ -678,10 +679,17 @@ const actions = {
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp });
       //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
-      const metaAttr = 'year';
+      let metaAttr = 'year';
       for (let i = 1990; i < 2019; i += 1) {
         const metaVal = i;
         dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
+      }
+
+      metaAttr = 'region';
+      const metaValsArray = ['aost', 'awest', 'agesamt', 'amitte', 'asuedost', 'spezifisch'];
+      for (let i = 0; i < metaValsArray.length; i += 1) {
+        const metaVal = metaValsArray[i];
+        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regional });
       }
 
       //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
@@ -714,7 +722,7 @@ const actions = {
   async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=18;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.Desc[0].size;
       const relFreq = response.data.Desc[0].rel;
@@ -871,8 +879,13 @@ const actions = {
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
       commit('processTopLemmas', { result: responses.topLemmas.data });
+
       if (router.currentRoute.params.query) {
-        dispatch('corpusQuery', router.currentRoute.params.query);
+        const routerQueryTerms = router.currentRoute.params.query.split(';');
+        for (let i = 0; i < routerQueryTerms.length; i += 1) {
+          commit('queryTermAdded', {"text": routerQueryTerms[i], "tiClasses":["ti-valid"]});
+          dispatch('corpusQuery', routerQueryTerms[i]);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -932,19 +945,9 @@ const state = {
     },
     /*
     {
-      component: 'multiMap',
-      class: 'col-md-6 vis-component',
-      chartProp: 'regions',
-    },
-    {
       component: 'treemapChart',
       class: 'col-md-6 vis-component',
       chartProp: 'wordFreqSummary',
-    },
-    {
-      component: 'bubbleChart',
-      class: 'col-md-6 vis-component',
-      chartProp: 'sources',
     },
     {
       component: 'bubbleChart',
@@ -956,6 +959,17 @@ const state = {
       class: 'col-md-4 vis-component',
       chartProp: 'kwic',
     },
+    /*
+    {
+      component: 'multiMap',
+      class: 'col-md-4 vis-component',
+      chartProp: 'regions',
+    },
+    {
+      component: 'bubbleChart',
+      class: 'col-md-4 vis-component',
+      chartProp: 'sources',
+    },*/
     /*
     {
       component: 'multiSankey',
