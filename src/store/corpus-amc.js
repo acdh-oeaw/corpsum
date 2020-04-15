@@ -762,7 +762,8 @@ const actions = {
 
 
       metaAttr = 'region';
-      const metaValsArray = ['aost', 'awest', 'agesamt', 'amitte', 'asuedost', 'spezifisch'];
+      // 'agesamt', 'spezifisch'
+      const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
       for (let i = 0; i < metaValsArray.length; i += 1) {
         const metaVal = metaValsArray[i];
         dispatch('requestRegionFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions });

@@ -19,7 +19,10 @@ export default {
         chart: {
           map: 'geoJSONAustria',
           height: this.elHeight,
-          spacingLeft: 150
+          spacingTop: 5,
+          spacingRight: 5,
+          spacingBottom: 5,
+          spacingLeft: 100,
         },
         title: false,
         mapNavigation: {
@@ -32,11 +35,12 @@ export default {
                   fontStyle: 'italic'
               }
           },
+          symbolWidth: 150,
           layout: 'horizontal',
           verticalAlign: 'top',
           align: 'left',
           floating: true,
-          x: -150
+          x: -100
         },
         colorAxis: {
           min: 0,

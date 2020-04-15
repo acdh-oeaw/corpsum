@@ -13,7 +13,7 @@ import mapInit from 'highcharts/modules/map';
 import TextHighlight from 'vue-text-highlight';
 import Multiselect from 'vue-multiselect';
 import VueTour from 'vue-tour';
-import mapAustria from './mapAustriaCorpsum';
+import mapAustria from './mapAustria';
 
 import './scss/bootstrap.scss';
 
