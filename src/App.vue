@@ -247,7 +247,7 @@ main, .navbar {
     border-radius: 0.25rem;
     background-color: #fff;
     border: solid 1px #dde4ea;
-    min-height: 370px;
+    min-height: 300px;
     overflow: hidden;
 
     .actions {

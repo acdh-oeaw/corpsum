@@ -31,7 +31,7 @@
           v-bind:key="element.id"
           v-bind:chartProp="element.mapData"
           v-bind:elKey="index"
-          v-bind:elHeight="480/maps.length"
+          v-bind:elHeight="306/maps.length"
           ref="chart"
           v-show="showChartElement"
         />

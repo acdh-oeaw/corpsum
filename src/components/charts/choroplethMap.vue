@@ -19,6 +19,7 @@ export default {
         chart: {
           map: 'geoJSONAustria',
           height: this.elHeight,
+          spacingLeft: 150
         },
         title: false,
         mapNavigation: {
@@ -35,6 +36,7 @@ export default {
           verticalAlign: 'top',
           align: 'left',
           floating: true,
+          x: -150
         },
         colorAxis: {
           min: 0,

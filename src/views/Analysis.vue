@@ -32,7 +32,7 @@
 </template>
 
 <script>
-// import Packery from 'packery';
+import Packery from 'packery';
 
 // @ is an alias to /src
 // import radarChart from '@/components/charts/radarChart.vue'
@@ -72,7 +72,7 @@ export default {
     console.log('mounted');
   },
   watch: {
-    /*
+
     chartData: {
       handler() {
         var grid = this.$refs.visWrapper;
@@ -85,7 +85,7 @@ export default {
       },
       deep: true,
     },
-    */
+
   },
   computed: {
     chartData() {

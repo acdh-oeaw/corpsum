@@ -185,6 +185,81 @@ const mutations = {
   },
 
 
+
+  processRegionFreq(state, payload) {
+
+    const metaVal = payload.metaVal;
+    const queryTerm = payload.term;
+    const absFreq = payload.absFreq;
+    const relFreq = payload.relFreq;
+    const storeObject = payload.storeObject;
+
+    const relativeMap = {
+      queryTerm: queryTerm,
+      mapData: {
+        title: 'Regional Relative Frequency (%)',
+        queryTerm: queryTerm,
+        valueTypeLabel: 'Relevative Frequency (%)',
+        valueTypeUnit: '%',
+        data: [],
+      },
+    };
+    const absoluteMap = {
+      queryTerm: queryTerm,
+      mapData: {
+        title: 'Regional Absolute Frequency',
+        queryTerm: queryTerm,
+        valueTypeLabel: 'Absolute Frequency (Hits)',
+        valueTypeUnit: '',
+        data: [],
+      },
+    };
+
+    const absObjKey = getObjectKey(storeObject.absoluteMaps, queryTerm, 'queryTerm');
+    const relObjKey = getObjectKey(storeObject.relativeMaps, queryTerm, 'queryTerm');
+
+    const regionName = metaVal;
+    let regionPrettyName;
+    switch (regionName) {
+      case 'aost':
+        regionPrettyName = 'AT-Ost';
+        break;
+      case 'asuedost':
+        regionPrettyName = 'AT-Südost';
+        break;
+      case 'amitte':
+        regionPrettyName = 'AT-Mitte';
+        break;
+      case 'awest':
+        regionPrettyName = 'AT-West';
+        break;
+      case 'agesamt':
+        regionPrettyName = 'AT-Nationwide';
+        break;
+      case 'spezifisch':
+        regionPrettyName = 'Specific';
+        break;
+      default:
+        regionPrettyName = '';
+    }
+    if (regionName !== 'spezifisch') {
+
+      if (absObjKey) {
+        storeObject.absoluteMaps[absObjKey].mapData.data.push({ query: payload.term, name: regionPrettyName, value: absFreq });
+      } else {
+        absoluteMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: absFreq });
+        storeObject.absoluteMaps.push(absoluteMap);
+      }
+
+      if (relObjKey) {
+        storeObject.relativeMaps[relObjKey].mapData.data.push({ query: payload.term, name: regionPrettyName, value: relFreq });
+      } else {
+        relativeMap.mapData.data.push({ query: payload.term, name: regionPrettyName, value: relFreq });
+        storeObject.relativeMaps.push(relativeMap);
+      }
+    }
+  },
+
   processTemporal(state, payload) {
     const items = payload.result;
     const absolute = { name: payload.term, data: [] };
@@ -685,14 +760,16 @@ const actions = {
         dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
       }
 
+
       metaAttr = 'region';
       const metaValsArray = ['aost', 'awest', 'agesamt', 'amitte', 'asuedost', 'spezifisch'];
       for (let i = 0; i < metaValsArray.length; i += 1) {
         const metaVal = metaValsArray[i];
-        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regional });
+        dispatch('requestRegionFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions });
       }
 
       //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+
       //dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
       //dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
       commit('changeLoadingStatus', { status: false });
@@ -716,6 +793,22 @@ const actions = {
     }
   },
 
+
+  // API request used for metal rel. freq. and abs. freq. results
+  async requestRegionFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
+    try {
+      const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
+      const response = await axios.get(viewattrsxURI);
+      const absFreq = response.data.Desc[0].size;
+      const relFreq = response.data.Desc[0].rel;
+      commit('processRegionFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
+
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  
 
 
   // API request used for metal rel. freq. and abs. freq. results
@@ -959,12 +1052,12 @@ const state = {
       class: 'col-md-4 vis-component',
       chartProp: 'kwic',
     },
-    /*
     {
       component: 'multiMap',
       class: 'col-md-4 vis-component',
       chartProp: 'regions',
     },
+    /*
     {
       component: 'bubbleChart',
       class: 'col-md-4 vis-component',
