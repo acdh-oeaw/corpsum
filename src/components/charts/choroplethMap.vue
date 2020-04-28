@@ -19,9 +19,9 @@ export default {
         chart: {
           map: 'geoJSONAustria',
           height: this.elHeight,
-          spacingTop: 5,
-          spacingRight: 5,
-          spacingBottom: 5,
+          spacingTop: 3,
+          spacingRight: 10,
+          spacingBottom: 3,
           spacingLeft: 100,
         },
         title: false,
@@ -61,7 +61,14 @@ export default {
           dataLabels: {
             enabled: true,
             format: '{point.properties.name}'
-          }
+          },
+          events: {
+            click: ({ point }) => {
+              const regionName = point.name;
+              const regionQuery = point.query;
+              this.bus.$emit('onRegionClick', { regionName, regionQuery });
+            },
+          },
         }],
         tooltip: {
           pointFormat:

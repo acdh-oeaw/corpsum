@@ -1,6 +1,8 @@
 <template>
   <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
 
+    <a class="navbar-brand text-center m-0" href="#">CorpSum</a>
+
     <multiselect
       class="ml-2 corpus-selector"
       v-model="selectedCorpus"
@@ -61,7 +63,7 @@
       v-model="tag"
       :tags="tags"
       ref="searchInput"
-      placeholder="Type a keyword or query and hit enter"
+      placeholder="Type a query and hit enter"
       :add-from-paste="false"
       :add-on-blur="false"
       :max-tags="6"
@@ -236,6 +238,15 @@ export default {
 </script>
 
 <style lang="scss">
+
+.navbar-brand {
+  font-family: 'Signika', sans-serif;
+  color: #fff;
+  padding: 13px 8px;
+  background-color: #007bfe;
+  margin: -1.5rem 0 -1.5rem -0.5rem !important;
+}
+
 /*
  * Tagsinput Styles
  */

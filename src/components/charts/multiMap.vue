@@ -6,20 +6,29 @@
           <info-icon></info-icon>
         </b-link>
         <span class="vis-title">{{ chartProp.mapTitle }}</span>
-        Relative
-        <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
-        Absolute
-        <div class="actions ml-auto">
-          <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+
+        <b-form-group class="head-buttons ml-auto">
+          <b-form-radio-group
+            v-model="valueType"
+            :options="freqOptions"
+            buttons
+            button-variant="outline-primary"
+            size="sm"
+            name="radio-btn-outline"
+            @change="onFrequencyValueTypeChange($event)"
+          ></b-form-radio-group>
+        </b-form-group>
+        <div class="actions">
+          <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
-          <b-button variant="info" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
+          <b-button variant="primary" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
             <bar-chart-2-icon></bar-chart-2-icon>
           </b-button>
-          <b-button variant="info" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
+          <b-button variant="primary" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
             <download-icon></download-icon>
           </b-button>
-          <b-button variant="info" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
+          <b-button variant="primary" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
             <image-icon></image-icon>
           </b-button>
         </div>
@@ -31,7 +40,7 @@
           v-bind:key="element.id"
           v-bind:chartProp="element.mapData"
           v-bind:elKey="index"
-          v-bind:elHeight="336/maps.length"
+          v-bind:elHeight="360/maps.length"
           ref="chart"
           v-show="showChartElement"
         />
@@ -65,7 +74,11 @@ export default {
       chartInfoModal: {
         id: `chart-info-modal-${this.elKey}`,
       },
-      frequencyValueTypeAbsolute: false,
+      valueType: 'relative',
+      freqOptions: [
+        { text: 'Relative', value: 'relative' },
+        { text: 'Absolute', value: 'absolute' },
+      ],
     };
   },
   created() {
@@ -80,8 +93,9 @@ export default {
   computed: {
   },
   methods: {
-    onFrequencyValueTypeChange() {
-      if (this.frequencyValueTypeAbsolute) {
+    onFrequencyValueTypeChange(checked) {
+      this.valueType = checked;
+      if (checked === 'absolute') {
         this.maps = this.chartProp.absoluteMaps;
       } else {
         this.maps = this.chartProp.relativeMaps;

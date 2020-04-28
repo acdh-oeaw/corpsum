@@ -191,23 +191,25 @@ const mutations = {
     const metaVal = payload.metaVal;
     const queryTerm = payload.term;
     const absFreq = payload.absFreq;
+    if (!absFreq) absFreq = 0;
     const relFreq = payload.relFreq;
+    if (!relFreq) relFreq = 0;
     const storeObject = payload.storeObject;
 
     const relativeMap = {
       queryTerm: queryTerm,
       mapData: {
-        title: 'Regional Relative Frequency (%)',
+        title: 'Regional Freq.',
         queryTerm: queryTerm,
-        valueTypeLabel: 'Relevative Frequency (%)',
-        valueTypeUnit: '%',
+        valueTypeLabel: 'Relevative Freq. (per Mil. Tokens)',
+        valueTypeUnit: '',
         data: [],
       },
     };
     const absoluteMap = {
       queryTerm: queryTerm,
       mapData: {
-        title: 'Regional Absolute Frequency',
+        title: 'Regional Freq.',
         queryTerm: queryTerm,
         valueTypeLabel: 'Absolute Frequency (Hits)',
         valueTypeUnit: '',
@@ -435,7 +437,7 @@ const mutations = {
       );
     }*/
     // Use overall rel. freq. data for other charts
-    const overallRel = payload.result.Desc[0].rel;
+    const overallRel = payload.result.relsize;
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
@@ -769,9 +771,10 @@ const actions = {
         dispatch('requestRegionFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions });
       }
 
-      //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
 
-      //dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
+      //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+      
       //dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
       commit('changeLoadingStatus', { status: false });
 
@@ -801,8 +804,8 @@ const actions = {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
-      const absFreq = response.data.Desc[0].size;
-      const relFreq = response.data.Desc[0].rel;
+      const absFreq = response.data.fullsize;
+      const relFreq = response.data.relsize;
       commit('processRegionFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
 
     } catch (error) {
@@ -818,8 +821,8 @@ const actions = {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
       const response = await axios.get(viewattrsxURI);
-      const absFreq = response.data.Desc[0].size;
-      const relFreq = response.data.Desc[0].rel;
+      const absFreq = response.data.fullsize;
+      const relFreq = response.data.relsize;
       commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
 
       if (!wordFormsQueryFlag) {
@@ -848,6 +851,8 @@ const actions = {
       //const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
       // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
       const items = response.data.Blocks[0].Items;
+
+
       for (let i = 0; i < items.length && i < 16; i += 1) {
         const metaAttr = 'year';
         const wordFormQueryTerm = `[word="${items[i].Word[0].n}"]`;
@@ -1004,6 +1009,7 @@ const state = {
   selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   corporaList: [
     { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+    { name: 'Corpus: AMC 60M', value: 'amc_60M', desc: 'A 60M token sample of Austrian Media Corpus' },
     { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   ],
   selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
@@ -1058,12 +1064,11 @@ const state = {
       class: 'col-md-4 vis-component',
       chartProp: 'regions',
     },
-    /*
     {
       component: 'bubbleChart',
       class: 'col-md-4 vis-component',
       chartProp: 'sources',
-    },*/
+    },
     /*
     {
       component: 'multiSankey',
@@ -1210,7 +1215,7 @@ const state = {
       series: [{ name: 'Absolute Frequency', data: [], colorByPoint: true }],
     },
     queryRelSummary: {
-      title: 'Fr. and Forms',
+      title: 'Freq. and Forms',
       subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
@@ -1301,7 +1306,7 @@ const state = {
       clouds: [],
     },
     regions: {
-      mapTitle: 'Regional Relative Frequency (%)',
+      mapTitle: 'Regional Freq.',
       mapSubtitle: 'Relative comparison to the baseline (100%) for the query in regions is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       title: 'Regional Absolute Frequency',
       subtitle: 'This chart displays the absolute number of occurences (hits) of a given query per regions in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',

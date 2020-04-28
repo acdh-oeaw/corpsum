@@ -1,5 +1,5 @@
 <template>
-  <div :key="componentKey">
+  <div>
     <div class="vis-component-inner">
       <div class="head d-flex">
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
@@ -7,16 +7,16 @@
         </b-link>
         <span class="vis-title">{{ chartProp.title }}</span>
         <div class="actions ml-auto">
-          <b-button variant="info" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+          <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
-          <b-button variant="info" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
+          <b-button variant="primary" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
             <bar-chart-2-icon></bar-chart-2-icon>
           </b-button>
-          <b-button variant="info" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
+          <b-button variant="primary" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
             <download-icon></download-icon>
           </b-button>
-          <b-button variant="info" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
+          <b-button variant="primary" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
             <image-icon></image-icon>
           </b-button>
         </div>
@@ -58,6 +58,7 @@ export default {
         chart: {
           type: 'bubble',
           zoomType: 'xy',
+          height: 360,
           spacingBottom: 20,
           spacingTop: 20,
           spacingLeft: 10,

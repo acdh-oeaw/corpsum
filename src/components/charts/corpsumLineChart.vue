@@ -148,7 +148,12 @@ export default {
     },
     drawYAxis() {
       select(this.$refs.axisY)
-        .call(axisLeft(this.yScale))
+        .call(axisLeft(this.yScale).ticks(10)
+          .tickFormat((d) => {
+            if (d > 1000) { return format('.2s')(d); }
+            if (d > 10) { return format('d')(d); }
+            return format('.2f')(d);
+          }))
         .append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 6)

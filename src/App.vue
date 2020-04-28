@@ -220,9 +220,11 @@ body {
   }
 }
 
+/*
 .sidebar, .navbar-brand {
   min-width: 135px;
 }
+*/
 
 main {
   /*max-width: calc(100% - 135px) !important;*/
@@ -273,10 +275,10 @@ main, .navbar {
 
   .head {
     border-bottom: 1px solid #dee2e6;
-    padding: 0.5rem;
+    padding: 0.30rem 0.5rem;
     background-color: #f0f7fd;
     align-items: center;
-    min-height: 43px;
+    min-height: 36px;
 
     .vis-title {
       font-weight: 500;

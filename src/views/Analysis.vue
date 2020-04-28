@@ -36,8 +36,8 @@ import Packery from 'packery';
 
 // @ is an alias to /src
 // import radarChart from '@/components/charts/radarChart.vue'
-import wrapperLineChart from '@/components/charts/wrapperLineChart.vue';
-import barChart from '@/components/charts/barChart.vue';
+// import wrapperLineChart from '@/components/charts/wrapperLineChart.vue';
+// import barChart from '@/components/charts/barChart.vue';
 // import queryBuilder from '@/components/ui-elements/queryBuilder.vue'
 // import stackedBarChart from '@/components/charts/stackedBarChart.vue'
 // import heatmapChart from '@/components/charts/heatmapChart.vue'
@@ -48,10 +48,10 @@ import barChart from '@/components/charts/barChart.vue';
 import kwicTable from '@/components/ui-elements/kwicTable.vue';
 // import visSeparator from '@/components/ui-elements/visSeparator.vue'
 import multiMap from '@/components/charts/multiMap.vue';
-import multiWordcloud from '@/components/charts/multiWordcloud.vue';
-import treemapChart from '@/components/charts/treemapChart.vue';
+// import multiWordcloud from '@/components/charts/multiWordcloud.vue';
+// import treemapChart from '@/components/charts/treemapChart.vue';
 import bubbleChart from '@/components/charts/bubbleChart.vue';
-import multiSankey from '@/components/charts/multiSankey.vue';
+// import multiSankey from '@/components/charts/multiSankey.vue';
 
 import corpsumBarChart from '@/components/charts/corpsumBarChart.vue';
 import corpsumLineChart from '@/components/charts/corpsumLineChart.vue';
@@ -59,7 +59,7 @@ import corpsumLineChart from '@/components/charts/corpsumLineChart.vue';
 export default {
   name: 'analysis',
   components: {
-    wrapperLineChart, barChart, kwicTable, multiMap, multiWordcloud, treemapChart, bubbleChart, multiSankey, corpsumBarChart, corpsumLineChart
+    kwicTable, multiMap, bubbleChart, corpsumBarChart, corpsumLineChart,
   },
   data() {
     return {

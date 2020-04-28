@@ -42,6 +42,10 @@
 
       </div>
 
+      <div class="kwic-filters-head d-flex">
+        Active Filters: {{ activeFilters }}
+      </div>
+
       <div class="kwic-table" >
 
         <!-- Main table element -->
@@ -208,6 +212,8 @@ export default {
   },
   mounted() {
     this.bus.$on('onLineCircleClick', (payload) => {
+      this.activeFilters.push(payload.year);
+      this.activeFilters.push(payload.query);
       const items = this.chartProp.items;
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
@@ -216,6 +222,42 @@ export default {
         }
       }
     });
+    this.bus.$on('onRegionClick', (payload) => {
+      this.activeFilters.push(payload.regionName);
+      this.activeFilters.push(payload.regionQuery);
+      let regionName;
+      switch (payload.regionName) {
+        case 'AT-Ost':
+          regionName = 'aost';
+          break;
+        case 'AT-Südost':
+          regionName = 'asuedost';
+          break;
+        case 'AT-Mitte':
+          regionName = 'amitte';
+          break;
+        case 'AT-West':
+          regionName = 'awest';
+          break;
+        case 'AT-Nationwide':
+          regionName = 'agesamt';
+          break;
+        case 'Specific':
+          regionName = 'spezifisch';
+          break;
+        default:
+          regionName = '';
+      }
+      const items = this.chartProp.items;
+      this.filteredItemsByCharts = [];
+      for (let i = 0; i < items.length; i += 1) {
+        if (items[i].region == regionName && items[i].queryTerm === payload.regionQuery) {
+          this.filteredItemsByCharts.push(items[i]);
+        }
+      }
+    });
+
+    this.bus.$emit('onRegionClick', { regionName, regionQuery });
   },
   data() {
     return {
@@ -244,6 +286,7 @@ export default {
       totalVisibleRows: this.chartProp.items.length,
       subcorpusTitle: '',
       filteredItemsByCharts: [],
+      activeFilters: [],
     }
   },
   computed: {
