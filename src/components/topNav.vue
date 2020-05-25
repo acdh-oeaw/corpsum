@@ -77,7 +77,7 @@
         </b-link>
       </li>
     </ul> -->
-    <nav class="p-0 navbar-light navbar-expand">
+<!--     <nav class="p-0 navbar-light navbar-expand">
       <b-navbar-nav>
         <b-nav-item-dropdown>
           <template slot="button-content">
@@ -96,7 +96,7 @@
           <b-dropdown-item href="#">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-    </nav>
+    </nav> -->
 
     <div class="topnav-spinner text-center" v-show="loadingStatus">
       <span>Querying the corpus, please wait.</span>
@@ -197,10 +197,6 @@ export default {
     changeProvider(val) {
       this.$router.push({ name: 'info', params: { id: val } });
     },
-    changeCorpus(val) {
-      this.$store.commit('changeSelectedCorpus', val);
-      localStorage.selectedCorpus = val;
-    },
   },
   computed: {
     loadingStatus() {
@@ -216,6 +212,8 @@ export default {
       },
       set(val) {
         this.$store.commit('changeSelectedCorpus', val);
+        this.$store.dispatch('getSubcorporaList');
+        this.$store.dispatch('queryCorpusInfo');
         localStorage.selectedCorpus = JSON.stringify(val);
       },
     },
@@ -228,6 +226,7 @@ export default {
       },
       set(val) {
         this.$store.commit('changeSelectedSubcorpus', val);
+        this.$store.dispatch('queryCorpusInfo');
         localStorage.selectedSubcorpus = JSON.stringify(val);
       },
     },

@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="vis-component-inner">
+      <div class="loading-spinner text-center" v-show="this.chartProp.loadingStatus">
+        <span>This component is waiting for the data, please wait.</span>
+        <b-spinner variant="primary" label="Text Centered"></b-spinner>
+      </div>
       <div class="head d-flex">
         <b-link class="mr-1" @click="$bvModal.show(chartInfoModal.id)">
           <info-icon></info-icon>
@@ -96,6 +100,13 @@ export default {
             dataLabels: {
               enabled: true,
               format: '{point.source}',
+            },
+            events: {
+              click: ({ point }) => {
+                const mediaQuery = point.series.name;
+                const mediaName = point.source;
+                this.bus.$emit('onMediaClick', { mediaName, mediaQuery });
+              },
             },
           },
           scatter: {

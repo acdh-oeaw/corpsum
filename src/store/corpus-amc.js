@@ -106,13 +106,17 @@ const mutations = {
     }
     items = payload.result.Blocks[0].Items;
 
-
-
     const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
 
     //state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
 
-    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+
+    let corpusTokenSize;
+    if (state.selectedSubcorpus.value !== 'none') {
+      corpusTokenSize = state.infoData.activeSubcorpusTokenSize;
+    } else {
+      corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+    }
 
     for (let i = 0; i < items.length && i < 25; i += 1) {
       const relValue = (items[i].freq * 1000000) / corpusTokenSize;
@@ -137,6 +141,8 @@ const mutations = {
         value: items[i].freq,
       });
     }
+
+    state.chartData.queryRelSummary.loadingStatus -= 1;
   },
 
 
@@ -182,17 +188,16 @@ const mutations = {
         storeObject.relative.data.push({ name: queryTerm, data: [relData] });
       }
     }
+
+    storeObject.loadingStatus -= 1;
   },
 
-
-
   processRegionFreq(state, payload) {
-
     const metaVal = payload.metaVal;
     const queryTerm = payload.term;
-    const absFreq = payload.absFreq;
+    let absFreq = payload.absFreq;
     if (!absFreq) absFreq = 0;
-    const relFreq = payload.relFreq;
+    let relFreq = payload.relFreq;
     if (!relFreq) relFreq = 0;
     const storeObject = payload.storeObject;
 
@@ -260,6 +265,8 @@ const mutations = {
         storeObject.relativeMaps.push(relativeMap);
       }
     }
+
+    storeObject.loadingStatus -= 1;
   },
 
   processTemporal(state, payload) {
@@ -289,7 +296,11 @@ const mutations = {
   processSources(state, payload) {
     const items = payload.result;
     const docsrcSizeItems = payload.docsrcSize.Items;
-    const series = { name: payload.term, symbol: 'circle', data: [] };
+    const series = {
+      name: payload.term,
+      symbol: 'circle',
+      data: [],
+    };
     for (let i = 0; i < items.length; i += 1) {
       for (let j = 0; j < docsrcSizeItems.length; j += 1) {
         if (docsrcSizeItems[j].str === items[i].Word[0].n) {
@@ -301,6 +312,7 @@ const mutations = {
       }
     }
     state.chartData.sources.series.push(series);
+    state.chartData.sources.loadingStatus -= 1;
   },
   processSections(state, payload) {
     const items = payload.result;
@@ -331,6 +343,8 @@ const mutations = {
       }
     }
     if (items.length > 0) storeObject.collocations.push(collSet);
+
+    storeObject.loadingStatus -= 1;
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
@@ -407,6 +421,17 @@ const mutations = {
   },
   processCorpInfo(state, payload) {
     const items = payload.result.sizes;
+    const subcorpora = payload.result.subcorpora;
+
+    if (state.selectedSubcorpus.value !== 'none') {
+      for (let i = 0; i < subcorpora.length; i += 1) {
+        if (subcorpora[i].n == state.selectedSubcorpus.value) {
+          state.infoData.activeSubcorpusTokenSize = subcorpora[i].tokens;
+          break;
+        }
+      }
+    }
+
     state.infoData.corpInfoTable.items.push(
       { unit: 'Documents', count: items.doccount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
       { unit: 'Paragraphs', count: items.parcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
@@ -441,13 +466,17 @@ const mutations = {
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
-    const absValue = (overallRel * corpusTokenSize) / 1000000;
+    //const absValue = (overallRel * corpusTokenSize) / 1000000;
+    const absValue = payload.result.fullsize;
 
     state.chartData.queryRelSummary.series[0].data.push({
       name: payload.term,
       relValue: overallRel,
       absValue: Math.round((absValue + Number.EPSILON) * 100) / 100,
     });
+
+    state.chartData.queryRelSummary.loadingStatus -= 1;
+    state.chartData.kwic.loadingStatus -= 1;
   },
 
 
@@ -582,6 +611,9 @@ const mutations = {
   },
   updateSubcorporaList(state, payload) {
     const items = payload.result;
+    state.subcorporaList = [
+      { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
+    ];
     for (let i = 0; i < items.length; i += 1) {
       state.subcorporaList.push({ name: `Subcorpus: ${items[i].n}`, value: items[i].n, desc: `Query the subcorpus: ${items[i].n}` });
     }
@@ -606,6 +638,7 @@ const mutations = {
     }
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
+    state.infoData.docsYears.data = [];
     state.infoData.docsYears.data.push(absolute);
   },
   processDocsRegions(state, payload) {
@@ -638,10 +671,12 @@ const mutations = {
         default:
       }
     }
+    state.infoData.docsRegions.series = [];
     state.infoData.docsRegions.series.push(seriesData);
   },
   processDocsSources(state, payload) {
     const items = payload.result.Items;
+    state.infoData.docsSources.data = [];
     for (let i = 0; (i < items.length) && (i < 20); i += 1) {
       state.infoData.docsSources.data.push({
         id: items[i].str,
@@ -653,6 +688,7 @@ const mutations = {
   },
   processDocsRessorts(state, payload) {
     const items = payload.result.Items;
+    state.infoData.docsRessorts.data = [];
     for (let i = 0; (i < items.length) && (i < 20); i += 1) {
       state.infoData.docsRessorts.data.push({
         id: items[i].str,
@@ -790,6 +826,8 @@ const actions = {
   async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
+      state.chartData.queryRelSummary.loadingStatus += 1;
+      state.chartData.kwic.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       commit('processKWIC', { term: queryTerm, result: response.data });
     } catch (error) {
@@ -803,6 +841,7 @@ const actions = {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
+      storeObject.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
       const relFreq = response.data.relsize;
@@ -820,6 +859,7 @@ const actions = {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
+      storeObject.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
       const relFreq = response.data.relsize;
@@ -829,6 +869,7 @@ const actions = {
         commit('processKWICYearly', { term: queryTerm, result: response.data });
 
         const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
+        storeObject.loadingStatus += 1;
         const responseColl = await axios.get(collxURI);
   
         commit('processCollocations', { metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject });
@@ -845,6 +886,7 @@ const actions = {
   async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
       const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
+      state.chartData.queryRelSummary.loadingStatus += 1;
       const response = await axios.get(freqsURI);
       commit('processWordFreqSum', { term: queryTerm, result: response.data });
 
@@ -853,6 +895,7 @@ const actions = {
       const items = response.data.Blocks[0].Items;
 
 
+      /*
       for (let i = 0; i < items.length && i < 16; i += 1) {
         const metaAttr = 'year';
         const wordFormQueryTerm = `[word="${items[i].Word[0].n}"]`;
@@ -861,7 +904,7 @@ const actions = {
           const metaVal = j;
           dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms, wordFormsQueryFlag: true });
         }
-      }
+      }*/
 
     } catch (error) {
       console.log(error);
@@ -890,9 +933,10 @@ const actions = {
   // API request used for media sources freq. results
   async requestMediaSources({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.docsrc_name;fcrit=doc.id;flimit=0;format=json`;
+      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.docsrc;fcrit=doc.id;flimit=0;format=json`;
+      state.chartData.sources.loadingStatus += 1;
       const response = await axios.get(freqttURI);
-      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
       commit('processSources', { term: queryTerm, result: response.data.Blocks[0].Items, docsrcSize: wordlistDocsrcResponse.data });
     } catch (error) {
@@ -948,18 +992,24 @@ const actions = {
   async queryCorpusInfo({ state, commit, dispatch }) {
     try {
       commit('changeLoadingStatus', { status: true, type: 'intro' });
+
+      let useSubCorp = '';
+      if (state.selectedSubcorpus.value !== 'none') {
+        useSubCorp = `usesubcorp=${state.selectedSubcorpus.value};`;
+      }
+
       if (router.currentRoute.params.corpus) {
         const corpusKey = getObjectKey(state.corporaList, router.currentRoute.params.corpus, 'value');
         state.selectedcorpus = state.corporaList[corpusKey];
       }
       const requestURIs = {};
-      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
-      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
+      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
-      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.selectedCorpus.value}&format=json`;
-      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.selectedCorpus.value}&format=json&subcorpora=1`;
+      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};
       responses.docsYears = await axios.get(requestURIs.docsYears);
@@ -968,7 +1018,7 @@ const actions = {
       responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
       // responses.topLCs = await axios.get(requestURIs.topLCs);
       responses.corpInfo = await axios.get(requestURIs.corpInfo);
-      responses.topLemmas = await axios.get(requestURIs.topLemmas);
+      //responses.topLemmas = await axios.get(requestURIs.topLemmas);
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
@@ -977,7 +1027,7 @@ const actions = {
       commit('processDocsRessorts', { result: responses.docsRessorts.data });
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
-      commit('processTopLemmas', { result: responses.topLemmas.data });
+      //commit('processTopLemmas', { result: responses.topLemmas.data });
 
       if (router.currentRoute.params.query) {
         const routerQueryTerms = router.currentRoute.params.query.split(';');
@@ -1011,6 +1061,7 @@ const state = {
     { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
     { name: 'Corpus: AMC 60M', value: 'amc_60M', desc: 'A 60M token sample of Austrian Media Corpus' },
     { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+    { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
   ],
   selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
   subcorporaList: [
@@ -1150,6 +1201,7 @@ const state = {
       ],
       series: [],
     },
+    activeSubcorpusTokenSize: 0,
     corpInfoTable: {
       title: 'Unit Sizes of the Corpus',
       subtitle: 'An annotated text corpus consists of structured elements such as documents, paragraphs, sentences, words and tokens. Tokens are the smallest units, which are symbols, numbers and lemmas. The size of a corpus is generally described by its total count of tokens and documents.',
@@ -1216,6 +1268,7 @@ const state = {
     },
     queryRelSummary: {
       title: 'Freq. and Forms',
+      loadingStatus: 0,
       subtitle: 'Total normalised frequency (per million tokens) of a given query is displayed.',
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
@@ -1232,6 +1285,7 @@ const state = {
     },
     temporal: {
       title: 'Yearly Freq.',
+      loadingStatus: 0,
       absolute: {
         title: 'Yearly Absolute Frequency',
         subtitle: 'Absolute number of occurences (hits) of a given query in years is displayed.',
@@ -1256,6 +1310,7 @@ const state = {
     },
     sources: {
       title: 'Distribution of Media Sources',
+      loadingStatus: 0,
       subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per media source. Sizes of the points show the absolute size of the media sources in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
@@ -1280,6 +1335,7 @@ const state = {
     },
     sections: {
       title: 'Distribution of Newspaper Sections',
+      loadingStatus: 0,
       subtitle: 'This chart displays the absolute number of hits of this query (y-axis) and relative frequency (x-axis) in comparison to the baseline (100%) for the query per newspaper section. Sizes of the points show the absolute size of the newspaper sections in the whole corpus, independent from the given query. Relative Frequency (%) shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       yAxisText: 'Absolute Frequency',
       xAxisText: 'Relative Frequency (%)',
@@ -1307,6 +1363,7 @@ const state = {
     },
     regions: {
       mapTitle: 'Regional Freq.',
+      loadingStatus: 0,
       mapSubtitle: 'Relative comparison to the baseline (100%) for the query in regions is displayed. This way of distribution shows how much more / less frequent the result of the query in this partition exists in comparison to the whole corpus. 100% represents the average baseline from the whole corpus.',
       title: 'Regional Absolute Frequency',
       subtitle: 'This chart displays the absolute number of occurences (hits) of a given query per regions in the selected corpus. Every media source has a region identifier. However some media sources can be nation-wide publication or too specific to be categorized under a specific region.',
@@ -1342,6 +1399,7 @@ const state = {
       ],
     },
     kwic: {
+      loadingStatus: 0,
       items: [],
       annotationOptions: [],
       fields: [

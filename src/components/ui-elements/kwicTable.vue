@@ -1,7 +1,10 @@
 <template>
   <div>
     <div :style="{'height':height}" class="vis-component-inner">
-
+      <div class="loading-spinner text-center" v-show="this.chartProp.loadingStatus">
+        <span>This component is waiting for the data, please wait.</span>
+        <b-spinner variant="primary" label="Text Centered"></b-spinner>
+      </div>
       <div v-show="isBusy" class="component-loading-overlay">
         <div class="text-center text-success my-2 mt-5">
           <b-spinner class="align-middle"></b-spinner>
@@ -42,9 +45,9 @@
 
       </div>
 
-      <div class="kwic-filters-head d-flex">
+      <!-- <div class="kwic-filters-head d-flex">
         Active Filters: {{ activeFilters }}
-      </div>
+      </div> -->
 
       <div class="kwic-table" >
 
@@ -222,6 +225,18 @@ export default {
         }
       }
     });
+    this.bus.$on('onMediaClick', (payload) => {
+      this.activeFilters.push(payload.mediaName);
+      this.activeFilters.push(payload.mediaQuery);
+      const items = this.chartProp.items;
+      this.filteredItemsByCharts = [];
+      for (let i = 0; i < items.length; i += 1) {
+        if (items[i].source === payload.mediaName && items[i].queryTerm === payload.mediaQuery) {
+          console.log(items[i])
+          this.filteredItemsByCharts.push(items[i]);
+        }
+      }
+    });
     this.bus.$on('onRegionClick', (payload) => {
       this.activeFilters.push(payload.regionName);
       this.activeFilters.push(payload.regionQuery);
@@ -251,7 +266,7 @@ export default {
       const items = this.chartProp.items;
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
-        if (items[i].region == regionName && items[i].queryTerm === payload.regionQuery) {
+        if (items[i].region === regionName && items[i].queryTerm === payload.regionQuery) {
           this.filteredItemsByCharts.push(items[i]);
         }
       }
@@ -303,7 +318,7 @@ export default {
         })
     },
     items() {
-      if (this.filteredItemsByCharts.length > 1) {
+      if (this.filteredItemsByCharts.length > 0) {
         return this.filteredItemsByCharts;
       } else {
         return this.chartProp.items;
