@@ -252,6 +252,16 @@ main, .navbar {
     min-height: 300px;
     overflow: hidden;
 
+    .loading-spinner {
+      position: absolute;
+      width: 100%;
+      background-color: #ffffffa8;
+      height: 100%;
+      top: 0;
+      padding: 100px 13px;
+      z-index: 9;
+    }
+
     .actions {
       button {
         padding: 0 0.25rem;
