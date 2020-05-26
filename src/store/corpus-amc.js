@@ -793,21 +793,61 @@ const actions = {
       //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
       let metaAttr = 'year';
-      for (let i = 1990; i < 2019; i += 1) {
-        const metaVal = i;
+
+      const queryYears =
+      [
+        1703,
+        1705,
+        1708,
+        1712,
+        1713,
+        1715,
+        1716,
+        1719,
+        1720,
+        1722,
+        1725,
+        1728,
+        1729,
+        1732,
+        1740,
+        1741,
+        1745,
+        1747,
+        1748,
+        1749,
+        1750,
+        1754,
+        1755,
+        1759,
+        1760,
+        1762,
+        1765,
+        1768,
+        1772,
+        1775,
+        1779,
+        1780,
+        1793,
+        1798
+        ];
+
+      for (let i = 0; i < queryYears.length; i += 1) {
+        const metaVal = queryYears[i];
         dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
       }
 
 
+      /*
       metaAttr = 'region';
       // 'agesamt', 'spezifisch'
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
       for (let i = 0; i < metaValsArray.length; i += 1) {
         const metaVal = metaValsArray[i];
         dispatch('requestRegionFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions });
-      }
+      }*/
 
-      dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
+      //dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
 
       //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
       
@@ -1004,27 +1044,27 @@ const actions = {
       }
       const requestURIs = {};
       requestURIs.docsYears = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
-      requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      //requestURIs.docsRegions = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.region;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      //requestURIs.docsSources = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.docsrc_name;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
+      //requestURIs.docsRessorts = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=1000;wlattr=doc.ressort2;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       // requestURIs.topLCs = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=50;wlattr=lc;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
       requestURIs.corpInfo = `${state.engineAPI}corp_info?corpname=${state.selectedCorpus.value}&format=json&subcorpora=1`;
-      requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
+      //requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};${useSubCorp}wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};
       responses.docsYears = await axios.get(requestURIs.docsYears);
-      responses.docsRegions = await axios.get(requestURIs.docsRegions);
-      responses.docsSources = await axios.get(requestURIs.docsSources);
-      responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
+      //responses.docsRegions = await axios.get(requestURIs.docsRegions);
+      //responses.docsSources = await axios.get(requestURIs.docsSources);
+      //responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
       // responses.topLCs = await axios.get(requestURIs.topLCs);
       responses.corpInfo = await axios.get(requestURIs.corpInfo);
       //responses.topLemmas = await axios.get(requestURIs.topLemmas);
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
-      commit('processDocsRegions', { result: responses.docsRegions.data });
-      commit('processDocsSources', { result: responses.docsSources.data });
-      commit('processDocsRessorts', { result: responses.docsRessorts.data });
+      //commit('processDocsRegions', { result: responses.docsRegions.data });
+      //commit('processDocsSources', { result: responses.docsSources.data });
+      //commit('processDocsRessorts', { result: responses.docsRessorts.data });
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
       //commit('processTopLemmas', { result: responses.topLemmas.data });
@@ -1079,8 +1119,13 @@ const state = {
   chartElements: [
     {
       component: 'corpsumBarChart',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-8 vis-component',
       chartProp: 'queryRelSummary',
+    },
+    {
+      component: 'kwicTable',
+      class: 'col-md-4 vis-component',
+      chartProp: 'kwic',
     },
     /*
     {
@@ -1091,7 +1136,7 @@ const state = {
     */
     {
       component: 'corpsumLineChart',
-      class: 'col-md-4 vis-component tooltip-overflow',
+      class: 'col-md-8 vis-component tooltip-overflow',
       chartProp: 'temporal',
     },
     /*
@@ -1104,11 +1149,6 @@ const state = {
       component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sections',
-    },*/
-    {
-      component: 'kwicTable',
-      class: 'col-md-4 vis-component',
-      chartProp: 'kwic',
     },
     {
       component: 'multiMap',
@@ -1120,7 +1160,6 @@ const state = {
       class: 'col-md-4 vis-component',
       chartProp: 'sources',
     },
-    /*
     {
       component: 'multiSankey',
       class: 'container-fluid p-0 d-flex',
