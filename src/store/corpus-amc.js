@@ -150,8 +150,10 @@ const mutations = {
     const metaAttr = payload;
     const metaVal = payload.metaVal;
     const queryTerm = payload.term;
-    const absFreq = payload.absFreq;
-    const relFreq = payload.relFreq;
+    let absFreq = payload.absFreq;
+    if (!absFreq) absFreq = 0;
+    let relFreq = payload.relFreq;
+    if (!relFreq) relFreq = 0;
     const storeObject = payload.storeObject;
 
     const absDataKey = getObjectKey(storeObject.absolute.data, queryTerm, 'name');
@@ -485,46 +487,48 @@ const mutations = {
   processKWICYearly(state, payload) {
     const items = payload.result.Lines;
 
-    const itemsSet = [];
+    if (items) {
+      const itemsSet = [];
 
-    for (let i = 0; (i < items.length) && (i < 100); i += 1) {
-      let docIdExists = false;
-      let docRowIndex;
-      // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
-      for (let j = 0; j < itemsSet.length; j += 1) {
-        if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
-          docIdExists = true;
-          docRowIndex = j;
-          break;
+      for (let i = 0; (i < items.length) && (i < 100); i += 1) {
+        let docIdExists = false;
+        let docRowIndex;
+        // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
+        for (let j = 0; j < itemsSet.length; j += 1) {
+          if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
+            docIdExists = true;
+            docRowIndex = j;
+            break;
+          }
+        }
+        if (!docIdExists) {
+          const docRow = {
+            date: items[i].Tbl_refs[1],
+            year: items[i].Tbl_refs[2],
+            source: items[i].Tbl_refs[5],
+            region: items[i].Tbl_refs[3],
+            left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+            word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+            right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+            docid: items[i].Tbl_refs[0],
+            ressort: items[i].Tbl_refs[4],
+            toknum: items[i].toknum,
+            selected: false,
+            queryTerm: payload.term,
+            hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
+            hitsNo: 1,
+          };
+          itemsSet.push(docRow);
+        } else {
+          itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+          itemsSet[docRowIndex].hitsNo++;
         }
       }
-      if (!docIdExists) {
-        const docRow = {
-          date: items[i].Tbl_refs[1],
-          year: items[i].Tbl_refs[2],
-          source: items[i].Tbl_refs[5],
-          region: items[i].Tbl_refs[3],
-          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-          docid: items[i].Tbl_refs[0],
-          ressort: items[i].Tbl_refs[4],
-          toknum: items[i].toknum,
-          selected: false,
-          queryTerm: payload.term,
-          hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
-          hitsNo: 1,
-        };
-        itemsSet.push(docRow);
-      } else {
-        itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
-        itemsSet[docRowIndex].hitsNo++;
-      }
+
+      state.chartData.kwic.items.push(...itemsSet);
+
+      state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
     }
-
-    state.chartData.kwic.items.push(...itemsSet);
-
-    state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
   },
 
 
