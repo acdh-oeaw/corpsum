@@ -78,7 +78,7 @@ export default {
         var grid = this.$refs.visWrapper;
         var pckry = new Packery( grid, {
           itemSelector: '.vis-component',
-          columnWidth: ".vis-component.col-md-4",
+          columnWidth: ".vis-component.col-md-6",
           gutter: 0,
           percentPosition: true
         });
@@ -109,7 +109,7 @@ export default {
       this.$store.dispatch('corpusQuery', 'Ball');
     },
     exampleQuery() {
-      const queryTerms = [{ text: '[lc=".*leben.*"]', tiClasses: ['ti-valid'] }, { text: '[lc=".*arbeit.*"]', tiClasses: ['ti-valid'] }];
+      const queryTerms = [{ text: '[lc=".*reich.*"]', tiClasses: ['ti-valid'] }, { text: '[lc=".*schaft.*"]', tiClasses: ['ti-valid'] }];
       for (let i = 0; i < queryTerms.length; i += 1) {
         this.$store.commit('queryTermAdded', queryTerms[i]);
         this.$store.dispatch('corpusQuery', queryTerms[i].text);

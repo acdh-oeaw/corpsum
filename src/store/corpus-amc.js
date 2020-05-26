@@ -871,7 +871,7 @@ const actions = {
   // API request used for total rel. freq. and KWIC results
   async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=60;async=0;format=json`;
       state.chartData.queryRelSummary.loadingStatus += 1;
       state.chartData.kwic.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
@@ -904,7 +904,7 @@ const actions = {
   async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=27;async=0;format=json`;
       storeObject.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
@@ -1122,12 +1122,12 @@ const state = {
   chartElements: [
     {
       component: 'corpsumBarChart',
-      class: 'col-md-8 vis-component h-50',
+      class: 'col-md-6 vis-component chart-height-50',
       chartProp: 'queryRelSummary',
     },
     {
       component: 'kwicTable',
-      class: 'col-md-4 vis-component',
+      class: 'col-md-6 vis-component',
       chartProp: 'kwic',
     },
     /*
@@ -1139,7 +1139,7 @@ const state = {
     */
     {
       component: 'corpsumLineChart',
-      class: 'col-md-8 vis-component h-50 tooltip-overflow',
+      class: 'col-md-6 vis-component chart-height-50 tooltip-overflow',
       chartProp: 'temporal',
     },
     /*

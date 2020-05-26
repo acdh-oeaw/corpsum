@@ -242,8 +242,8 @@ main, .navbar {
   /*width: calc(100% - 145px) !important;*/
 }
 
-.h-50 {
-  height: 50%;
+.chart-height-50 {
+  height: calc(50vh - 34px);
 }
 
 .vis-component {

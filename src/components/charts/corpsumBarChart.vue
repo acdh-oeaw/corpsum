@@ -137,6 +137,9 @@ export default {
       },
       deep: true,
     },
+    '$refs.chart.clientHeight' () {
+console.log("hey")
+    }
   },
   methods: {
     initChart() {
