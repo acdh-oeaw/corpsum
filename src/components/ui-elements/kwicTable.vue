@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="{'height':height}" class="vis-component-inner">
+    <div class="vis-component-inner">
       <div class="loading-spinner text-center" v-show="this.chartProp.loadingStatus">
         <span>This component is waiting for the data, please wait.</span>
         <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -495,7 +495,7 @@ export default {
 <style lang="scss">
 .kwic-table {
   overflow-y: auto;
-  max-height: 700px;
+  max-height: calc(100vh - 120px);
   font-size: 0.8rem;
 }
 

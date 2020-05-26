@@ -210,6 +210,10 @@ body {
 /*
  * Content
  */
+main {
+  height: calc(100vh - 56px);
+}
+
 [role="main"] {
   padding-top: 133px; /* Space for fixed navbar */
 }
@@ -238,6 +242,10 @@ main, .navbar {
   /*width: calc(100% - 145px) !important;*/
 }
 
+.h-50 {
+  height: 50%;
+}
+
 .vis-component {
   padding: .25rem !important;
 
@@ -249,8 +257,14 @@ main, .navbar {
     border-radius: 0.25rem;
     background-color: #fff;
     border: solid 1px #dde4ea;
-    min-height: 300px;
+    min-height: 200px;
+    height: 100%;
     overflow: hidden;
+
+    .corpsum-chart {
+      position: relative;
+      height: calc(100% - 37px);
+    }
 
     .loading-spinner {
       position: absolute;

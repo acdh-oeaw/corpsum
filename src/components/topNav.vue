@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar fixed-top flex-md-nowrap shadow ml-auto px-2">
 
-    <a class="navbar-brand text-center m-0" href="#">CorpSum</a>
+    <span class="navbar-brand text-center m-0" href="#">CorpSum</span>
 
     <multiselect
       class="ml-2 corpus-selector"
@@ -269,7 +269,7 @@ export default {
 }
 
 .ti-tag {
-  font-size: 1rem !important;
+  font-size: 0.85rem !important;
   background-color: #eff2f5 !important;
   -webkit-box-shadow: 1px 1px 0px 0px #afafafba;
   box-shadow: 1px 1px 0px 0px #afafafba;
@@ -316,7 +316,7 @@ export default {
     }
 
     .multiselect__input, .multiselect__single, .multiselect__element {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
 
     .multiselect__content-wrapper {
@@ -337,6 +337,11 @@ export default {
 
 .ti-new-tag-input-wrapper {
   padding: 0 5px !important;
+
+  input {
+    font-size: 0.85rem;
+  }
+
 }
 
 .ti-new-tag-input.ti-valid {

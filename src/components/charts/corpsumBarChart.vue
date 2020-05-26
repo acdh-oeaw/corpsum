@@ -53,7 +53,7 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <div class="corpsum-bar-chart" ref="chart" :key="componentKey">
+      <div class="corpsum-chart" ref="chart" :key="componentKey">
         <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
@@ -96,15 +96,15 @@ export default {
     // this.svgWidth = document.getElementById('container').offsetWidth * 0.75;
     console.log('chart mounted');
     // this.svgWidth = this.$refs.chart.clientWidth;
-    // this.AddResizeListener();
     this.initChart();
     this.AnimateLoad();
     this.renderWordForms();
+    this.AddResizeListener();
   },
   data() {
     return {
       svgWidth: 0,
-      svgHeight: 275,
+      svgHeight: 0,
       svgPadding: {
         top: 25, right: 20, bottom: 30, left: 40,
       },
@@ -165,6 +165,7 @@ export default {
     AnimateLoad() {
       if (this.$refs.chart) {
         this.svgWidth = this.$refs.chart.clientWidth;
+        this.svgHeight = this.$refs.chart.clientHeight;
       }
 
       const axisX = d3.select('#axis-x');
@@ -374,11 +375,12 @@ export default {
     AddResizeListener() {
       // redraw the chart 300ms after the window has been resized
       window.addEventListener('resize', () => {
-        this.$data.redrawToggle = false;
+        //this.$data.redrawToggle = false;
         setTimeout(() => {
-          this.$data.redrawToggle = true;
-          this.$data.svgWidth = document.getElementById('container').offsetWidth * 0.75;
+          //this.$data.redrawToggle = true;
+          this.initChart();
           this.AnimateLoad();
+          this.renderWordForms();
         }, 300);
       });
     },
@@ -650,10 +652,6 @@ export default {
 
 .bar-top-label-text, .bar-hover-text, .bar-piece > text {
   font-size: 0.70rem;
-}
-
-.corpsum-bar-chart {
-  position: relative;
 }
 
 .go-to-upper-chart-btn {

@@ -87,6 +87,7 @@ export default {
   },
   mounted() {
     this.drawChart();
+    this.AddResizeListener();
     this.bus.$on('onDrilldownClick', (payload) => {
       this.wordFormsToShow = payload.barsData;
       this.wordFormsBarIndex = payload.i;
@@ -104,7 +105,7 @@ export default {
   data() {
     return {
       svgWidth: 0,
-      svgHeight: 275,
+      svgHeight: 0,
       svgPadding: {
         top: 25, right: 20, bottom: 30, left: 40,
       },
@@ -138,6 +139,7 @@ export default {
   methods: {
     drawChart() {
       if (this.$refs.chart) this.svgWidth = this.$refs.chart.clientWidth;
+      if (this.$refs.chart) this.svgHeight = this.$refs.chart.clientHeight;
       select(this.$refs.chartGroup)
         .attr('transform', `translate(${this.svgPadding.left},${this.svgPadding.top})`);
       this.drawXAxis();
@@ -292,6 +294,16 @@ export default {
     onWordFormToggle() {
       this.drawChart();
     },
+    AddResizeListener() {
+      // redraw the chart 300ms after the window has been resized
+      window.addEventListener('resize', () => {
+        //this.$data.redrawToggle = false;
+        setTimeout(() => {
+          //this.$data.redrawToggle = true;
+          this.drawChart();
+        }, 300);
+      });
+    },
     getObjectKey(object, value, property) {
       if (property) return Object.keys(object).find((key) => object[key][property] === value);
       return Object.keys(object).find((key) => object[key] === value);
@@ -362,10 +374,6 @@ export default {
 .chart-btn-sm {
   padding: 0.15rem 0.4rem;
   font-size: 0.8rem;
-}
-
-.corpsum-chart {
-  position: relative;
 }
 
 .gridlines line {

@@ -104,42 +104,44 @@ const mutations = {
         break;
       }
     }
-    items = payload.result.Blocks[0].Items;
 
-    const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
+    if (payload.result.Blocks) {
+      items = payload.result.Blocks[0].Items;
+      const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
 
-    //state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
+      //state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
 
 
-    let corpusTokenSize;
-    if (state.selectedSubcorpus.value !== 'none') {
-      corpusTokenSize = state.infoData.activeSubcorpusTokenSize;
-    } else {
-      corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
-    }
+      let corpusTokenSize;
+      if (state.selectedSubcorpus.value !== 'none') {
+        corpusTokenSize = state.infoData.activeSubcorpusTokenSize;
+      } else {
+        corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+      }
 
-    for (let i = 0; i < items.length && i < 25; i += 1) {
-      const relValue = (items[i].freq * 1000000) / corpusTokenSize;
-      state.chartData.queryRelSummary.series[0].wordForms.push({
-        query: payload.term,
-        name: items[i].Word[0].n,
-        absValue: items[i].freq,
-        relValue: Math.round((relValue + Number.EPSILON) * 100) / 100,
-      });
-    }
+      for (let i = 0; i < items.length && i < 25; i += 1) {
+        const relValue = (items[i].freq * 1000000) / corpusTokenSize;
+        state.chartData.queryRelSummary.series[0].wordForms.push({
+          query: payload.term,
+          name: items[i].Word[0].n,
+          absValue: items[i].freq,
+          relValue: Math.round((relValue + Number.EPSILON) * 100) / 100,
+        });
+      }
 
-    state.chartData.wordFreqSummary.data.push({
-      id: payload.term,
-      name: payload.term,
-      color: colors[queryTermKey],
-      sortIndex: queryTermKey,
-    });
-    for (let i = 0; i < items.length; i += 1) {
       state.chartData.wordFreqSummary.data.push({
-        name: items[i].Word[0].n,
-        parent: payload.term,
-        value: items[i].freq,
+        id: payload.term,
+        name: payload.term,
+        color: colors[queryTermKey],
+        sortIndex: queryTermKey,
       });
+      for (let i = 0; i < items.length; i += 1) {
+        state.chartData.wordFreqSummary.data.push({
+          name: items[i].Word[0].n,
+          parent: payload.term,
+          value: items[i].freq,
+        });
+      }
     }
 
     state.chartData.queryRelSummary.loadingStatus -= 1;
@@ -936,7 +938,7 @@ const actions = {
 
       //const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
       // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
-      const items = response.data.Blocks[0].Items;
+      // const items = response.data.Blocks[0].Items;
 
 
       /*
@@ -1100,11 +1102,8 @@ const actions = {
 const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
+  selectedCorpus: { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
   corporaList: [
-    { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
-    { name: 'Corpus: AMC 60M', value: 'amc_60M', desc: 'A 60M token sample of Austrian Media Corpus' },
-    { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
     { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
   ],
   selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
@@ -1123,7 +1122,7 @@ const state = {
   chartElements: [
     {
       component: 'corpsumBarChart',
-      class: 'col-md-8 vis-component',
+      class: 'col-md-8 vis-component h-50',
       chartProp: 'queryRelSummary',
     },
     {
@@ -1140,7 +1139,7 @@ const state = {
     */
     {
       component: 'corpsumLineChart',
-      class: 'col-md-8 vis-component tooltip-overflow',
+      class: 'col-md-8 vis-component h-50 tooltip-overflow',
       chartProp: 'temporal',
     },
     /*
