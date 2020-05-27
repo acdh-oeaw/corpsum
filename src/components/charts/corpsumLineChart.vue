@@ -33,7 +33,7 @@
           ></b-form-radio-group>
         </b-form-group>
         <div class="actions">
-          <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+<!--           <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
           <b-button variant="primary" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
@@ -41,7 +41,7 @@
           </b-button>
           <b-button variant="primary" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
             <download-icon></download-icon>
-          </b-button>
+          </b-button> -->
           <b-button variant="primary" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
             <image-icon></image-icon>
           </b-button>
@@ -49,7 +49,7 @@
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
       <div class="corpsum-line-chart corpsum-chart" ref="chart" :key="componentKey">
-        <svg class="main-svg" :width="svgWidth" :height="svgHeight">
+        <svg class="main-svg" ref="mainSvg" :width="svgWidth" :height="svgHeight">
           <g class="chart-group" ref="chartGroup">
             <g class="focus-group" ref="focusGroup">
               <g class="axis axis-x" ref="axisX"></g>
@@ -75,6 +75,8 @@ import { select } from 'd3-selection';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { line, curveCardinal } from 'd3-shape';
 import { format } from 'd3-format';
+
+const d3ToPng = require('d3-svg-to-png');
 
 export default {
   name: 'corpsumLineChart',
@@ -269,7 +271,11 @@ export default {
       select(this.$refs.focusGroup).select(`.line-id-${lineID}`).classed('line-path-hovered', flag);
     },
     exportImage() {
-      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+      //this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+      d3ToPng('.corpsum-line-chart > .main-svg', 'chart', {
+        scale: 3,
+        quality: 0.01,
+      });
     },
     exportCSV() {
       this.$refs.chart.$children[0].chart.downloadCSV();

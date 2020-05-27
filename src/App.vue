@@ -79,9 +79,10 @@ export default {
   mounted() {
     this.$store.dispatch('getSubcorporaList');
     this.$store.dispatch('queryCorpusInfo');
+    /*
     if (!localStorage.tourCompleted) {
       this.$tours.myTour.start();
-    }
+    }*/
   },
   computed: {
     tags() {

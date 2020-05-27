@@ -38,7 +38,7 @@
         <toggle-button v-model="frequencyValueTypeAbsolute" @change="onFrequencyValueTypeChange"/>
         Absolute -->
         <div class="actions">
-          <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
+<!--           <b-button variant="primary" @click="showTable" v-show="showTableIcon" v-b-tooltip.hover title="Show data table">
             <list-icon></list-icon>
           </b-button>
           <b-button variant="primary" @click="showChart" v-show="showChartIcon" v-b-tooltip.hover title="Show chart">
@@ -46,14 +46,14 @@
           </b-button>
           <b-button variant="primary" @click="exportCSV" v-b-tooltip.hover title="Export data as CSV">
             <download-icon></download-icon>
-          </b-button>
+          </b-button> -->
           <b-button variant="primary" @click="exportImage" v-b-tooltip.hover title="Export image as SVG">
             <image-icon></image-icon>
           </b-button>
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <div class="corpsum-chart" ref="chart" :key="componentKey">
+      <div class="corpsum-chart corpsum-bar-chart" ref="chart" :key="componentKey">
         <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
@@ -83,6 +83,8 @@ import { selectAll } from 'd3-selection';
 import { transition } from 'd3-transition';
 import * as d3 from 'd3';
 
+const d3ToPng = require('d3-svg-to-png');
+
 export default {
   name: 'corpsumBarChart',
   props: {
@@ -96,10 +98,10 @@ export default {
     // this.svgWidth = document.getElementById('container').offsetWidth * 0.75;
     console.log('chart mounted');
     // this.svgWidth = this.$refs.chart.clientWidth;
+    this.AddResizeListener();
     this.initChart();
     this.AnimateLoad();
     this.renderWordForms();
-    this.AddResizeListener();
   },
   data() {
     return {
@@ -132,14 +134,12 @@ export default {
   watch: {
     'chartProp.series': {
       handler() {
+        this.initChart();
         this.AnimateLoad();
         this.renderWordForms();
       },
       deep: true,
     },
-    '$refs.chart.clientHeight' () {
-console.log("hey")
-    }
   },
   methods: {
     initChart() {
@@ -553,7 +553,11 @@ console.log("hey")
       this.componentKey += 1;
     },
     exportImage() {
-      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+      //this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+      d3ToPng('.corpsum-bar-chart > #main-svg', 'chart', {
+        scale: 3,
+        quality: 0.01,
+      });
     },
     exportCSV() {
       this.$refs.chart.$children[0].chart.downloadCSV();
