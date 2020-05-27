@@ -505,8 +505,8 @@ const mutations = {
         }
         if (!docIdExists) {
           const docRow = {
-            date: items[i].Tbl_refs[1],
-            year: items[i].Tbl_refs[2],
+            date: items[i].Tbl_refs[2],
+            year: items[i].Tbl_refs[1],
             source: items[i].Tbl_refs[5],
             region: items[i].Tbl_refs[3],
             left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
@@ -904,7 +904,7 @@ const actions = {
   async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=27;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=5000;newctxsize=27;async=0;format=json`;
       storeObject.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;

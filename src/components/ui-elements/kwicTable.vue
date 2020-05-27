@@ -215,6 +215,7 @@ export default {
   },
   mounted() {
     this.bus.$on('onLineCircleClick', (payload) => {
+      console.log(payload)
       this.activeFilters.push(payload.year);
       this.activeFilters.push(payload.query);
       const items = this.chartProp.items;
