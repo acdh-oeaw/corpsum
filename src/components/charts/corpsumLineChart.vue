@@ -227,11 +227,19 @@ export default {
           break;
         }
       }
-      let collxGroup;
-      if (collxData) {
-        collxGroup = select(this.$refs.tooltips).append('g')
-          .attr('class', 'line-collx-group');
+      const collxGroup = select(this.$refs.tooltips).append('g')
+        .attr('class', 'line-collx-group');
 
+      collxGroup.append('text')
+        .text(year)
+        .attr('class', 'line-collx-text')
+        .attr('x', () => position.x + 11)
+        .attr('y', () => position.y - 12)
+        .attr('text-anchor', 'start')
+        .attr('font-weight', 'bold')
+        .style('opacity', 1);
+
+      if (collxData) {
         collxGroup.append('rect')
           .attr('class', () => `line-collx-rect line-path stroke-series-color-${iParent}`)
           .attr('x', () => position.x + 8)

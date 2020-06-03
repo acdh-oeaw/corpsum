@@ -838,8 +838,8 @@ const actions = {
         1798
         ];
 
-      for (let i = 0; i < queryYears.length; i += 1) {
-        const metaVal = queryYears[i];
+      for (let i = 1703; i < 1799; i += 1) {
+        const metaVal = i;
         dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
       }
 
@@ -904,7 +904,7 @@ const actions = {
   async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=5000;newctxsize=27;async=0;format=json`;
+      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=2000;newctxsize=27;async=0;format=json`;
       storeObject.loadingStatus += 1;
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
@@ -1102,9 +1102,9 @@ const actions = {
 const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
-  selectedCorpus: { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
+  selectedCorpus: { name: 'Corpus: wrdiarium02.2', value: 'wrdiarium02.2', desc: 'Wienerisches Diarium 02.1' },
   corporaList: [
-    { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
+    { name: 'Corpus: wrdiarium02.2', value: 'wrdiarium02.2', desc: 'Wienerisches Diarium 02.2' },
   ],
   selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
   subcorporaList: [

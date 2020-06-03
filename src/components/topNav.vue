@@ -142,10 +142,10 @@ export default {
   },
   mounted() {
     if (localStorage.selectedCorpus) {
-      this.$store.commit('changeSelectedCorpus', JSON.parse(localStorage.selectedCorpus));
+      //this.$store.commit('changeSelectedCorpus', JSON.parse(localStorage.selectedCorpus));
     }
     if (localStorage.selectedSubcorpus) {
-      this.$store.commit('changeSelectedSubcorpus', JSON.parse(localStorage.selectedSubcorpus));
+      //this.$store.commit('changeSelectedSubcorpus', JSON.parse(localStorage.selectedSubcorpus));
     }
   },
   methods: {
