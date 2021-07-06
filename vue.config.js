@@ -44,7 +44,7 @@ if (process.env.NODE_ENV === 'production') {
         },
       },
     },
-    outputDir: 'html',
+    outputDir: 'public',
     configureWebpack: {
       devtool: 'eval-source-map',
     },
