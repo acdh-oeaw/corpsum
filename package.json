@@ -5,8 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
-    "lint": "vue-cli-service lint",
-    "start": "cd server && npm install --only=production && node server.js"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
