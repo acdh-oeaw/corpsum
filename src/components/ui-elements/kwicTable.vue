@@ -37,7 +37,7 @@
             :total-rows="totalRows"
             :per-page="perPage"
             limit="3"
-            hide-goto-end-buttons="true"
+            :hide-goto-end-buttons="true"
             size="sm"
             class="my-0"
           ></b-pagination>
