@@ -40,7 +40,7 @@ const mutations = {
         state.chartData.temporal.relative.data.splice(i, 1);
         state.chartData.regions.relativeMaps.splice(i, 1);
         state.chartData.regions.absoluteMaps.splice(i, 1);
-        //state.chartData.regions.series.splice(i, 1);
+        // state.chartData.regions.series.splice(i, 1);
         state.chartData.sources.series.splice(i, 1);
         state.chartData.sections.series.splice(i, 1);
         state.chartData.collocations.clouds.splice(i, 1);
@@ -108,7 +108,7 @@ const mutations = {
 
     const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
 
-    //state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
+    // state.chartData.queryRelSummary.series[0].data[termArrayKey].absTotal = payload.processSumResp;
 
 
     let corpusTokenSize;
@@ -148,11 +148,11 @@ const mutations = {
 
   processMetaFreq(state, payload) {
     const metaAttr = payload;
-    const metaVal = payload.metaVal;
+    const { metaVal } = payload;
     const queryTerm = payload.term;
-    const absFreq = payload.absFreq;
-    const relFreq = payload.relFreq;
-    const storeObject = payload.storeObject;
+    const { absFreq } = payload;
+    const { relFreq } = payload;
+    const { storeObject } = payload;
 
     const absDataKey = getObjectKey(storeObject.absolute.data, queryTerm, 'name');
     const relDataKey = getObjectKey(storeObject.relative.data, queryTerm, 'name');
@@ -193,29 +193,29 @@ const mutations = {
   },
 
   processRegionFreq(state, payload) {
-    const metaVal = payload.metaVal;
+    const { metaVal } = payload;
     const queryTerm = payload.term;
-    let absFreq = payload.absFreq;
+    let { absFreq } = payload;
     if (!absFreq) absFreq = 0;
-    let relFreq = payload.relFreq;
+    let { relFreq } = payload;
     if (!relFreq) relFreq = 0;
-    const storeObject = payload.storeObject;
+    const { storeObject } = payload;
 
     const relativeMap = {
-      queryTerm: queryTerm,
+      queryTerm,
       mapData: {
         title: 'Regional Freq.',
-        queryTerm: queryTerm,
+        queryTerm,
         valueTypeLabel: 'Relevative Freq. (per Mil. Tokens)',
         valueTypeUnit: '',
         data: [],
       },
     };
     const absoluteMap = {
-      queryTerm: queryTerm,
+      queryTerm,
       mapData: {
         title: 'Regional Freq.',
-        queryTerm: queryTerm,
+        queryTerm,
         valueTypeLabel: 'Absolute Frequency (Hits)',
         valueTypeUnit: '',
         data: [],
@@ -250,7 +250,6 @@ const mutations = {
         regionPrettyName = '';
     }
     if (regionName !== 'spezifisch') {
-
       if (absObjKey) {
         storeObject.absoluteMaps[absObjKey].mapData.data.push({ query: payload.term, name: regionPrettyName, value: absFreq });
       } else {
@@ -273,7 +272,7 @@ const mutations = {
     const items = payload.result;
     const absolute = { name: payload.term, data: [] };
     const relative = { name: payload.term, data: [] };
-    //const skeRelative = { name: payload.term, data: [] };
+    // const skeRelative = { name: payload.term, data: [] };
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
@@ -282,16 +281,16 @@ const mutations = {
       const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
       const relValue = (items[i].freq * 1000000) / yearTokenSize;
       absolute.data.push([Number(items[i].Word[0].n), items[i].freq]);
-      relative.data.push([Number(items[i].Word[0].n),  Math.round((relValue + Number.EPSILON) * 100) / 100]);
-      //skeRelative.data.push([Number(items[i].Word[0].n), items[i].rel]);
+      relative.data.push([Number(items[i].Word[0].n), Math.round((relValue + Number.EPSILON) * 100) / 100]);
+      // skeRelative.data.push([Number(items[i].Word[0].n), items[i].rel]);
     }
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
     relative.data.sort((a, b) => a[0] - b[0]);
-    //skeRelative.data.sort((a, b) => a[0] - b[0]);
+    // skeRelative.data.sort((a, b) => a[0] - b[0]);
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
-    //state.chartData.temporal.skeRelative.data.push(skeRelative);
+    // state.chartData.temporal.skeRelative.data.push(skeRelative);
   },
   processSources(state, payload) {
     const items = payload.result;
@@ -331,9 +330,9 @@ const mutations = {
     state.chartData.sections.series.push(series);
   },
   processCollocations(state, payload) {
-    const storeObject = payload.storeObject;
-    const metaVal = payload.metaVal;
-    const metaAttr = payload.metaAttr;
+    const { storeObject } = payload;
+    const { metaVal } = payload;
+    const { metaAttr } = payload;
     const items = payload.data.Items;
     const collSet = { query: payload.term, [metaAttr]: metaVal, data: [] };
     for (let i = 0; i < items.length; i += 1) {
@@ -421,11 +420,11 @@ const mutations = {
   },
   processCorpInfo(state, payload) {
     const items = payload.result.sizes;
-    const subcorpora = payload.result.subcorpora;
+    const { subcorpora } = payload.result;
 
     if (state.selectedSubcorpus.value !== 'none') {
       for (let i = 0; i < subcorpora.length; i += 1) {
-        if (subcorpora[i].n == state.selectedSubcorpus.value) {
+        if (subcorpora[i].n === state.selectedSubcorpus.value) {
           state.infoData.activeSubcorpusTokenSize = subcorpora[i].tokens;
           break;
         }
@@ -460,13 +459,13 @@ const mutations = {
           queryTerm: payload.term,
         },
       );
-    }*/
+    } */
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.relsize;
 
     const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
 
-    //const absValue = (overallRel * corpusTokenSize) / 1000000;
+    // const absValue = (overallRel * corpusTokenSize) / 1000000;
     const absValue = payload.result.fullsize;
 
     state.chartData.queryRelSummary.series[0].data.push({
@@ -478,8 +477,6 @@ const mutations = {
     state.chartData.queryRelSummary.loadingStatus -= 1;
     state.chartData.kwic.loadingStatus -= 1;
   },
-
-
 
 
   processKWICYearly(state, payload) {
@@ -528,8 +525,7 @@ const mutations = {
   },
 
 
-
-/*
+  /*
   processKWICYearly(state, payload) {
     const items = payload.result.Lines;
     for (let i = 0; i < items.length; i += 1) {
@@ -549,10 +545,9 @@ const mutations = {
         },
       );
     }
-  },*/
+  }, */
 
 
-  
   processWordTree(state, payload) {
     const chart = {
       chartData: {
@@ -790,12 +785,14 @@ const actions = {
 
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp });
-      //dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
+      // dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
       let metaAttr = 'year';
       for (let i = 1990; i < 2019; i += 1) {
         const metaVal = i;
-        dispatch('requestMetaFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal });
+        dispatch('requestMetaFreq', {
+          queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal,
+        });
       }
 
 
@@ -804,20 +801,22 @@ const actions = {
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
       for (let i = 0; i < metaValsArray.length; i += 1) {
         const metaVal = metaValsArray[i];
-        dispatch('requestRegionFreq', { queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions });
+        dispatch('requestRegionFreq', {
+          queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions,
+        });
       }
 
       dispatch('requestMediaSources', { queryTerm, queryTermEncoded, useSubCorp });
 
-      //dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
-      
-      //dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
+      // dispatch('requestRegional', { queryTerm, queryTermEncoded, useSubCorp });
+
+      // dispatch('requestSections', { queryTerm, queryTermEncoded, useSubCorp });
       commit('changeLoadingStatus', { status: false });
 
-      //commit('processSum', { term: queryTerm, result: response.data.fullsize });
-      //commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
-      //commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
-      //commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
+      // commit('processSum', { term: queryTerm, result: response.data.fullsize });
+      // commit('processWordTree', { term: queryTerm, result: responses.freqmlURI.data });
+      // commit('processCollocations', { term: queryTerm, result: responses.collxURI.data });
+      // commit('updateRawResults', { term: queryTerm, result: responses.freqttURI.data });
     } catch (error) {
       console.log(error);
     }
@@ -837,7 +836,9 @@ const actions = {
 
 
   // API request used for metal rel. freq. and abs. freq. results
-  async requestRegionFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
+  async requestRegionFreq({ state, commit, dispatch }, {
+    queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag,
+  }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
@@ -845,17 +846,19 @@ const actions = {
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
       const relFreq = response.data.relsize;
-      commit('processRegionFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
-
+      commit('processRegionFreq', {
+        metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
+      });
     } catch (error) {
       console.log(error);
     }
   },
-  
 
 
   // API request used for metal rel. freq. and abs. freq. results
-  async requestMetaFreq({ state, commit, dispatch }, { queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag }) {
+  async requestMetaFreq({ state, commit, dispatch }, {
+    queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag,
+  }) {
     try {
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
       const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
@@ -863,7 +866,9 @@ const actions = {
       const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
       const relFreq = response.data.relsize;
-      commit('processMetaFreq', { metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject });
+      commit('processMetaFreq', {
+        metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
+      });
 
       if (!wordFormsQueryFlag) {
         commit('processKWICYearly', { term: queryTerm, result: response.data });
@@ -871,16 +876,16 @@ const actions = {
         const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
         storeObject.loadingStatus += 1;
         const responseColl = await axios.get(collxURI);
-  
-        commit('processCollocations', { metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject });
-      }
 
+        commit('processCollocations', {
+          metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   },
 
-  
 
   // API request used for word form freq. results
   async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
@@ -890,7 +895,7 @@ const actions = {
       const response = await axios.get(freqsURI);
       commit('processWordFreqSum', { term: queryTerm, result: response.data });
 
-      //const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
+      // const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
       // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
       const items = response.data.Blocks[0].Items;
 
@@ -904,8 +909,7 @@ const actions = {
           const metaVal = j;
           dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms, wordFormsQueryFlag: true });
         }
-      }*/
-
+      } */
     } catch (error) {
       console.log(error);
     }
@@ -1018,7 +1022,7 @@ const actions = {
       responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
       // responses.topLCs = await axios.get(requestURIs.topLCs);
       responses.corpInfo = await axios.get(requestURIs.corpInfo);
-      //responses.topLemmas = await axios.get(requestURIs.topLemmas);
+      // responses.topLemmas = await axios.get(requestURIs.topLemmas);
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
@@ -1027,12 +1031,12 @@ const actions = {
       commit('processDocsRessorts', { result: responses.docsRessorts.data });
       // commit('processTopLCs', { result: responses.topLCs.data });
       commit('processCorpInfo', { result: responses.corpInfo.data });
-      //commit('processTopLemmas', { result: responses.topLemmas.data });
+      // commit('processTopLemmas', { result: responses.topLemmas.data });
 
       if (router.currentRoute.params.query) {
         const routerQueryTerms = router.currentRoute.params.query.split(';');
         for (let i = 0; i < routerQueryTerms.length; i += 1) {
-          commit('queryTermAdded', {"text": routerQueryTerms[i], "tiClasses":["ti-valid"]});
+          commit('queryTermAdded', { text: routerQueryTerms[i], tiClasses: ['ti-valid'] });
           dispatch('corpusQuery', routerQueryTerms[i]);
         }
       }
@@ -1104,7 +1108,7 @@ const state = {
       component: 'bubbleChart',
       class: 'col-md-6 vis-component',
       chartProp: 'sections',
-    },*/
+    }, */
     {
       component: 'kwicTable',
       class: 'col-md-4 vis-component',
@@ -1130,7 +1134,7 @@ const state = {
       component: 'multiWordcloud',
       class: 'container-fluid p-0 d-flex',
       chartProp: 'collocations',
-    },*/
+    }, */
   ],
   infoElements: [
     {
@@ -1273,7 +1277,9 @@ const state = {
       yAxisText: 'Frequency per million tokens',
       xAxisType: 'category',
       legendEnabled: false,
-      series: [{ name: 'Normalised Frequency', data: [], wordForms: [], colorByPoint: true }],
+      series: [{
+        name: 'Normalised Frequency', data: [], wordForms: [], colorByPoint: true,
+      }],
     },
     wordFreqSummary: {
       title: 'Total Absolute Frequency and Word Forms',
@@ -1403,12 +1409,24 @@ const state = {
       items: [],
       annotationOptions: [],
       fields: [
-        { key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center' },
-        { key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center' },
-        { key: 'hitsNo', label: 'Hits', sortable: true, thStyle: { width: '40px' } },
-        { key: 'left', label: 'Left', sortable: true, class: 'text-right' },
-        { key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word' },
-        { key: 'right', label: 'Right', sortable: true, class: 'text-left' },
+        {
+          key: 'actions', label: 'View', sortable: false, thStyle: { width: '45px' }, class: 'text-center',
+        },
+        {
+          key: 'selected', label: 'All', sortable: false, thStyle: { width: '50px' }, class: 'text-center',
+        },
+        {
+          key: 'hitsNo', label: 'Hits', sortable: true, thStyle: { width: '40px' },
+        },
+        {
+          key: 'left', label: 'Left', sortable: true, class: 'text-right',
+        },
+        {
+          key: 'word', label: 'Word', sortable: true, class: 'text-center kwic-word',
+        },
+        {
+          key: 'right', label: 'Right', sortable: true, class: 'text-left',
+        },
       ],
       height: 720,
       annotationFields: [],

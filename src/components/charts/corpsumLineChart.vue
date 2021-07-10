@@ -173,9 +173,8 @@ export default {
         .x((d) => this.xScale(d.year))
         .y((d) => this.yScale(d.value));
       for (let i = 0; i < this.chartData[this.valueType].data.length; i += 1) {
-
         const pathGroup = focusGroup.append('g')
-          .attr('id', () => { return `line-group-${i}`; })
+          .attr('id', () => `line-group-${i}`)
           .attr('class', 'line-group');
 
         pathGroup.append('path')
@@ -193,14 +192,13 @@ export default {
             .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-data-circle bg-series-color-${this.wordFormsBarIndex}`; } return `line-data-circle bg-series-color-${i}`; })
             .attr('r', '4')
             .style('cursor', 'pointer')
-            .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, {x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey])}, i)})
+            .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, { x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey]) }, i); })
             .on('mouseout', () => { this.onLineCircleMouseOut(); })
-            .on('click', () => { this.onLineCircleClick(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name); })
+            .on('click', () => { this.onLineCircleClick(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name); });
 
-            //.on('mouseover', () => { this.handleLineMouseOver(i, 1) })
-            //.on('mouseout', () => { this.handleLineMouseOver(i, 0) });
+          // .on('mouseover', () => { this.handleLineMouseOver(i, 1) })
+          // .on('mouseout', () => { this.handleLineMouseOver(i, 0) });
         }
-
       }
     },
     drawGridlines() {

@@ -75,12 +75,12 @@ export default {
 
     chartData: {
       handler() {
-        var grid = this.$refs.visWrapper;
-        var pckry = new Packery( grid, {
+        const grid = this.$refs.visWrapper;
+        const pckry = new Packery(grid, {
           itemSelector: '.vis-component',
-          columnWidth: ".vis-component.col-md-4",
+          columnWidth: '.vis-component.col-md-4',
           gutter: 0,
-          percentPosition: true
+          percentPosition: true,
         });
       },
       deep: true,
@@ -117,11 +117,11 @@ export default {
     },
     changeSampleQuery(querySet) {
       console.log(this.initialChartDataState);
-      if (querySet == 1) {
+      if (querySet === 1) {
         const queryTerms = ['coche', 'carro', 'auto'];
         this.$store.commit('resetChartData', this.initialChartDataState);
         this.$store.commit('resetQueryTerms', queryTerms);
-      } else if (querySet == 2) {
+      } else if (querySet === 2) {
         const queryTerms = ['teléfono celular', 'teléfono móvil'];
         this.$store.commit('resetChartData', this.initialChartDataState);
         this.$store.commit('resetQueryTerms', queryTerms);

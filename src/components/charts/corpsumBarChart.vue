@@ -74,7 +74,7 @@
 
 <script>
 import {
-  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, CornerUpLeftIcon
+  DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, CornerUpLeftIcon,
 } from 'vue-feather-icons';
 import { ToggleButton } from 'vue-js-toggle-button';
 import { scaleLinear, scaleBand } from 'd3-scale';
@@ -90,7 +90,7 @@ export default {
     elKey: Number,
   },
   components: {
-    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton, CornerUpLeftIcon
+    DownloadIcon, ImageIcon, ListIcon, BarChart2Icon, InfoIcon, ToggleButton, CornerUpLeftIcon,
   },
   mounted() {
     // this.svgWidth = document.getElementById('container').offsetWidth * 0.75;
@@ -199,7 +199,7 @@ export default {
         .attr('y', (d) => this.yScale(d[this.yKey]))
         .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
         .attr('width', this.xScale.bandwidth())
-        //.attr('fill', (d) => this.colors(d[this.xKey]));
+        // .attr('fill', (d) => this.colors(d[this.xKey]));
         .attr('class', (d, i) => `bg-series-color-${i}`);
 
       // Create bar-blocks for new data
@@ -219,7 +219,7 @@ export default {
         .attr('y', (d) => this.yScale(d[this.yKey]))
         .attr('height', (d) => this.svgHeight - this.svgPadding.top - this.svgPadding.bottom - this.yScale(d[this.yKey]))
         .attr('width', this.xScale.bandwidth())
-        //.attr('fill', (d) => this.colors(d[this.xKey]));
+        // .attr('fill', (d) => this.colors(d[this.xKey]));
         .attr('class', (d, i) => `bg-series-color-${i}`);
     },
     renderWordForms() {
@@ -423,7 +423,7 @@ export default {
         this.activeDrilldownData = barsData;
         this.activeDrilldownParentIndex = i;
         this.createBars(barsData, i);
-        //this.$store.commit('queryTermAdded', val.tag);
+        // this.$store.commit('queryTermAdded', val.tag);
         console.log(barsData);
         this.bus.$emit('onDrilldownClick', { barsData, i });
       }
@@ -514,11 +514,11 @@ export default {
           const cx = this.xScale(d[this.xKey]) + this.xScale.bandwidth() - 15;
           const cy = this.yScale(d[this.yKey]) - 5;
           return `rotate(-45,${cx},${cy})`;
-        });*/
+        }); */
       d3.selectAll('.bar-hover-text').remove();
     },
     shadeColor(baseColor, change) {
-      return `#${ baseColor.replace(/^#/, '').replace(/../g, baseColor => (`0${Math.min(255, Math.max(0, parseInt(baseColor, 16) + Math.round(change))).toString(16)}`).substr(-2))}`;
+      return `#${baseColor.replace(/^#/, '').replace(/../g, (baseColor) => (`0${Math.min(255, Math.max(0, parseInt(baseColor, 16) + Math.round(change))).toString(16)}`).substr(-2))}`;
     },
     onFrequencyValueTypeChange(checked) {
       if (checked === 'absValue') {

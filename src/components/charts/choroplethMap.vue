@@ -10,7 +10,7 @@ export default {
     elKey: Number,
     elHeight: Number,
   },
-  data () {
+  data() {
     return {
       chartOptions: {
         exporting: {
@@ -30,22 +30,22 @@ export default {
         },
         legend: {
           title: {
-              text: this.chartProp.queryTerm + '<br/><span style="font-size: 9px; color: #666; font-weight: normal">' + this.chartProp.valueTypeLabel + '</span>',
-              style: {
-                  fontStyle: 'italic'
-              }
+            text: `${this.chartProp.queryTerm}<br/><span style="font-size: 9px; color: #666; font-weight: normal">${this.chartProp.valueTypeLabel}</span>`,
+            style: {
+              fontStyle: 'italic',
+            },
           },
           symbolWidth: 150,
           layout: 'horizontal',
           verticalAlign: 'top',
           align: 'left',
           floating: true,
-          x: -100
+          x: -100,
         },
         colorAxis: {
           min: 0,
-          minColor: "#FFFFFF",
-          maxColor: this.Highcharts.getOptions().colors[this.elKey]
+          minColor: '#FFFFFF',
+          maxColor: this.Highcharts.getOptions().colors[this.elKey],
         },
         series: [{
           data: this.chartProp.data,
@@ -54,13 +54,13 @@ export default {
           name: this.chartProp.valueTypeLabel,
           states: {
             hover: {
-              color: '#a4edba'
-            }
+              color: '#a4edba',
+            },
           },
           borderWidth: 1,
           dataLabels: {
             enabled: true,
-            format: '{point.properties.name}'
+            format: '{point.properties.name}',
           },
           events: {
             click: ({ point }) => {
@@ -72,13 +72,13 @@ export default {
         }],
         tooltip: {
           pointFormat:
-            '<span>{point.name}</span>: <b>{point.value}' + this.chartProp.valueTypeUnit + '</b><br/>',
-          shared: true
+            `<span>{point.name}</span>: <b>{point.value}${this.chartProp.valueTypeUnit}</b><br/>`,
+          shared: true,
         },
-      }
-    }
+      },
+    };
   },
-}
+};
 
 </script>
  <style scoped>

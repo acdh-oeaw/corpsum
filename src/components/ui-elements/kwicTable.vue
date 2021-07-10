@@ -204,23 +204,23 @@
 </template>
 
 <script>
-import { FileTextIcon, ExternalLinkIcon } from 'vue-feather-icons'
+import { FileTextIcon, ExternalLinkIcon, InfoIcon } from 'vue-feather-icons';
 
 export default {
   props: {
-    chartProp: Object
+    chartProp: Object,
   },
   components: {
-    FileTextIcon, ExternalLinkIcon
+    FileTextIcon, ExternalLinkIcon, InfoIcon,
   },
   mounted() {
     this.bus.$on('onLineCircleClick', (payload) => {
       this.activeFilters.push(payload.year);
       this.activeFilters.push(payload.query);
-      const items = this.chartProp.items;
+      const { items } = this.chartProp;
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
-        if (items[i].year == payload.year && items[i].queryTerm === payload.query) {
+        if (items[i].year === payload.year && items[i].queryTerm === payload.query) {
           this.filteredItemsByCharts.push(items[i]);
         }
       }
@@ -228,11 +228,11 @@ export default {
     this.bus.$on('onMediaClick', (payload) => {
       this.activeFilters.push(payload.mediaName);
       this.activeFilters.push(payload.mediaQuery);
-      const items = this.chartProp.items;
+      const { items } = this.chartProp;
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
         if (items[i].source === payload.mediaName && items[i].queryTerm === payload.mediaQuery) {
-          console.log(items[i])
+          console.log(items[i]);
           this.filteredItemsByCharts.push(items[i]);
         }
       }
@@ -263,7 +263,7 @@ export default {
         default:
           regionName = '';
       }
-      const items = this.chartProp.items;
+      const { items } = this.chartProp;
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
         if (items[i].region === regionName && items[i].queryTerm === payload.regionQuery) {
@@ -278,7 +278,7 @@ export default {
     return {
       selectedDocs: [],
       fields: this.chartProp.fields,
-      height: this.chartProp.height + 'px',
+      height: `${this.chartProp.height}px`,
       annotationFields: this.chartProp.annotationFields,
       currentPage: 1,
       perPage: 22,
@@ -296,73 +296,70 @@ export default {
       subcorpusModal: {
         id: 'create-subcorpus-modal',
         title: 'Create a subcorpus',
-        content: ''
+        content: '',
       },
       totalVisibleRows: this.chartProp.items.length,
       subcorpusTitle: '',
       filteredItemsByCharts: [],
       activeFilters: [],
-    }
+    };
   },
   computed: {
     sortedItemsKWIC() {
       if (this.$refs.table) return this.$refs.table.sortedItems;
-      else return this.chartProp.items;
+      return this.chartProp.items;
     },
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
+        .filter((f) => f.sortable)
+        .map((f) => ({ text: f.label, value: f.key }));
     },
     items() {
       if (this.filteredItemsByCharts.length > 0) {
         return this.filteredItemsByCharts;
-      } else {
-        return this.chartProp.items;
       }
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      return this.chartProp.items;
+
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
     isBusy() {
       return this.chartProp.isBusy;
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
     annotationOptions() {
       return this.chartProp.annotationOptions;
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
     totalRows: {
-      get: function() {
+      get() {
         return this.chartProp.totalRows;
       },
-      set: function(value) {
+      set(value) {
         this.chartProp.totalRows = value;
-      }
+      },
     },
     modalTextContent() {
       return this.$store.getters.modalTextContent;
-      set: (value) => console.log(value) // this.$state.commit('someMutation', value )
+      (value) => console.log(value); // this.$state.commit('someMutation', value )
     },
     tags() {
       return this.$store.getters.queryTerms;
     },
     subcorpusTitleState() {
-      return this.subcorpusTitle.length >= 4 ? true : false
+      return this.subcorpusTitle.length >= 4;
     },
     invalidFeedback() {
       if (this.subcorpusTitle.length > 4) {
-        return ''
-      } else if (this.subcorpusTitle.length > 0) {
-        return 'Enter at least 4 characters'
-      } else {
-        return 'This field is required'
+        return '';
+      } if (this.subcorpusTitle.length > 0) {
+        return 'Enter at least 4 characters';
       }
+      return 'This field is required';
     },
     validFeedback() {
-      return this.subcorpusTitleState === true ? '' : ''
-    }
+      return this.subcorpusTitleState === true ? '' : '';
+    },
   },
   watch: {
     items(val) {
@@ -371,8 +368,9 @@ export default {
   },
   methods: {
     addNewAnnoVocabulary(annoContent, annoClass, docid, rowIndex, annoType) {
-
-      this.$store.dispatch('addNewAnnoVocabulary', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
+      this.$store.dispatch('addNewAnnoVocabulary', {
+        annoContent, annoClass, docID: docid, rowIndex, annoType,
+      });
     },
     changeAnnotation(checked, annoClass, docid, rowIndex, annoType) {
       this.addAnnotation(checked, annoClass, docid, rowIndex, annoType);
@@ -381,18 +379,20 @@ export default {
       if (annoContent === undefined) {
         annoContent = '';
       }
-      this.$store.dispatch('addAnnotation', { annoContent: annoContent, annoClass: annoClass, docID: docid, rowIndex: rowIndex, annoType: annoType } );
+      this.$store.dispatch('addAnnotation', {
+        annoContent, annoClass, docID: docid, rowIndex, annoType,
+      });
     },
     removeAnnotation(event, annoClass, rowIndex, optionsArray) {
       let id = event.annoID;
       if (!id) {
-        const optionKey = Object.keys(this.items[rowIndex][annoClass]).find(key => this.items[rowIndex][annoClass][key].title === event.title);
+        const optionKey = Object.keys(this.items[rowIndex][annoClass]).find((key) => this.items[rowIndex][annoClass][key].title === event.title);
         id = this.items[rowIndex][annoClass][optionKey].annoID;
       }
-      this.$store.dispatch('removeAnnotation', { annoID: id } );
+      this.$store.dispatch('removeAnnotation', { annoID: id });
     },
     createSubcorpus() {
-      this.$store.dispatch('createSubcorpus', {docs: this.selectedDocs, title: this.subcorpusTitle} );
+      this.$store.dispatch('createSubcorpus', { docs: this.selectedDocs, title: this.subcorpusTitle });
       if (this.subcorpusTitleState && this.selectedDocs.length > 0) {
         this.$root.$emit('bv::hide::modal', this.subcorpusModal.id);
       } else {
@@ -405,13 +405,13 @@ export default {
       do {
         nextRow++;
       }
-      while (this.$refs.table.sortedItems[[nextRow]].docid == this.$refs.table.sortedItems[[curRow]].docid);
+      while (this.$refs.table.sortedItems[[nextRow]].docid === this.$refs.table.sortedItems[[curRow]].docid);
       const item = this.$refs.table.sortedItems[[nextRow]];
-      this.infoModal.title = item.source + ' - ' + item.date;
+      this.infoModal.title = `${item.source} - ${item.date}`;
       this.infoModal.rowId = nextRow;
       this.modalTextContent = '';
       this.$store.dispatch('modalTextQuery', item);
-      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.infoModal.content = JSON.stringify(item, null, 2);
     },
     prevDoc() {
       const curRow = this.infoModal.rowId;
@@ -419,39 +419,39 @@ export default {
       do {
         prevRow--;
       }
-      while (this.$refs.table.sortedItems[[prevRow]].docid == this.$refs.table.sortedItems[[curRow]].docid);
+      while (this.$refs.table.sortedItems[[prevRow]].docid === this.$refs.table.sortedItems[[curRow]].docid);
       const item = this.$refs.table.sortedItems[[prevRow]];
-      this.infoModal.title = item.source + ' - ' + item.date;
+      this.infoModal.title = `${item.source} - ${item.date}`;
       this.infoModal.rowId = prevRow;
       this.modalTextContent = '';
       this.$store.dispatch('modalTextQuery', item);
-      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.infoModal.content = JSON.stringify(item, null, 2);
     },
     info(item, index, button) {
       // this.infoModal.title = `Row index: ${index}`
-      this.infoModal.title = item.source + ' - ' + item.date;
+      this.infoModal.title = `${item.source} - ${item.date}`;
       this.infoModal.rowId = (this.perPage * (this.currentPage - 1)) + index;
       this.modalTextContent = '';
       this.$store.dispatch('modalTextQuery', item);
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+      this.infoModal.content = JSON.stringify(item, null, 2);
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button);
     },
     resetInfoModal() {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
+      this.infoModal.title = '';
+      this.infoModal.content = '';
     },
     onFiltered(filteredItems) {
       this.totalVisibleRows = filteredItems.length;
       // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
     },
     subcorpus(button) {
-      this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button)
+      this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button);
     },
     toggleSelectAllDocs(checked) {
-      console.log(checked)
-      if(!checked) {
+      console.log(checked);
+      if (!checked) {
         this.selectedDocs = [];
         // Loop all items and deselect
         for (let i = 0; i < this.items.length; i += 1) {
@@ -461,7 +461,7 @@ export default {
         // Loop all items and add them to selectedDocs (ignore duplicates)
         for (let i = 0; i < this.items.length; i += 1) {
           if (!this.selectedDocs.includes(this.items[i].docid)) {
-            this.selectedDocs.push(this.items[i].docid)
+            this.selectedDocs.push(this.items[i].docid);
           }
         }
         // Loop all items and select
@@ -473,23 +473,23 @@ export default {
     toggleSelectedDocs(item) {
       // Add or remove docid from the selectedDocs array
       if (item.selected) {
-        this.selectedDocs.push(item.docid)
+        this.selectedDocs.push(item.docid);
       } else {
         for (let i = this.selectedDocs.length - 1; i >= 0; i--) {
           if (this.selectedDocs[i] === item.docid) {
             this.selectedDocs.splice(i, 1);
           }
-        } 
+        }
       }
       // Loop all items and toggle other items with the same doc id
       for (let i = 0; i < this.items.length; i += 1) {
-        if (this.items[i].docid == item.docid) {
+        if (this.items[i].docid === item.docid) {
           this.items[i].selected = item.selected;
         }
       }
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">

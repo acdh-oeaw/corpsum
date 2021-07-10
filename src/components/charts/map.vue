@@ -88,7 +88,7 @@ export default {
 
       for (let i = 0; i < mapData.length; i += 1) {
         for (let j = 0; j < countries.length; j += 1) {
-          if (mapData[i].key == countries[j].name) {
+          if (mapData[i].key === countries[j].name) {
             mapData[i].id = countries[j].id;
             continue;
           }
