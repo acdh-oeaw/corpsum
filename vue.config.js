@@ -50,15 +50,15 @@ if (process.env.NODE_ENV === 'production') {
       devtool: 'eval-source-map',
     },
     devServer: {
-      before(app) {
-        app.use(basicAuth({
-          users: {
-            corpsum: '<the real corpsum-proxy password>', // do not git this!!!
-          },
-          realm: 'Auhorization Required',
-          challenge: true,
-        }))
-      }
+      // before(app) {
+      //   app.use(basicAuth({
+      //     users: {
+      //       corpsum: '<the real corpsum-proxy password>', // do not git this!!!
+      //     },
+      //     realm: 'Auhorization Required',
+      //     challenge: true,
+      //   }))
+      // }
     }
   };
 }
