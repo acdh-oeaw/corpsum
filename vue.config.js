@@ -1,5 +1,6 @@
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CompressionPlugin = require('compression-webpack-plugin');
+const basicAuth = require('express-basic-auth');
 
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
@@ -48,5 +49,16 @@ if (process.env.NODE_ENV === 'production') {
     configureWebpack: {
       devtool: 'eval-source-map',
     },
+    devServer: {
+      before(app) {
+        app.use(basicAuth({
+          users: {
+            corpsum: '<the real corpsum-proxy password>', // do not git this!!!
+          },
+          realm: 'Auhorization Required',
+          challenge: true,
+        }))
+      }
+    }
   };
 }
