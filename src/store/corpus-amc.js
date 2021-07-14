@@ -7,6 +7,8 @@ import router from '../router';
 Vue.prototype.$http = axios;
 Vue.prototype.axios = axios;
 
+axios.defaults.withCredentials = true;
+
 Vue.use(Vuex);
 
 function getObjectKey(object, value, property) {
