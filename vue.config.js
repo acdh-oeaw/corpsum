@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'production') {
         },
       },
     },
-    outputDir: 'public',
+    outputDir: 'html',
     configureWebpack: {
       devtool: '',
       optimization: {

@@ -29,7 +29,7 @@ const {
 
 const distDirectory =
   DIST_DIRECTORY ||
-  (config.has("distDirectory") ? config.get("distDirectory") : "../dist/");
+  (config.has("distDirectory") ? config.get("distDirectory") : "../html/");
 const port = PORT || (config.has("port") ? config.get("port") : 3000);
 const cacheEnabled = isEnabled(CACHE_ENABLED, "cacheEnabled", config);
 const cacheControlHeaderValue =
