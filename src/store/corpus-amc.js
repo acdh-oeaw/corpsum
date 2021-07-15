@@ -486,38 +486,40 @@ const mutations = {
 
     const itemsSet = [];
 
-    for (let i = 0; (i < items.length) && (i < 100); i += 1) {
-      let docIdExists = false;
-      let docRowIndex;
-      // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
-      for (let j = 0; j < itemsSet.length; j += 1) {
-        if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
-          docIdExists = true;
-          docRowIndex = j;
-          break;
+    if (items !== undefined) {
+      for (let i = 0; (i < items.length) && (i < 100); i += 1) {
+        let docIdExists = false;
+        let docRowIndex;
+        // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
+        for (let j = 0; j < itemsSet.length; j += 1) {
+          if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
+            docIdExists = true;
+            docRowIndex = j;
+            break;
+          }
         }
-      }
-      if (!docIdExists) {
-        const docRow = {
-          date: items[i].Tbl_refs[1],
-          year: items[i].Tbl_refs[2],
-          source: items[i].Tbl_refs[5],
-          region: items[i].Tbl_refs[3],
-          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-          docid: items[i].Tbl_refs[0],
-          ressort: items[i].Tbl_refs[4],
-          toknum: items[i].toknum,
-          selected: false,
-          queryTerm: payload.term,
-          hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
-          hitsNo: 1,
-        };
-        itemsSet.push(docRow);
-      } else {
-        itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
-        itemsSet[docRowIndex].hitsNo++;
+        if (!docIdExists) {
+          const docRow = {
+            date: items[i].Tbl_refs[1],
+            year: items[i].Tbl_refs[2],
+            source: items[i].Tbl_refs[5],
+            region: items[i].Tbl_refs[3],
+            left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
+            word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
+            right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
+            docid: items[i].Tbl_refs[0],
+            ressort: items[i].Tbl_refs[4],
+            toknum: items[i].toknum,
+            selected: false,
+            queryTerm: payload.term,
+            hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
+            hitsNo: 1,
+          };
+          itemsSet.push(docRow);
+        } else {
+          itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
+          itemsSet[docRowIndex].hitsNo++;
+        }
       }
     }
 
@@ -1046,17 +1048,17 @@ const actions = {
       console.log(error);
     }
   },
-/*   async corpusQueryData({ state, commit, dispatch }, params) {
-    try {
-
-      // commit('processRegional', { term: params.term, result: response.data });
-      // commit('processDispersion', { term: params.term, result: response.data });
-      // commit('processNarrative', { term: params.term, result: response.data[0] });
-      // commit('processKWIC', { term: params.term, result: kwicResp.data });
-    } catch (error) {
-      console.log(error);
-    }
-  }, */
+  /*   async corpusQueryData({ state, commit, dispatch }, params) {
+      try {
+  
+        // commit('processRegional', { term: params.term, result: response.data });
+        // commit('processDispersion', { term: params.term, result: response.data });
+        // commit('processNarrative', { term: params.term, result: response.data[0] });
+        // commit('processKWIC', { term: params.term, result: kwicResp.data });
+      } catch (error) {
+        console.log(error);
+      }
+    }, */
 };
 
 const state = {
