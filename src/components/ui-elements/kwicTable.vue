@@ -214,6 +214,7 @@ export default {
     FileTextIcon, ExternalLinkIcon, InfoIcon,
   },
   mounted() {
+    let regionName = null;
     this.bus.$on('onLineCircleClick', (payload) => {
       this.activeFilters.push(payload.year);
       this.activeFilters.push(payload.query);
@@ -238,9 +239,9 @@ export default {
       }
     });
     this.bus.$on('onRegionClick', (payload) => {
+      console.log('REGION NAME: ', payload.regionName);
       this.activeFilters.push(payload.regionName);
       this.activeFilters.push(payload.regionQuery);
-      let regionName;
       switch (payload.regionName) {
         case 'AT-Ost':
           regionName = 'aost';
@@ -272,7 +273,7 @@ export default {
       }
     });
 
-    this.bus.$emit('onRegionClick', { regionName, regionQuery });
+    if (regionName !== null) this.bus.$emit('onRegionClick', { regionName, regionQuery });
   },
   data() {
     return {
