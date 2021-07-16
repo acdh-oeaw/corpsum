@@ -449,9 +449,9 @@ const mutations = {
         { unit: 'Sentences', count: items.sentcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
         { unit: 'Words', count: items.wordcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
         { unit: 'Tokens', count: items.tokencount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-        );
-      }
-      },
+      );
+    }
+  },
   processKWIC(state, payload) {
     const items = payload.result.Lines;
 
@@ -665,27 +665,27 @@ const mutations = {
         const regionName = itemsRegions[i].str;
         switch (regionName) {
           case 'aost':
-          seriesData.data[1] = itemsRegions[i].freq;
-          break;
+            seriesData.data[1] = itemsRegions[i].freq;
+            break;
           case 'asuedost':
-          seriesData.data[2] = itemsRegions[i].freq;
-          break;
+            seriesData.data[2] = itemsRegions[i].freq;
+            break;
           case 'amitte':
             seriesData.data[3] = itemsRegions[i].freq;
             break;
-            case 'awest':
-              seriesData.data[4] = itemsRegions[i].freq;
-              break;
-              case 'agesamt':
-                seriesData.data[0] = itemsRegions[i].freq;
-                break;
-                case 'spezifisch':
-                  seriesData.data[5] = itemsRegions[i].freq;
-                  break;
-                  default:
-                  }
-                }
-              }
+          case 'awest':
+            seriesData.data[4] = itemsRegions[i].freq;
+            break;
+          case 'agesamt':
+            seriesData.data[0] = itemsRegions[i].freq;
+            break;
+          case 'spezifisch':
+            seriesData.data[5] = itemsRegions[i].freq;
+            break;
+          default:
+        }
+      }
+    }
     state.infoData.docsRegions.series = [];
     state.infoData.docsRegions.series.push(seriesData);
   },
@@ -968,7 +968,7 @@ const actions = {
       const response = await axios.get(freqttURI);
       const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
-      commit('processSources', { term: queryTerm, result: response.data.Blocks !== undefined ?  response.data.Blocks[0].Items : [], docsrcSize: wordlistDocsrcResponse.data });
+      commit('processSources', { term: queryTerm, result: response.data.Blocks !== undefined ? response.data.Blocks[0].Items : [], docsrcSize: wordlistDocsrcResponse.data });
     } catch (error) {
       console.log(error);
     }
@@ -1085,7 +1085,7 @@ const actions = {
 
 const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
-  engineAPINoCache: 'https://noske-corpsum.acdh-dev.oeaw.ac.at/run.cgi/',
+  engineAPINoCache: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   corporaList: [
     { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
