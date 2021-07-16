@@ -106,7 +106,9 @@ const mutations = {
         break;
       }
     }
-    items = payload.result.Blocks[0].Items;
+    console.log('result: ')
+    console.log(payload.result)
+    items = payload.result.Blocks !== undefined ? payload.result.Blocks[0].Items : [];
 
     const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
 
@@ -117,7 +119,9 @@ const mutations = {
     if (state.selectedSubcorpus.value !== 'none') {
       corpusTokenSize = state.infoData.activeSubcorpusTokenSize;
     } else {
-      corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+      console.log('state: ')
+      console.log(state.infoData.corpInfoTable)
+      corpusTokenSize = parseInt(state.infoData.corpInfoTable.items.length >= 5 ? state.infoData.corpInfoTable.items[4].count.split('.').join('') : 0, 10);
     }
 
     for (let i = 0; i < items.length && i < 25; i += 1) {
@@ -337,13 +341,16 @@ const mutations = {
     const { metaAttr } = payload;
     const items = payload.data.Items;
     const collSet = { query: payload.term, [metaAttr]: metaVal, data: [] };
-    for (let i = 0; i < items.length; i += 1) {
-      if (items[i].str.length > 1) {
-        const valueRounded = Math.round((Number(items[i].Stats[0].s) + Number.EPSILON) * 100) / 100;
-        collSet.data.push({ name: items[i].str, logDice: valueRounded });
+    if (items !== undefined) {
+
+      for (let i = 0; i < items.length; i += 1) {
+        if (items[i].str.length > 1) {
+          const valueRounded = Math.round((Number(items[i].Stats[0].s) + Number.EPSILON) * 100) / 100;
+          collSet.data.push({ name: items[i].str, logDice: valueRounded });
+        }
       }
+      if (items.length > 0) storeObject.collocations.push(collSet);
     }
-    if (items.length > 0) storeObject.collocations.push(collSet);
 
     storeObject.loadingStatus -= 1;
   },
@@ -421,6 +428,8 @@ const mutations = {
     state.chartData.narrative.categories.push(payload.term);
   },
   processCorpInfo(state, payload) {
+    console.log('payload: ');
+    console.log(payload.result);
     const items = payload.result.sizes;
     const { subcorpora } = payload.result;
 
@@ -433,14 +442,16 @@ const mutations = {
       }
     }
 
-    state.infoData.corpInfoTable.items.push(
-      { unit: 'Documents', count: items.doccount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-      { unit: 'Paragraphs', count: items.parcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-      { unit: 'Sentences', count: items.sentcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-      { unit: 'Words', count: items.wordcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-      { unit: 'Tokens', count: items.tokencount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
-    );
-  },
+    if (items !== undefined) { // is not entering the loop only for the AMX 60M corpus
+      state.infoData.corpInfoTable.items.push(
+        { unit: 'Documents', count: items.doccount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+        { unit: 'Paragraphs', count: items.parcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+        { unit: 'Sentences', count: items.sentcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+        { unit: 'Words', count: items.wordcount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+        { unit: 'Tokens', count: items.tokencount.replace(/\B(?=(\d{3})+(?!\d))/g, '.') },
+        );
+      }
+      },
   processKWIC(state, payload) {
     const items = payload.result.Lines;
 
@@ -465,7 +476,7 @@ const mutations = {
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.relsize;
 
-    const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10);
+    // const corpusTokenSize = parseInt(state.infoData.corpInfoTable.items[4].count.split('.').join(''), 10); -> commented because corpusTokenSize is not used
 
     // const absValue = (overallRel * corpusTokenSize) / 1000000;
     const absValue = payload.result.fullsize;
@@ -632,8 +643,10 @@ const mutations = {
   processDocsYears(state, payload) {
     const items = payload.result.Items;
     const absolute = { name: 'Number of Documents', data: [] };
-    for (let i = 0; i < items.length; i += 1) {
-      absolute.data.push([Number(items[i].str), items[i].freq]);
+    if (items !== undefined) {
+      for (let i = 0; i < items.length; i += 1) {
+        absolute.data.push([Number(items[i].str), items[i].freq]);
+      }
     }
     // Sort by year
     absolute.data.sort((a, b) => a[0] - b[0]);
@@ -646,55 +659,64 @@ const mutations = {
       name: 'Documents',
       data: [0, 0, 0, 0, 0, 0],
     };
-    for (let i = 0; i < itemsRegions.length; i += 1) {
-      const regionName = itemsRegions[i].str;
-      switch (regionName) {
-        case 'aost':
+    if (itemsRegions !== undefined) {
+
+      for (let i = 0; i < itemsRegions.length; i += 1) {
+        const regionName = itemsRegions[i].str;
+        switch (regionName) {
+          case 'aost':
           seriesData.data[1] = itemsRegions[i].freq;
           break;
-        case 'asuedost':
+          case 'asuedost':
           seriesData.data[2] = itemsRegions[i].freq;
           break;
-        case 'amitte':
-          seriesData.data[3] = itemsRegions[i].freq;
-          break;
-        case 'awest':
-          seriesData.data[4] = itemsRegions[i].freq;
-          break;
-        case 'agesamt':
-          seriesData.data[0] = itemsRegions[i].freq;
-          break;
-        case 'spezifisch':
-          seriesData.data[5] = itemsRegions[i].freq;
-          break;
-        default:
-      }
-    }
+          case 'amitte':
+            seriesData.data[3] = itemsRegions[i].freq;
+            break;
+            case 'awest':
+              seriesData.data[4] = itemsRegions[i].freq;
+              break;
+              case 'agesamt':
+                seriesData.data[0] = itemsRegions[i].freq;
+                break;
+                case 'spezifisch':
+                  seriesData.data[5] = itemsRegions[i].freq;
+                  break;
+                  default:
+                  }
+                }
+              }
     state.infoData.docsRegions.series = [];
     state.infoData.docsRegions.series.push(seriesData);
   },
   processDocsSources(state, payload) {
     const items = payload.result.Items;
     state.infoData.docsSources.data = [];
-    for (let i = 0; (i < items.length) && (i < 20); i += 1) {
-      state.infoData.docsSources.data.push({
-        id: items[i].str,
-        name: items[i].str,
-        value: items[i].freq,
-        sortIndex: i,
-      });
+    if (items !== undefined) {
+
+      for (let i = 0; (i < items.length) && (i < 20); i += 1) {
+        state.infoData.docsSources.data.push({
+          id: items[i].str,
+          name: items[i].str,
+          value: items[i].freq,
+          sortIndex: i,
+        });
+      }
     }
   },
   processDocsRessorts(state, payload) {
     const items = payload.result.Items;
     state.infoData.docsRessorts.data = [];
-    for (let i = 0; (i < items.length) && (i < 20); i += 1) {
-      state.infoData.docsRessorts.data.push({
-        id: items[i].str,
-        name: items[i].str,
-        value: items[i].freq,
-        sortIndex: i,
-      });
+    if (items !== undefined) {
+
+      for (let i = 0; (i < items.length) && (i < 20); i += 1) {
+        state.infoData.docsRessorts.data.push({
+          id: items[i].str,
+          name: items[i].str,
+          value: items[i].freq,
+          sortIndex: i,
+        });
+      }
     }
   },
   processTopLCs(state, payload) {
@@ -901,7 +923,7 @@ const actions = {
 
       // const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
       // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
-      const items = response.data.Blocks[0].Items;
+      // const items = response.data.Blocks[0].Items; -> is commented because items is not used here
 
 
       /*
@@ -946,7 +968,7 @@ const actions = {
       const response = await axios.get(freqttURI);
       const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
       const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
-      commit('processSources', { term: queryTerm, result: response.data.Blocks[0].Items, docsrcSize: wordlistDocsrcResponse.data });
+      commit('processSources', { term: queryTerm, result: response.data.Blocks !== undefined ?  response.data.Blocks[0].Items : [], docsrcSize: wordlistDocsrcResponse.data });
     } catch (error) {
       console.log(error);
     }
@@ -1050,7 +1072,7 @@ const actions = {
   },
   /*   async corpusQueryData({ state, commit, dispatch }, params) {
       try {
-  
+
         // commit('processRegional', { term: params.term, result: response.data });
         // commit('processDispersion', { term: params.term, result: response.data });
         // commit('processNarrative', { term: params.term, result: response.data[0] });

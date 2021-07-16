@@ -202,6 +202,8 @@ export default {
         // .attr('fill', (d) => this.colors(d[this.xKey]));
         .attr('class', (d, i) => `bg-series-color-${i}`);
 
+      console.log('BARS: ', bars)
+
       // Create bar-blocks for new data
       const newBars = bars
         .enter()
