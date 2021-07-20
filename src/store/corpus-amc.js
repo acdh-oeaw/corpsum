@@ -1082,7 +1082,7 @@ const state = {
   engineAPINoCache: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   selectedCorpus: { name: 'AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
   corporaList: [
-    { name: 'Corpus: AMC 3.1', value: 'amc_3.1', desc: 'The latest and full Austrian Media Corpus' },
+    { name: 'Corpus: AMC 3.2', value: 'amc_3.2', desc: 'The latest and full Austrian Media Corpus' },
     { name: 'Corpus: AMC 60M', value: 'amc_60M', desc: 'A 60M token sample of Austrian Media Corpus' },
     { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
     { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
