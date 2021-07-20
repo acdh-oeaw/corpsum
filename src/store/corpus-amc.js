@@ -106,8 +106,6 @@ const mutations = {
         break;
       }
     }
-    console.log('result: ')
-    console.log(payload.result)
     items = payload.result.Blocks !== undefined ? payload.result.Blocks[0].Items : [];
 
     const termArrayKey = getObjectKey(state.chartData.queryRelSummary.series[0].data, payload.term, 'name');
@@ -119,8 +117,6 @@ const mutations = {
     if (state.selectedSubcorpus.value !== 'none') {
       corpusTokenSize = state.infoData.activeSubcorpusTokenSize;
     } else {
-      console.log('state: ')
-      console.log(state.infoData.corpInfoTable)
       corpusTokenSize = parseInt(state.infoData.corpInfoTable.items.length >= 5 ? state.infoData.corpInfoTable.items[4].count.split('.').join('') : 0, 10);
     }
 
@@ -428,8 +424,6 @@ const mutations = {
     state.chartData.narrative.categories.push(payload.term);
   },
   processCorpInfo(state, payload) {
-    console.log('payload: ');
-    console.log(payload.result);
     const items = payload.result.sizes;
     const { subcorpora } = payload.result;
 
