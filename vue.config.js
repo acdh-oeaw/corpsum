@@ -2,7 +2,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CompressionPlugin = require('compression-webpack-plugin');
 const basicAuth = require('express-basic-auth');
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
   module.exports = {
     css: {
       sourceMap: true,
