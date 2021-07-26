@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
-    "test": "echo we don't test frontends, our users do",
+    "test": "echo \"we don't test frontends, our users do\"",
     "start": "cd server && npm install --only=production && node server.js"
   },
   "engines": {
