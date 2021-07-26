@@ -9,6 +9,10 @@
     "test": "echo we don't test frontends, our users do",
     "start": "cd server && npm install --only=production && node server.js"
   },
+  "engines": {
+    "node": "14.x",
+    "npm": "7.16.x"
+  },
   "dependencies": {
     "@johmun/vue-tags-input": "^2.0.1",
     "axios": ">=0.18.1",
