@@ -860,13 +860,13 @@ export const actions = {
       requestURIs.freqmlURI = `${state.engineAPI}freqml?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}attrs=word;ctxattrs=word;pagesize=1000;gdexcnt=0;ml=1;flimit=0;ml1attr=word;ml1ctx=-1<0;ml2attr=word;ml2ctx=0~0>0;freqlevel=3;ml3attr=word;ml3ctx=1>0;format=json`;
       requestURIs.collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.corpusName};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=50;cbgrfns=d;csortfn=d;format=json`;
       const responses = {};
-      responses.freqttURI = await axios.get(requestURIs.freqttURI);
-      responses.freqsURI = await axios.get(requestURIs.freqsURI);
-      responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI);
-      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI);
-      responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI);
-      responses.freqmlURI = await axios.get(requestURIs.freqmlURI);
-      responses.collxURI = await axios.get(requestURIs.collxURI);
+      responses.freqttURI = await axios.get(requestURIs.freqttURI, { withCredentials: true });
+      responses.freqsURI = await axios.get(requestURIs.freqsURI, { withCredentials: true });
+      responses.wordlistDocsrcURI = await axios.get(requestURIs.wordlistDocsrcURI, { withCredentials: true });
+      responses.wordlistRessortURI = await axios.get(requestURIs.wordlistRessortURI, { withCredentials: true });
+      responses.viewattrsxURI = await axios.get(requestURIs.viewattrsxURI, { withCredentials: true });
+      responses.freqmlURI = await axios.get(requestURIs.freqmlURI, { withCredentials: true });
+      responses.collxURI = await axios.get(requestURIs.collxURI, { withCredentials: true });
 
       // KWIC Annotation
       const annoClasses = await axios.get('https://skeann.acdh-dev.oeaw.ac.at/1/MARA/annotationClasses');
@@ -895,7 +895,7 @@ export const actions = {
   },
   async modalTextQuery({ state, commit, dispatch }, item) {
     try {
-      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`);
+      const response = await axios.get(`${state.engineAPI}structctx?corpname=${state.corpusName};pos=${item.toknum};struct=doc;format=json`, { withCredentials: true });
       commit('updateModalTextContent', { term: item.word, result: response.data });
     } catch (error) {
       console.log(error);
@@ -961,13 +961,13 @@ export const actions = {
       requestURIs.topLemmas = `${state.engineAPI}wordlist?corpname=${state.corpusName};wlmaxitems=50;wlattr=lemma;wlminfreq=5;wlsort=f;wlnums=frq;format=json`;
 
       const responses = {};
-      responses.docsYears = await axios.get(requestURIs.docsYears);
-      responses.docsRegions = await axios.get(requestURIs.docsRegions);
-      responses.docsSources = await axios.get(requestURIs.docsSources);
-      responses.docsRessorts = await axios.get(requestURIs.docsRessorts);
+      responses.docsYears = await axios.get(requestURIs.docsYears, { withCredentials: true });
+      responses.docsRegions = await axios.get(requestURIs.docsRegions, { withCredentials: true });
+      responses.docsSources = await axios.get(requestURIs.docsSources, { withCredentials: true });
+      responses.docsRessorts = await axios.get(requestURIs.docsRessorts, { withCredentials: true });
       // responses.topLCs = await axios.get(requestURIs.topLCs);
-      responses.corpInfo = await axios.get(requestURIs.corpInfo);
-      responses.topLemmas = await axios.get(requestURIs.topLemmas);
+      responses.corpInfo = await axios.get(requestURIs.corpInfo, { withCredentials: true });
+      responses.topLemmas = await axios.get(requestURIs.topLemmas, { withCredentials: true });
 
       commit('changeLoadingStatus', { status: false, type: 'intro' });
       commit('processDocsYears', { result: responses.docsYears.data });
