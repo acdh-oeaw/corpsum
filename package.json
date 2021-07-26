@@ -8,6 +8,10 @@
     "lint": "vue-cli-service lint",
     "start": "cd server && npm install --only=production && node server.js"
   },
+  "engines": {
+    "node": "14.x",
+    "npm": "7.16.x"
+  },
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
     "axios": "^0.21.1",
