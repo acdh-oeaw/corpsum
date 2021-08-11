@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 3000",
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
     "test": "echo \"we don't test frontends, our users do\"",
