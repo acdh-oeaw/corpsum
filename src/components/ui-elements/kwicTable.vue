@@ -340,9 +340,14 @@ export default {
         this.chartProp.totalRows = value;
       },
     },
-    modalTextContent() {
-      return this.$store.getters.modalTextContent;
+    modalTextContent: {
+      get() {
+        return this.$store.getters.modalTextContent;
       (value) => console.log(value); // this.$state.commit('someMutation', value )
+      },
+      set(newVal) {
+        return newVal
+      }
     },
     tags() {
       return this.$store.getters.queryTerms;
