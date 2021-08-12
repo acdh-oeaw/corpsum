@@ -76,6 +76,10 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { line, curveCardinal } from 'd3-shape';
 import { format } from 'd3-format';
 
+/**
+ * This class handles the different clicks possibilities on the Freq. and Forms table
+ * 
+ */
 export default {
   name: 'corpsumLineChart',
   props: {
@@ -87,16 +91,19 @@ export default {
   },
   mounted() {
     this.drawChart();
+    // onDrilldownClick handles the click on the column 
     this.bus.$on('onDrilldownClick', (payload) => {
       this.wordFormsToShow = payload.barsData;
       this.wordFormsBarIndex = payload.i;
       this.drawChart(payload.i);
     });
+    // onDrilldownGoBack handles the return function to the initial columns presentation state
     this.bus.$on('onDrilldownGoBack', () => {
       this.wordFormsToShow = false;
       this.wordFormsBarIndex = false;
       this.drawChart();
     });
+    // onBarHover handles the hovering with the mouse of the column component in the table
     this.bus.$on('onBarHover', (payload) => {
       this.highlightLine(payload.name, payload.flag);
     });
@@ -110,7 +117,7 @@ export default {
       },
       xKey: 'year',
       yKey: 'value',
-      valueType: 'relative',
+      valueType: 'relative', // is either relative or absolute. The wordForms array has 2 entries, relative and absolute
       componentKey: 0,
       showTableIcon: true,
       showChartIcon: false,
@@ -300,16 +307,21 @@ export default {
       if (this.wordFormsToShow) {
         const wordFormsLines = { absolute: { data: [] }, relative: { data: [] } };
         for (let i = 0; i < this.wordFormsToShow.length; i += 1) {
+          console.log('this.chartProp:', this.chartProp, ' AND ', this.chartProp.wordForms.absolute, ' | ', this.chartProp.wordForms.relative) // these relative and absolute values return objects of length 0 
           let key = this.getObjectKey(this.chartProp.wordForms.absolute.data, `[word="${this.wordFormsToShow[i].name}"]`, 'name');
-          wordFormsLines.absolute.data.push(this.chartProp.wordForms[this.valueType].data[key]);
+          console.log('key: ', key) // returns undefined
+          wordFormsLines.absolute.data.push(this.chartProp.wordForms[this.valueType].data[key]); 
           key = this.getObjectKey(this.chartProp.wordForms.relative.data, `[word="${this.wordFormsToShow[i].name}"]`, 'name');
           wordFormsLines.relative.data.push(this.chartProp.wordForms[this.valueType].data[key]);
         }
+        console.log('returns after looping', wordFormsLines) // returns an array of undefined
         return wordFormsLines;
-      } return this.chartProp;
+      } console.log('did not go inside the loop, returns: ', this.chartProp) 
+      return this.chartProp;
     },
     flatDomainItems() {
       const domainData = this.chartData[this.valueType].data;
+      console.log('domainData: ', domainData, ' and-> ', this.chartData) // returns arrays of undefined
       const domainItems = [];
       for (let i = 0; i < domainData.length; i += 1) {
         for (let j = 0; j < domainData[i].data.length; j += 1) {

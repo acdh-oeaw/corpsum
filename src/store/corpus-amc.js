@@ -3,6 +3,10 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import router from '../router';
 
+/**
+ * This class handles the Austrian Media Corpus.
+ */
+
 // Axios properties
 Vue.prototype.$http = axios;
 Vue.prototype.axios = axios;
@@ -807,6 +811,7 @@ const actions = {
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp });
       // dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
+      // TODO: remove the loop and insert one request instead
       let metaAttr = 'year';
       for (let i = 1990; i < 2019; i += 1) {
         const metaVal = i;
@@ -841,6 +846,8 @@ const actions = {
       console.log(error);
     }
   },
+
+  
   // API request used for total rel. freq. and KWIC results
   async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
@@ -1085,7 +1092,7 @@ const state = {
     { name: 'Corpus: AMC 3.2', value: 'amc_3.2', desc: 'The latest and full Austrian Media Corpus' },
     { name: 'Corpus: AMC 60M', value: 'amc_60M', desc: 'A 60M token sample of Austrian Media Corpus' },
     { name: 'Corpus: AMC Demo', value: 'amc3_demo', desc: 'A limited-size demo of Austrian Media Corpus' },
-    { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' },
+    { name: 'Corpus: wrdiarium02.1', value: 'wrdiarium02.1', desc: 'Wienerisches Diarium 02.1' }, // Has another structure
   ],
   selectedSubcorpus: { name: 'Subcorpus: None', value: 'none', desc: 'Use the original corpus' },
   subcorporaList: [

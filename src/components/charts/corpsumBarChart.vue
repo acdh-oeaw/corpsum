@@ -83,6 +83,10 @@ import { selectAll } from 'd3-selection';
 import { transition } from 'd3-transition';
 import * as d3 from 'd3';
 
+/**
+ * This class is responsible for the data representation of the Freq. and Forms table
+ * 
+ */
 export default {
   name: 'corpsumBarChart',
   props: {
@@ -201,8 +205,6 @@ export default {
         .attr('width', this.xScale.bandwidth())
         // .attr('fill', (d) => this.colors(d[this.xKey]));
         .attr('class', (d, i) => `bg-series-color-${i}`);
-
-      console.log('BARS: ', bars)
 
       // Create bar-blocks for new data
       const newBars = bars
@@ -416,9 +418,11 @@ export default {
       d3.select(`#t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`).remove();
       let lineName = d.name;
       if (d.query) lineName = `[word="${d.name}"]`;
-      this.bus.$emit('onBarHover', { name: lineName, flag: false });
+      this.bus.$emit('onBarHover', { name: lineName, flag: false }); // cannot read property 'name' of undefined 
     },
     handleBarClick(d, i) {
+      // barsData holds all the information about all the possible connected words to the user's search input in an array 
+      // Each entry is of type Object with the attributes: absValue, name, query, relValue, thisHeight, yEndPos
       const barsData = this.chartProp.series[0].wordForms.filter((el) => el.query === d.name).slice(0, 15);
       if (barsData) {
         this.activeDrilldownQuery = d.name;
@@ -426,7 +430,6 @@ export default {
         this.activeDrilldownParentIndex = i;
         this.createBars(barsData, i);
         // this.$store.commit('queryTermAdded', val.tag);
-        console.log(barsData);
         this.bus.$emit('onDrilldownClick', { barsData, i });
       }
     },
