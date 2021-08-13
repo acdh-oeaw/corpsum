@@ -53,7 +53,7 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <div class="corpsum-bar-chart" ref="chart" :key="componentKey">
+      <div class="corpsum-bar-chart" :key="componentKey" ref="chart">
         <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
@@ -62,6 +62,7 @@
             <g id="bars-group"></g>
           </g>
         </svg>
+      <!-- <highcharts :options="chartOptions" ref="chartTry" v-show="showChartElement"></highcharts> -->
         <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
           <corner-up-left-icon></corner-up-left-icon>
           Go Back
@@ -107,6 +108,14 @@ export default {
   },
   data() {
     return {
+      // chartOptions: {
+      //   zoomType: 'xy',
+      //   height: 275,
+      //   spacingBottom: 30,
+      //   spacingTop: 25,
+      //   spacingLeft: 40,
+      //   spacingRight: 20,
+      // },
       svgWidth: 0,
       svgHeight: 275,
       svgPadding: {
@@ -559,7 +568,9 @@ export default {
       this.$refs.chart.$children[0].chart.downloadCSV();
     },
     showTable() {
-      this.$refs.chart.$children[0].chart.viewData();
+      console.log('showTable function: ', this.$refs.chart, 'children: ', this.$refs.chart.$children)
+      this.$refs.chart.$children[0].chart.viewData(); // this.$refs.chart is the html object and has no children
+      console.log(this.$el, this.$el.querySelector('.highcharts-data-table')) // querySelector highcharts is null
       this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
