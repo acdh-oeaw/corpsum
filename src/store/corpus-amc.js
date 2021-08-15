@@ -152,6 +152,7 @@ const mutations = {
   },
 
 
+  // This method is part of the requestMetaFreq method
   processMetaFreq(state, payload) {
     const metaAttr = payload;
     const { metaVal } = payload;
@@ -182,6 +183,8 @@ const mutations = {
       } else {
         storeObject.absolute.data.push({ name: queryTerm, data: [absData] });
       }
+
+      console.log('storeObject.absolue.data: ', storeObject.absolute.data)
 
       if (relDataKey) {
         // Avoid duplicating the same data
@@ -286,16 +289,17 @@ const mutations = {
       const yearKey = getObjectKey(state.infoData.docsYears.data[0].data, Number(items[i].Word[0].n), [0]);
       const yearTokenSize = state.infoData.docsYears.data[0].data[yearKey][1];
       const relValue = (items[i].freq * 1000000) / yearTokenSize;
-      absolute.data.push([Number(items[i].Word[0].n), items[i].freq]);
-      relative.data.push([Number(items[i].Word[0].n), Math.round((relValue + Number.EPSILON) * 100) / 100]);
+      absolute.data.push({ year: Number(items[i].Word[0].n), value: items[i].freq });
+      relative.data.push({ year: Number(items[i].Word[0].n), value: Math.round((relValue + Number.EPSILON) * 100) / 100 });
       // skeRelative.data.push([Number(items[i].Word[0].n), items[i].rel]);
     }
     // Sort by year
-    absolute.data.sort((a, b) => a[0] - b[0]);
-    relative.data.sort((a, b) => a[0] - b[0]);
+    absolute.data.sort((a, b) => a.year - b.year);
+    relative.data.sort((a, b) => a.year - b.year);
     // skeRelative.data.sort((a, b) => a[0] - b[0]);
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
+    console.log('state.chartData.temporal', state.chartData.temporal)
     // state.chartData.temporal.skeRelative.data.push(skeRelative);
   },
   processSources(state, payload) {
@@ -784,10 +788,12 @@ const actions = {
     try {
       commit('changeLoadingStatus', { status: true });
 
+      // updating the state regarding its selected corpus if the router holds the corresponding parameter
       if (router.currentRoute.params.corpus) {
         const corpusKey = getObjectKey(state.corporaList, router.currentRoute.params.corpus, 'value');
         state.selectedcorpus = state.corporaList[corpusKey];
       }
+      // updating the state regarding its selected subcorpus if the router holds the corresponding parameter
       if (router.currentRoute.params.subcorpus) {
         const subcorpusKey = getObjectKey(state.subcorporaList, router.currentRoute.params.subcorpus, 'value');
         state.selectedSubcorpus = state.subcorporaList[subcorpusKey];
@@ -807,21 +813,21 @@ const actions = {
       const responses = {};
       */
 
-      dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp });
-      dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp });
-      // dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp }); // total rel. freq. and KWIC results
+      dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp }); // word form freq. results
+      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
       // TODO: remove the loop and insert one request instead
-      let metaAttr = 'year';
-      for (let i = 1990; i < 2019; i += 1) {
-        const metaVal = i;
-        dispatch('requestMetaFreq', {
-          queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal,
-        });
-      }
+      // let metaAttr = 'year';
+      // for (let i = 1990; i < 2019; i += 1) {
+      //   const metaVal = i;
+      //   dispatch('requestMetaFreq', {
+      //     queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal,
+      //   });
+      // }
 
 
-      metaAttr = 'region';
+      let metaAttr = 'region';
       // 'agesamt', 'spezifisch'
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
       for (let i = 0; i < metaValsArray.length; i += 1) {

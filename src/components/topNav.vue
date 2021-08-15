@@ -181,6 +181,7 @@ export default {
         default:
           val.tag.text = `[word="${val.tag.text}"]`;
       }
+      // appending after the first search query the analysis parameter to the router
       if (this.$router.currentRoute.name !== 'analysis') {
         this.$router.push({ name: 'analysis' });
       }

@@ -199,9 +199,9 @@ export default {
             .attr('class', () => { if (this.wordFormsBarIndex !== false) { return `line-data-circle bg-series-color-${this.wordFormsBarIndex}`; } return `line-data-circle bg-series-color-${i}`; })
             .attr('r', '4')
             .style('cursor', 'pointer')
-            .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, { x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey]) }, i); })
+            .on('mouseover', () => { this.onLineCircleMouseOver(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name, { x: this.xScale(this.chartData[this.valueType].data[i].data[j][this.xKey]), y: this.yScale(this.chartData[this.valueType].data[i].data[j][this.yKey]) }, i); }) // produce undefined property 'data'
             .on('mouseout', () => { this.onLineCircleMouseOut(); })
-            .on('click', () => { this.onLineCircleClick(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name); });
+            .on('click', () => { this.onLineCircleClick(this.chartData[this.valueType].data[i].data[j][this.xKey], this.chartData[this.valueType].data[i].name); }); // produce undefined property 'data'
 
           // .on('mouseover', () => { this.handleLineMouseOver(i, 1) })
           // .on('mouseout', () => { this.handleLineMouseOver(i, 0) });

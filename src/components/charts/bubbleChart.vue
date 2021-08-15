@@ -150,6 +150,7 @@ export default {
       this.$refs.chart.chart.downloadCSV();
     },
     showTable() {
+      console.log('showTable function: ', this.$refs.chart, 'children: ', this.$refs.chart.$children)
       this.$refs.chart.chart.viewData();
       this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
