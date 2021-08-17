@@ -152,7 +152,7 @@ const mutations = {
   },
 
 
-  // This method is part of the requestMetaFreq method
+  // This method is part of the requestMetaFreq method. Is the sequential version for processTemporal.
   processMetaFreq(state, payload) {
     const metaAttr = payload;
     const { metaVal } = payload;
@@ -491,15 +491,19 @@ const mutations = {
 
     state.chartData.queryRelSummary.loadingStatus -= 1;
     state.chartData.kwic.loadingStatus -= 1;
+
+    console.log('kwic items: ', state.chartData.kwic)
   },
 
 
   processKWICYearly(state, payload) {
+    console.log('the payload is: ', payload)
     const items = payload.result.Lines;
-
+    
     const itemsSet = [];
-
+    
     if (items !== undefined) {
+      console.log('In ProcessKWICYEARLY', items, items.length)
       for (let i = 0; (i < items.length) && (i < 100); i += 1) {
         let docIdExists = false;
         let docRowIndex;
@@ -540,7 +544,6 @@ const mutations = {
 
     state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
   },
-
 
   /*
   processKWICYearly(state, payload) {
@@ -815,7 +818,7 @@ const actions = {
 
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp }); // total rel. freq. and KWIC results
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp }); // word form freq. results
-      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
+      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp, storeObject: state.chartData.temporal, });
 
       // TODO: remove the loop and insert one request instead
       // let metaAttr = 'year';
@@ -826,7 +829,7 @@ const actions = {
       //   });
       // }
 
-
+      // metaAttr = 'region';
       let metaAttr = 'region';
       // 'agesamt', 'spezifisch'
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
@@ -888,7 +891,7 @@ const actions = {
   },
 
 
-  // API request used for metal rel. freq. and abs. freq. results
+  // API request used for metal rel. freq. and abs. freq. results. Is the sequential version for requestTemporal
   async requestMetaFreq({ state, commit, dispatch }, {
     queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag,
   }) {
@@ -902,10 +905,12 @@ const actions = {
       commit('processMetaFreq', {
         metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
       });
+      console.log('requestmetaFreq response.data: ', response.data)
 
       if (!wordFormsQueryFlag) {
+        console.log(queryTerm)
         commit('processKWICYearly', { term: queryTerm, result: response.data });
-
+        console.log('result: response.data ', response.data);
         const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
         storeObject.loadingStatus += 1;
         const responseColl = await axios.get(collxURI);
@@ -948,11 +953,33 @@ const actions = {
     }
   },
   // API request used for temporal freq. results
-  async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
+  async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, storeObject }) {
     try {
       const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
+      console.log('response.data requestTemporal: ', response.data, response.data.Blocks, response.data.Blocks[0]);
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
+      
+      let metaAttr = 'year';
+      for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
+        const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${response.data.Blocks[0].Items[i].Word[0].n}"/>`)
+        const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
+        const responseColl = await axios.get(collxURI);
+
+        commit('processCollocations', {
+          metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
+        });
+      }
+      // commit('processKWICYearly', { term: queryTerm, result: response.data });
+      // const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
+      // storeObject.loadingStatus += 1;
+      // const responseColl = await axios.get(collxURI);
+
+      // commit('processCollocations', {
+      //   metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
+      // });
+    
+      // commit('processCollocationsAll', { term: queryTerm, result: response.data }); TODO
     } catch (error) {
       console.log(error);
     }

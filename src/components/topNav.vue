@@ -160,6 +160,7 @@ export default {
       console.log(this.$refs.searchInput);
       this.$refs.searchInput.performAddTags(this.tag);
     },
+    // initiates the search process 
     tagAdded(val) {
       this.tag = '';
       switch (this.queryAttribute.value) {
@@ -185,8 +186,8 @@ export default {
       if (this.$router.currentRoute.name !== 'analysis') {
         this.$router.push({ name: 'analysis' });
       }
-      this.$store.commit('queryTermAdded', val.tag);
-      this.$store.dispatch('corpusQuery', val.tag.text);
+      this.$store.commit('queryTermAdded', val.tag); // updates the queryTerms of the state.chartData
+      this.$store.dispatch('corpusQuery', val.tag.text); // sending the search query to the selected corpus
     },
     tagRemoved(val) {
       this.tag = '';
