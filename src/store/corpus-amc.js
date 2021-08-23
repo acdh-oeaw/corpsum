@@ -184,8 +184,6 @@ const mutations = {
         storeObject.absolute.data.push({ name: queryTerm, data: [absData] });
       }
 
-      console.log('storeObject.absolue.data: ', storeObject.absolute.data)
-
       if (relDataKey) {
         // Avoid duplicating the same data
         if (!getObjectKey(storeObject.relative.data[relDataKey].data, relData.year, 'year')) {
@@ -299,7 +297,6 @@ const mutations = {
     // skeRelative.data.sort((a, b) => a[0] - b[0]);
     state.chartData.temporal.absolute.data.push(absolute);
     state.chartData.temporal.relative.data.push(relative);
-    console.log('state.chartData.temporal', state.chartData.temporal)
     // state.chartData.temporal.skeRelative.data.push(skeRelative);
   },
   processSources(state, payload) {
@@ -457,7 +454,7 @@ const mutations = {
   processKWIC(state, payload) {
     const items = payload.result.Lines;
 
-    /*
+    
     for (let i = 0; i < items.length; i += 1) {
       state.chartData.kwic.items.push(
         {
@@ -474,7 +471,7 @@ const mutations = {
           queryTerm: payload.term,
         },
       );
-    } */
+    } 
     // Use overall rel. freq. data for other charts
     const overallRel = payload.result.relsize;
 
@@ -492,18 +489,16 @@ const mutations = {
     state.chartData.queryRelSummary.loadingStatus -= 1;
     state.chartData.kwic.loadingStatus -= 1;
 
-    console.log('kwic items: ', state.chartData.kwic)
   },
 
 
+  // Key Word in Context
   processKWICYearly(state, payload) {
-    console.log('the payload is: ', payload)
     const items = payload.result.Lines;
     
     const itemsSet = [];
     
     if (items !== undefined) {
-      console.log('In ProcessKWICYEARLY', items, items.length)
       for (let i = 0; (i < items.length) && (i < 100); i += 1) {
         let docIdExists = false;
         let docRowIndex;
@@ -515,7 +510,7 @@ const mutations = {
             break;
           }
         }
-        if (!docIdExists) {
+        if (!docIdExists) { // first iteration starts always here
           const docRow = {
             date: items[i].Tbl_refs[1],
             year: items[i].Tbl_refs[2],
@@ -905,12 +900,9 @@ const actions = {
       commit('processMetaFreq', {
         metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
       });
-      console.log('requestmetaFreq response.data: ', response.data)
 
       if (!wordFormsQueryFlag) {
-        console.log(queryTerm)
         commit('processKWICYearly', { term: queryTerm, result: response.data });
-        console.log('result: response.data ', response.data);
         const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
         storeObject.loadingStatus += 1;
         const responseColl = await axios.get(collxURI);
@@ -957,8 +949,9 @@ const actions = {
     try {
       const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
       const response = await axios.get(freqttURI);
-      console.log('response.data requestTemporal: ', response.data, response.data.Blocks, response.data.Blocks[0]);
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
+      
+      commit('processKWICYearly', { term: queryTerm, result: response.data });
       
       let metaAttr = 'year';
       for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
@@ -970,7 +963,6 @@ const actions = {
           metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
         });
       }
-      // commit('processKWICYearly', { term: queryTerm, result: response.data });
       // const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
       // storeObject.loadingStatus += 1;
       // const responseColl = await axios.get(collxURI);
