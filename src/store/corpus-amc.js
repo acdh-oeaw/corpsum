@@ -451,6 +451,8 @@ const mutations = {
       );
     }
   },
+
+  // Key Word in Context
   processKWIC(state, payload) {
     const items = payload.result.Lines;
 
@@ -490,78 +492,6 @@ const mutations = {
     state.chartData.kwic.loadingStatus -= 1;
 
   },
-
-
-  // Key Word in Context
-  processKWICYearly(state, payload) {
-    const items = payload.result.Lines;
-    
-    const itemsSet = [];
-    
-    if (items !== undefined) {
-      for (let i = 0; (i < items.length) && (i < 100); i += 1) {
-        let docIdExists = false;
-        let docRowIndex;
-        // for (let j = 0; j < state.chartData.kwic.items.length; j += 1) {
-        for (let j = 0; j < itemsSet.length; j += 1) {
-          if (itemsSet[j].docid === items[i].Tbl_refs[0]) {
-            docIdExists = true;
-            docRowIndex = j;
-            break;
-          }
-        }
-        if (!docIdExists) { // first iteration starts always here
-          const docRow = {
-            date: items[i].Tbl_refs[1],
-            year: items[i].Tbl_refs[2],
-            source: items[i].Tbl_refs[5],
-            region: items[i].Tbl_refs[3],
-            left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-            word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-            right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-            docid: items[i].Tbl_refs[0],
-            ressort: items[i].Tbl_refs[4],
-            toknum: items[i].toknum,
-            selected: false,
-            queryTerm: payload.term,
-            hits: [typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : ''],
-            hitsNo: 1,
-          };
-          itemsSet.push(docRow);
-        } else {
-          itemsSet[docRowIndex].hits.push(typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '');
-          itemsSet[docRowIndex].hitsNo++;
-        }
-      }
-    }
-
-    state.chartData.kwic.items.push(...itemsSet);
-
-    state.chartData.kwic.totalRows += state.chartData.kwic.items.length;
-  },
-
-  /*
-  processKWICYearly(state, payload) {
-    const items = payload.result.Lines;
-    for (let i = 0; i < items.length; i += 1) {
-      state.chartData.kwic.items.push(
-        {
-          date: items[i].Tbl_refs[1],
-          source: items[i].Tbl_refs[4],
-          region: items[i].Tbl_refs[2],
-          left: typeof items[i].Left[0] !== 'undefined' ? items[i].Left[0].str : '',
-          word: typeof items[i].Kwic[0] !== 'undefined' ? items[i].Kwic[0].str : '',
-          right: typeof items[i].Right[0] !== 'undefined' ? items[i].Right[0].str : '',
-          docid: items[i].Tbl_refs[0],
-          topic: items[i].Tbl_refs[3],
-          toknum: items[i].toknum,
-          selected: false,
-          queryTerm: payload.term,
-        },
-      );
-    }
-  }, */
-
 
   processWordTree(state, payload) {
     const chart = {
@@ -815,16 +745,6 @@ const actions = {
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp }); // word form freq. results
       dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp, storeObject: state.chartData.temporal, });
 
-      // TODO: remove the loop and insert one request instead
-      // let metaAttr = 'year';
-      // for (let i = 1990; i < 2019; i += 1) {
-      //   const metaVal = i;
-      //   dispatch('requestMetaFreq', {
-      //     queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal,
-      //   });
-      // }
-
-      // metaAttr = 'region';
       let metaAttr = 'region';
       // 'agesamt', 'spezifisch'
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
@@ -885,38 +805,6 @@ const actions = {
     }
   },
 
-
-  // API request used for metal rel. freq. and abs. freq. results. Is the sequential version for requestTemporal
-  async requestMetaFreq({ state, commit, dispatch }, {
-    queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag,
-  }) {
-    try {
-      const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.year;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=19;async=0;format=json`;
-      storeObject.loadingStatus += 1;
-      const response = await axios.get(viewattrsxURI);
-      const absFreq = response.data.fullsize;
-      const relFreq = response.data.relsize;
-      commit('processMetaFreq', {
-        metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
-      });
-
-      if (!wordFormsQueryFlag) {
-        commit('processKWICYearly', { term: queryTerm, result: response.data });
-        const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
-        storeObject.loadingStatus += 1;
-        const responseColl = await axios.get(collxURI);
-
-        commit('processCollocations', {
-          metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  },
-
-
   // API request used for word form freq. results
   async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
     try {
@@ -951,7 +839,7 @@ const actions = {
       const response = await axios.get(freqttURI);
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
       
-      commit('processKWICYearly', { term: queryTerm, result: response.data });
+      // commit('processKWICYearly', { term: queryTerm, result: response.data });
       
       let metaAttr = 'year';
       for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
