@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import router from '../router';
+import { getCollx, getKWIC, getMediaSourcesFreq, getRegionFreq, getTemporal, getWordForms, getWordlistDorcsrc } from '../api/service-amc';
 
 /**
  * This class handles the Austrian Media Corpus.
@@ -773,16 +774,11 @@ const actions = {
 
   
   // API request used for total rel. freq. and KWIC results
-  async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
-    try {
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.datum;setrefs==doc.region;setrefs==doc.ressort2;setrefs==doc.docsrc_name;pagesize=1000;newctxsize=30;async=0;format=json`;
-      state.chartData.queryRelSummary.loadingStatus += 1;
-      state.chartData.kwic.loadingStatus += 1;
-      const response = await axios.get(viewattrsxURI);
-      commit('processKWIC', { term: queryTerm, result: response.data });
-    } catch (error) {
-      console.log(error);
-    }
+  async requestKWIC({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {    
+    const response = await getKWIC(state.engineAPI, queryTermEncoded, state.selectedCorpus.value, useSubCorp);
+    state.chartData.queryRelSummary.loadingStatus += 1;
+    state.chartData.kwic.loadingStatus += 1;
+    commit('processKWIC', { term: queryTerm, result: response.data })
   },
 
 
@@ -790,28 +786,22 @@ const actions = {
   async requestRegionFreq({ state, commit, dispatch }, {
     queryTerm, metaAttr, metaVal, useSubCorp, storeObject, wordFormsQueryFlag,
   }) {
-    try {
-      const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${metaVal}"/>`);
-      const viewattrsxURI = `${state.engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
+      const response = await getRegionFreq(state.engineAPI, queryTerm, metaAttr, metaVal, state.selectedCorpus.value, useSubCorp) // axios.get(viewattrsxURI);
       storeObject.loadingStatus += 1;
-      const response = await axios.get(viewattrsxURI);
       const absFreq = response.data.fullsize;
       const relFreq = response.data.relsize;
       commit('processRegionFreq', {
         metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
       });
-    } catch (error) {
-      console.log(error);
-    }
+    
   },
 
   // API request used for word form freq. results
   async requestWordForms({ state, commit, dispatch }, { queryTerm, queryTermEncoded, useSubCorp }) {
-    try {
-      const freqsURI = `${state.engineAPI}freqs?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
-      state.chartData.queryRelSummary.loadingStatus += 1;
-      const response = await axios.get(freqsURI);
-      commit('processWordFreqSum', { term: queryTerm, result: response.data });
+    
+    const response = await getWordForms(state.engineAPI, queryTermEncoded, state.selectedCorpus.value, useSubCorp);
+    state.chartData.queryRelSummary.loadingStatus += 1;
+    commit('processWordFreqSum', { term: queryTerm, result: response.data });
 
       // const wordFormSetIndex = state.chartData.temporal.wordForms.push({ name: queryTerm, data: [] }) - 1;
       // const wordFormSet = state.chartData.temporal.wordForms[wordFormSetIndex];
@@ -828,41 +818,22 @@ const actions = {
           dispatch('requestMetaFreq', { queryTerm: wordFormQueryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.temporal.wordForms, wordFormsQueryFlag: true });
         }
       } */
-    } catch (error) {
-      console.log(error);
-    }
   },
   // API request used for temporal freq. results
   async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, storeObject }) {
-    try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
-      const response = await axios.get(freqttURI);
+    
+      const response = await getTemporal(state.engineAPI, queryTermEncoded, state.selectedCorpus.value, useSubCorp);
       commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
-      
-      // commit('processKWICYearly', { term: queryTerm, result: response.data });
-      
+            
       let metaAttr = 'year';
       for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
-        const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}="${response.data.Blocks[0].Items[i].Word[0].n}"/>`)
-        const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
-        const responseColl = await axios.get(collxURI);
-
+        let metaVal =  response.data.Blocks[0].Items[i].Word[0].n; // the year
+        const responseColl = await getCollx(state.engineAPI, queryTerm, metaAttr, metaVal, state.selectedCorpus.value, useSubCorp); // axios.get(collxURI);
         commit('processCollocations', {
           metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
         });
       }
-      // const collxURI = `${state.engineAPI}collx?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
-      // storeObject.loadingStatus += 1;
-      // const responseColl = await axios.get(collxURI);
-
-      // commit('processCollocations', {
-      //   metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
-      // });
     
-      // commit('processCollocationsAll', { term: queryTerm, result: response.data }); TODO
-    } catch (error) {
-      console.log(error);
-    }
   },
   // API request used for regional freq. results
   async requestRegional({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
@@ -876,16 +847,11 @@ const actions = {
   },
   // API request used for media sources freq. results
   async requestMediaSources({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
-    try {
-      const freqttURI = `${state.engineAPI}freqtt?q=${queryTermEncoded};corpname=${state.selectedCorpus.value};${useSubCorp}fttattr=doc.docsrc;fcrit=doc.id;flimit=0;format=json`;
-      state.chartData.sources.loadingStatus += 1;
-      const response = await axios.get(freqttURI);
-      const wordlistDocsrcURI = `${state.engineAPI}wordlist?corpname=${state.selectedCorpus.value};wlmaxitems=1000;wlattr=doc.docsrc;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
-      const wordlistDocsrcResponse = await axios.get(wordlistDocsrcURI);
-      commit('processSources', { term: queryTerm, result: response.data.Blocks !== undefined ? response.data.Blocks[0].Items : [], docsrcSize: wordlistDocsrcResponse.data });
-    } catch (error) {
-      console.log(error);
-    }
+    state.chartData.sources.loadingStatus += 1;
+    const response = await getMediaSourcesFreq(state.engineAPI, queryTermEncoded, state.selectedCorpus.value, useSubCorp);
+    const wordlistDocsrcResponse = await getWordlistDorcsrc(state.engineAPI, state.selectedCorpus.value); // axios.get(wordlistDocsrcURI);
+    commit('processSources', { term: queryTerm, result: response.data.Blocks !== undefined ? response.data.Blocks[0].Items : [], docsrcSize: wordlistDocsrcResponse.data });
+   
   },
   // API request used for ressorts freq. results
   async requestSections({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {

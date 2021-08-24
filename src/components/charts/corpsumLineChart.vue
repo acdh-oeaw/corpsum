@@ -321,7 +321,6 @@ export default {
     },
     flatDomainItems() {
       const domainData = this.chartData[this.valueType].data;
-      console.log('domainData: ', domainData, ' and-> ', this.chartData) // returns arrays of undefined
       const domainItems = [];
       for (let i = 0; i < domainData.length; i += 1) {
         for (let j = 0; j < domainData[i].data.length; j += 1) {
