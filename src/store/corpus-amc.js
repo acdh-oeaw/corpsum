@@ -727,7 +727,7 @@ const actions = {
         const subcorpusKey = getObjectKey(state.subcorporaList, router.currentRoute.params.subcorpus, 'value');
         state.selectedSubcorpus = state.subcorporaList[subcorpusKey];
       }
-
+  
       const queryTermEncoded = encodeURIComponent(`aword,${queryTerm}`);
       // const requestURIs = {};
       let useSubCorp = '';

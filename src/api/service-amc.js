@@ -7,8 +7,8 @@ Vue.prototype.$http = axios;
 Vue.prototype.axios = axios;
 
 axios.defaults.withCredentials = true;
-const engineAPI = 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/';
 
+const engineAPI = 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/';
 
 Vue.use(Vuex);
 
@@ -22,6 +22,12 @@ export async function getKWIC(queryTermEncoded, selectedCorpus, subCorp) {
     }
 }
 
+/**
+ * This method provides access to the frequenct statistics
+ * The attribute that stands at the core of the request (fttattr) is the year
+ * 
+ * @returns response from the get function
+ */
 export async function getTemporal(queryTermEncoded, selectedCorpus, useSubCorp) {
     const freqttURI = `${engineAPI}freqtt?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}fttattr=doc.year;fcrit=doc.id;flimit=0;format=json`;
     try {
@@ -32,6 +38,11 @@ export async function getTemporal(queryTermEncoded, selectedCorpus, useSubCorp) 
     }
 }
 
+/**
+ * This method provides collocation candidates computation
+ * 
+ * @returns 
+ */
 export async function getCollx(queryTerm, metaAttr, metaVal, selectedCorpus, useSubCorp) {
     const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}=${metaVal}/>`);
     const collxURI = `${engineAPI}collx?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
@@ -54,6 +65,10 @@ export async function getRegionFreq(queryTerm, metaAttr, metaVal, selectedCorpus
     }
 }
 
+/**
+ * This method provides access to the frequency statistics.
+ *
+ */
 export async function getWordForms(queryTermEncoded, selectedCorpus, useSubCorp) {
     const freqsURI = `${engineAPI}freqs?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}fcrit=word/e 0~0>0;flimit=0;format=json`;
     try {
@@ -64,6 +79,10 @@ export async function getWordForms(queryTermEncoded, selectedCorpus, useSubCorp)
     }
 }
 
+/**
+ * docsrc
+ * 
+ */
 export async function getMediaSourcesFreq(queryTermEncoded, selectedCorpus, useSubCorp) {
     const freqttURI = `${engineAPI}freqtt?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}fttattr=doc.docsrc;fcrit=doc.id;flimit=0;format=json`;
     try {
@@ -74,6 +93,10 @@ export async function getMediaSourcesFreq(queryTermEncoded, selectedCorpus, useS
     }
 }
 
+/**
+ * This method provides the functionality of “word list” and “keywords” functions that are normally available under the link “Word List” in the web interface
+ * The corpus attribute that we work with here is docsrc
+ */
 export async function getWordlistDorcsrc(selectedCorpus) {
     const wordlistDocsrcURI = `${engineAPI}wordlist?corpname=${selectedCorpus};wlmaxitems=1000;wlattr=doc.docsrc;wlminfreq=1;include_nonwords=1;wlsort=f;wlnums=docf;format=json`;
     try {
@@ -84,6 +107,10 @@ export async function getWordlistDorcsrc(selectedCorpus) {
     }
 }
 
+/**
+ * This method provides the functionality of “word list” and “keywords” functions that are normally available under the link “Word List” in the web interface
+ * The corpus attributes: year, region, docsrc_name, ressort2
+ */
 export async function getCorpusInfo(selectedCorpus, subCorp) {
     const requestURIs = {};
     requestURIs.docsYears = `${engineAPI}wordlist?corpname=${selectedCorpus};${subCorp}wlmaxitems=1000;wlattr=doc.year;wlminfreq=1;include_nonwords=1;wlsort=f;format=json`;
