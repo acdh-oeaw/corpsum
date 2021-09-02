@@ -48,7 +48,8 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <div class="corpsum-line-chart corpsum-chart" ref="chart" :key="componentKey">
+      <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>    
+      <!-- <div class="corpsum-line-chart corpsum-chart" ref="chart" :key="componentKey">
         <svg class="main-svg" :width="svgWidth" :height="svgHeight">
           <g class="chart-group" ref="chartGroup">
             <g class="focus-group" ref="focusGroup">
@@ -59,7 +60,7 @@
             <g class="tooltips" v-show="showCollocations" ref="tooltips"></g>
           </g>
         </svg>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -129,6 +130,56 @@ export default {
         { text: 'Relative', value: 'relative' },
         { text: 'Absolute', value: 'absolute' },
       ],
+      chartOptions: {
+        exporting: {
+          enabled: false,
+        },
+        chart: {
+          type: 'line',
+          height: this.chartProp.height,
+          spacingButtom: 30,
+          spacingTop: 25,
+          spacingLeft: 40,
+          spacingRight: 20,
+        },
+        title: this.chartProp.title, //
+        xAxis: {
+          type: this.chartProp.xAxisType, // 
+          categories: this.chartProp.categoriesX, //
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: this.chartProp.yAxisText, //
+          },
+          labels: {
+              //
+          },
+        },
+        legend: {
+          enabled: this.chartProp.legendEnabled,
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'top',
+          y: -15,
+          margin: 15,
+        },
+        tooltip: {
+            pointFormat: //
+            '<span><b>{point.source}</b></span>:<br/>Relative freq: {point.x}%<br/> Absolute freq:: {point.y}<br/> Partition size: {point.z}<br/>',
+        },
+        plotOptions: {
+          line: {
+            dataLabels: {
+              enabled: true
+            },
+            enableMouseTracking: false,
+          }
+
+        },
+        series: this.chartProp.series,
+
+      },
       wordFormsToShow: false,
       wordFormsBarIndex: false,
       showCollocations: true,
@@ -137,7 +188,7 @@ export default {
   watch: {
     chartProp: {
       handler() {
-        this.drawChart();
+        // this.drawChart();
       },
       deep: true,
     },

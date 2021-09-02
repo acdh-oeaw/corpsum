@@ -41,7 +41,6 @@ export async function getTemporal(queryTermEncoded, selectedCorpus, useSubCorp) 
 /**
  * This method provides collocation candidates computation
  * 
- * @returns 
  */
 export async function getCollx(queryTerm, metaAttr, metaVal, selectedCorpus, useSubCorp) {
     const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}=${metaVal}/>`);

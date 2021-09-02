@@ -427,6 +427,7 @@ export default {
       d3.select(`#t${this.xScale(d[this.xKey])}-${this.yScale(d[this.yKey])}-${i}`).remove();
       let lineName = d.name;
       if (d.query) lineName = `[word="${d.name}"]`;
+      console.log('d.name: ', d.name)
       this.bus.$emit('onBarHover', { name: lineName, flag: false }); // cannot read property 'name' of undefined 
     },
     handleBarClick(d, i) {
