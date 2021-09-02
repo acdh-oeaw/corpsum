@@ -48,8 +48,8 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>    
-      <!-- <div class="corpsum-line-chart corpsum-chart" ref="chart" :key="componentKey">
+      <!-- <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>     -->
+      <div class="corpsum-line-chart corpsum-chart" ref="chart" :key="componentKey">
         <svg class="main-svg" :width="svgWidth" :height="svgHeight">
           <g class="chart-group" ref="chartGroup">
             <g class="focus-group" ref="focusGroup">
@@ -60,7 +60,7 @@
             <g class="tooltips" v-show="showCollocations" ref="tooltips"></g>
           </g>
         </svg>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -188,7 +188,7 @@ export default {
   watch: {
     chartProp: {
       handler() {
-        // this.drawChart();
+        this.drawChart();
       },
       deep: true,
     },

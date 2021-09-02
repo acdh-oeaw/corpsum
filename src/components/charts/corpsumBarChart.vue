@@ -53,22 +53,22 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <div class="corpsum-bar-chart" :key="componentKey" ref="chart">
-        <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
+      <!-- <div class="corpsum-bar-chart" :key="componentKey" ref="chart"> -->
+        <!-- <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
             <g id="axis-x" class="axis"></g>
             <g id="axis-y" class="axis"></g>
             <g id="bars-group"></g>
           </g>
-        </svg>
-      <!-- <highcharts :options="chartOptions" ref="chartTry" v-show="showChartElement"></highcharts> -->
-        <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
+        </svg> -->
+      <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>
+        <!-- <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
           <corner-up-left-icon></corner-up-left-icon>
           Go Back
-        </b-button>
+        </b-button> -->
 
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -108,14 +108,59 @@ export default {
   },
   data() {
     return {
-      // chartOptions: {
-      //   zoomType: 'xy',
-      //   height: 275,
-      //   spacingBottom: 30,
-      //   spacingTop: 25,
-      //   spacingLeft: 40,
-      //   spacingRight: 20,
-      // },
+      chartOptions: {
+        exporting: {
+          enabled: false,
+        },
+        chart: {
+          type: 'column',
+          height: this.chartProp.height,
+          spacingBottom: 30,
+          spacingTop: 25,
+          spacingLeft: 40,
+          spacingRight: 20,
+        },
+        title: false,
+        xAxis: {
+          type: this.chartProp.xAxisType,
+          categories: this.chartProp.categoriesX,
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: this.chartProp.yAxisText,
+          },
+          labels: {
+            // align: 'left',
+            // x: 0,
+          },
+        },
+        legend: {
+          enabled: this.chartProp.legendEnabled,
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'top',
+          y: -15,
+          margin: 5,
+        },
+        tooltip: {
+          pointFormat:
+            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+          shared: true,
+        },
+        plotOptions: {
+          column: {
+            dataLabels: {
+              enabled: true,
+              inside: true,
+              align: 'center',
+              verticalAlign: 'top',
+              format: '{point.y}',
+            },
+          },
+        },
+        series: this.chartProp.series,
+      },
       svgWidth: 0,
       svgHeight: 275,
       svgPadding: {
@@ -563,15 +608,14 @@ export default {
       this.componentKey += 1;
     },
     exportImage() {
-      this.$refs.chart.$children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
+      this.$refs.chart.chart.exportChartLocal({ type: 'image/svg+xml' });
     },
     exportCSV() {
-      this.$refs.chart.$children[0].chart.downloadCSV();
+      console.log('CSV', this.$refs.chart, this.$refs.chart.$children)
+      this.$refs.chart.chart.downloadCSV();
     },
     showTable() {
-      console.log('showTable function: ', this.$refs.chart, 'children: ', this.$refs.chart.$children)
-      this.$refs.chart.$children[0].chart.viewData(); // this.$refs.chart is the html object and has no children
-      console.log(this.$el, this.$el.querySelector('.highcharts-data-table')) // querySelector highcharts is null
+      this.$refs.chart.chart.viewData(); // this.$refs.chart is the html object and has no children
       this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
@@ -582,10 +626,10 @@ export default {
       this.showTableIcon = true;
       this.showChartIcon = false;
       this.showChartElement = true;
-      const tables = this.$el.querySelectorAll('.highcharts-data-table');
-      for (let i = 0; i < tables.length; i += 1) {
-        tables[i].style.display = 'none';
-      }
+      const tables = this.$el.querySelectorAll('.highcharts-data-table').style.display = 'none';
+      // for (let i = 0; i < tables.length; i += 1) {
+      //   tables[i].style.display = 'none';
+      // }
     },
   },
   computed: {
