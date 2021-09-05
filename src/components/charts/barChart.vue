@@ -106,13 +106,13 @@ export default {
   },
   methods: {
     exportImage() {
-      this.$refs.chart.chart.exportChartLocal({ type: 'image/svg+xml' });
+      this.$refs.chart.children[0].chart.exportChartLocal({ type: 'image/svg+xml' });
     },
     exportCSV() {
-      this.$refs.chart.chart.downloadCSV();
+      this.$refs.chart.children[0].chart.downloadCSV();
     },
     showTable() {
-      this.$refs.chart.chart.viewData();
+      this.$refs.chart.children[0].chart.viewData();
       this.$el.querySelector('.highcharts-data-table').childNodes[0].classList.add('table', 'table-sm', 'table-bordered');
       this.$el.querySelector('.highcharts-data-table').style.display = 'block';
       this.showTableIcon = false;
