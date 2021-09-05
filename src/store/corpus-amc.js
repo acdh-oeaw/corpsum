@@ -829,9 +829,14 @@ const actions = {
     for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
       let metaVal = response.data.Blocks[0].Items[i].Word[0].n; // the year
       const responseColl = await getCollx(queryTerm, metaAttr, metaVal, state.selectedCorpus.value, useSubCorp); // axios.get(collxURI);
-      commit('processCollocations', {
-        metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
-      });
+      if (responseColl !== 'no collocations') {
+        commit('processCollocations', {
+          metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
+        });
+      } 
+      // else {
+      //   this.disable_collocations_btn = true;
+      // }
     }
 
   },
@@ -1132,6 +1137,11 @@ const state = {
       xAxisText: 'Ranking',
     }, */
   },
+  /**
+   * chartData is especially important for the corpsumLineChart vue component 
+   * that is mainly in charge of the Yearly Freq. table. 
+   * 
+   */
   chartData: {
     queryTerms: [],
     separatorQuery: {
@@ -1200,6 +1210,7 @@ const state = {
         },
       },
       collocations: [],
+      // disable_collocations_btn: false,
     },
     sources: {
       title: 'Distribution of Media Sources',
