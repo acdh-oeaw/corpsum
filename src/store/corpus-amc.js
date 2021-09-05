@@ -201,7 +201,6 @@ const mutations = {
   },
 
   processRegionFreq(state, payload) {
-    console.log('processRegionFreq', payload)
     const { metaVal } = payload;
     const queryTerm = payload.term;
     let { absFreq } = payload;
@@ -752,7 +751,6 @@ const actions = {
       const metaValsArray = ['aost', 'awest', 'amitte', 'asuedost'];
       for (let i = 0; i < metaValsArray.length; i += 1) {
         const metaVal = metaValsArray[i];
-        console.log('metaVal: ', metaVal, queryTerm)
         dispatch('requestRegionFreq', {
           queryTerm, metaAttr, metaVal, useSubCorp, storeObject: state.chartData.regions,
         });
@@ -792,7 +790,6 @@ const actions = {
     storeObject.loadingStatus += 1;
     const absFreq = response.data.fullsize;
     const relFreq = response.data.relsize;
-    console.log('reponse from getRegionFreq', response)
     commit('processRegionFreq', {
       metaAttr, metaVal, term: queryTerm, absFreq, relFreq, storeObject,
     });
@@ -932,7 +929,6 @@ const actions = {
       const routerQueryTerms = router.currentRoute.params.query.split(';');
       for (let i = 0; i < routerQueryTerms.length; i += 1) {
         commit('queryTermAdded', { text: routerQueryTerms[i], tiClasses: ['ti-valid'] });
-        console.log('routerQueryTerms[i]: ', routerQueryTerms[i])
         dispatch('corpusQuery', routerQueryTerms[i]);
       }
     }
