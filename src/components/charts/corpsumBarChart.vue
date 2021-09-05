@@ -53,22 +53,21 @@
         </div>
       </div>
       <b-modal :id="chartInfoModal.id" :title="this.chartProp.title" ok-only scrollable>{{this.chartProp.subtitle}}</b-modal>
-      <!-- <div class="corpsum-bar-chart" :key="componentKey" ref="chart"> -->
-        <!-- <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight">
+      <div class="corpsum-bar-chart" :key="componentKey" ref="chart"> 
+        <svg id="main-svg" v-if="redrawToggle === true" :width="svgWidth" :height="svgHeight"> 
           <g id="chart-group">
             <g id="gridlines-y" class="gridlines"></g>
             <g id="axis-x" class="axis"></g>
             <g id="axis-y" class="axis"></g>
             <g id="bars-group"></g>
           </g>
-        </svg> -->
-      <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>
-        <!-- <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
+        </svg>
+      <!-- <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts> -->
+        <b-button variant="outline-primary" class="go-to-upper-chart-btn chart-btn-sm" v-show="activeDrilldownQuery" @click="goToUpperChart" size="sm">
           <corner-up-left-icon></corner-up-left-icon>
           Go Back
-        </b-button> -->
-
-      <!-- </div> -->
+        </b-button>
+       </div>
     </div>
   </div>
 </template>
@@ -131,8 +130,6 @@ export default {
             text: this.chartProp.yAxisText,
           },
           labels: {
-            // align: 'left',
-            // x: 0,
           },
         },
         legend: {
