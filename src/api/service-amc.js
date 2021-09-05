@@ -62,6 +62,9 @@ export async function getRegionFreq(queryTerm, metaAttr, metaVal, selectedCorpus
     const viewattrsxURI = `${engineAPI}viewattrsx?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}viewmode=kwic;attrs=word;ctxattrs=word;setattrs=word;allpos=kw;setrefs==doc.id;setrefs==doc.region;pagesize=10;newctxsize=5;async=0;format=json`;
     try {
         const response = await axios.get(viewattrsxURI);
+        if (response.data.error) {
+            console.log('no data regarding the region frequency was found.')
+        }
         return response;
     } catch (error) {
         console.log(error);

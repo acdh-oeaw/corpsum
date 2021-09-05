@@ -184,7 +184,6 @@ export default {
       wordFormsToShow: false,
       wordFormsBarIndex: false,
       showCollocations: true,
-      disable_collocations_btn: this.chartProp.disable_collocations_btn,
     };
   },
   watch: {
