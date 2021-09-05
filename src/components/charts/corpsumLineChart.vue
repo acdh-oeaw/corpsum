@@ -58,7 +58,7 @@
               <g class="axis axis-y" ref="axisY"></g>
               <g class="gridlines gridlines-y" ref="gridlinesY"></g>
             </g>
-            <g class="tooltips" v-show="showCollocations" ref="tooltips"></g>
+            <g class="tooltips" v-show="showCollocations" v-if="this.chartData.collocations.length > 0" ref="tooltips"></g>
           </g>
         </svg>
       </div>
