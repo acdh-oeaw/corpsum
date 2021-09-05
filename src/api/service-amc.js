@@ -44,7 +44,6 @@ export async function getTemporal(queryTermEncoded, selectedCorpus, useSubCorp) 
  */
 export async function getCollx(queryTerm, metaAttr, metaVal, selectedCorpus, useSubCorp) {
     const queryTermEncoded = encodeURIComponent(`aword,${queryTerm} within <doc ${metaAttr}=${metaVal}/>`);
-    console.log(queryTermEncoded);
     const collxURI = `${engineAPI}collx?q=${queryTermEncoded};corpname=${selectedCorpus};${useSubCorp}cfromw=-5;ctow=5;cminfreq=5;cminbgr=3;cmaxitems=10;cbgrfns=d;csortfn=d;format=json`;
     try {
         const responseColl = await axios.get(collxURI);

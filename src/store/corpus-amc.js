@@ -834,9 +834,10 @@ const actions = {
           metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
         });
       } 
-      // else {
-      //   this.disable_collocations_btn = true;
-      // }
+      else {
+        this.disable_collocations_btn = true;
+        console.log('yes disabledddd')
+      }
     }
 
   },
@@ -1210,7 +1211,6 @@ const state = {
         },
       },
       collocations: [],
-      // disable_collocations_btn: false,
     },
     sources: {
       title: 'Distribution of Media Sources',

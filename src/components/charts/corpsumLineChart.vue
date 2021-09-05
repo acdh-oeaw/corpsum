@@ -13,11 +13,11 @@
 
         <b-form-group class="head-buttons ml-auto mr-2">
           <b-button
+            v-if="this.chartData.collocations.length > 0"
             :pressed.sync="showCollocations"
             variant="outline-primary"
             size="sm"
           >
-            <!-- :disabled="this.chartData[disable_collocations_btn]" -->
             Collocations
           </b-button>
         </b-form-group>
@@ -184,7 +184,7 @@ export default {
       wordFormsToShow: false,
       wordFormsBarIndex: false,
       showCollocations: true,
-      // disable_collocations_btn: this.chartData[disable_collocations_btn],
+      disable_collocations_btn: this.chartProp.disable_collocations_btn,
     };
   },
   watch: {
