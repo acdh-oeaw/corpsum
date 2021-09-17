@@ -105,8 +105,7 @@ export default {
       this.wordFormsBarIndex = false;
       this.drawChart();
     });
-    console.log('length of the collocations: ', this.chartData.collocations.length);
-    // onBarHover handles the hovering with the mouse of the column component in the table
+    // onBarHover handles the hovering with the mouse of the column component in corpsumBarChart!
     this.bus.$on('onBarHover', (payload) => {
       this.highlightLine(payload.name, payload.flag);
     });
@@ -272,17 +271,20 @@ export default {
     onLineCircleClick(year, query) {
       this.bus.$emit('onLineCircleClick', { year, query });
     },
+    // creates the small window containing the relevant collocations information
     onLineCircleMouseOver(year, query, position, iParent) {
       let collxData = [];
+      // the correct year is found via iterating
       for (let i = 0; i < this.chartData.collocations.length; i += 1) {
         const d = this.chartData.collocations[i];
-        if (d.year === year && d.query === query) {
+        if (d.year === '' + year.toString(10) && d.query.replace(/\\/g, '') === query) {
           collxData = d.data;
-          break;
+          break; // if the correct year and query are found, stops the loop, the relevant information is located in collxData
         }
       }
       let collxGroup;
-      if (collxData) {
+      // only if the data contains information, otherwise not rect will be drawn
+      if (collxData.length > 0) {
         collxGroup = select(this.$refs.tooltips).append('g')
           .attr('class', 'line-collx-group');
 
@@ -320,10 +322,9 @@ export default {
     onLineCircleMouseOut() {
       select(this.$refs.tooltips).select('.line-collx-group').remove();
     },
+    // The line in this component will be highlighted if there is a hovering on the corresponding column in the BarChart component
     highlightLine(queryName, flag) {
-      console.log('we are in highlightLine')
-      const lineID = this.getObjectKey(this.chartData[this.valueType].data, queryName, 'name');
-      console.log('the lindID is: ', lineID)
+      const lineID = this.getObjectKey(this.chartData[this.valueType].data, queryName, 'name'); // returns the column index on which the hovering is happening
       select(this.$refs.focusGroup).select(`.line-id-${lineID}`).classed('line-path-hovered', flag);
     },
     exportImage() {
