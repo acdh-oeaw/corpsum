@@ -343,6 +343,7 @@ const mutations = {
     const { metaAttr } = payload;
     const items = payload.data.Items;
     const collSet = { query: payload.term, [metaAttr]: metaVal, data: [] };
+    
     if (items !== undefined) {
 
       for (let i = 0; i < items.length; i += 1) {
@@ -827,6 +828,7 @@ const actions = {
 
     let metaAttr = 'year';
     for (let i = 0; i < response.data.Blocks[0].Items.length; i += 1) {
+      state.chartData.temporal.loadingStatus += 1;
       let metaVal = response.data.Blocks[0].Items[i].Word[0].n; // the year
       const responseColl = await getCollx(queryTerm, metaAttr, metaVal, state.selectedCorpus.value, useSubCorp); // axios.get(collxURI);
       if (responseColl !== 'no collocations') {
