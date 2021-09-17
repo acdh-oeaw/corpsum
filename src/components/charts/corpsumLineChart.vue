@@ -105,6 +105,7 @@ export default {
       this.wordFormsBarIndex = false;
       this.drawChart();
     });
+    console.log('length of the collocations: ', this.chartData.collocations.length);
     // onBarHover handles the hovering with the mouse of the column component in the table
     this.bus.$on('onBarHover', (payload) => {
       this.highlightLine(payload.name, payload.flag);
@@ -183,7 +184,7 @@ export default {
       },
       wordFormsToShow: false,
       wordFormsBarIndex: false,
-      showCollocations: true,
+      showCollocations: true, // enables the hovering that shows the list of collocations per year
     };
   },
   watch: {
@@ -320,7 +321,9 @@ export default {
       select(this.$refs.tooltips).select('.line-collx-group').remove();
     },
     highlightLine(queryName, flag) {
+      console.log('we are in highlightLine')
       const lineID = this.getObjectKey(this.chartData[this.valueType].data, queryName, 'name');
+      console.log('the lindID is: ', lineID)
       select(this.$refs.focusGroup).select(`.line-id-${lineID}`).classed('line-path-hovered', flag);
     },
     exportImage() {

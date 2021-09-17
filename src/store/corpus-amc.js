@@ -338,7 +338,7 @@ const mutations = {
     state.chartData.sections.series.push(series);
   },
   processCollocations(state, payload) {
-    const { storeObject } = payload;
+    // const { storeObject } = payload;
     const { metaVal } = payload;
     const { metaAttr } = payload;
     const items = payload.data.Items;
@@ -352,10 +352,10 @@ const mutations = {
           collSet.data.push({ name: items[i].str, logDice: valueRounded });
         }
       }
-      if (items.length > 0) storeObject.collocations.push(collSet);
+      if (items.length > 0) state.chartData.temporal.collocations.push(collSet);
     }
 
-    storeObject.loadingStatus -= 1;
+    state.chartData.temporal.loadingStatus -= 1;
   },
   processRegional(state, payload) {
     const itemsRegions = payload.result;
@@ -745,7 +745,7 @@ const actions = {
 
       dispatch('requestKWIC', { queryTerm, queryTermEncoded, useSubCorp }); // total rel. freq. and KWIC results
       dispatch('requestWordForms', { queryTerm, queryTermEncoded, useSubCorp }); // word form freq. results
-      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp, storeObject: state.chartData.temporal, });
+      dispatch('requestTemporal', { queryTerm, queryTermEncoded, useSubCorp });
 
       let metaAttr = 'region';
       // 'agesamt', 'spezifisch'
@@ -821,7 +821,7 @@ const actions = {
     } */
   },
   // API request used for temporal freq. results
-  async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp, storeObject }) {
+  async requestTemporal({ state, commit }, { queryTerm, queryTermEncoded, useSubCorp }) {
 
     const response = await getTemporal(queryTermEncoded, state.selectedCorpus.value, useSubCorp);
     commit('processTemporal', { term: queryTerm, result: response.data.Blocks[0].Items });
@@ -833,7 +833,7 @@ const actions = {
       const responseColl = await getCollx(queryTerm, metaAttr, metaVal, state.selectedCorpus.value, useSubCorp); // axios.get(collxURI);
       if (responseColl !== 'no collocations') {
         commit('processCollocations', {
-          metaAttr, metaVal, term: queryTerm, data: responseColl.data, storeObject,
+          metaAttr, metaVal, term: queryTerm, data: responseColl.data
         });
       } 
     }
