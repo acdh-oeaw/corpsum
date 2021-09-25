@@ -481,7 +481,10 @@ export default {
         this.activeDrilldownParentIndex = i;
         this.createBars(barsData, i);
         // this.$store.commit('queryTermAdded', val.tag);
-        this.bus.$emit('onDrilldownClick', { barsData, i });
+        console.log('barsData, i', barsData, i)
+        if (barsData !== undefined && i !== undefined) {
+          this.bus.$emit('onDrilldownClick', { barsData, i });
+        }
       }
     },
     goToUpperChart() {
