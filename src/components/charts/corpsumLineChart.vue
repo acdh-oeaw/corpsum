@@ -535,26 +535,21 @@ export default {
             this.chartProp.wordForms[this.valueType].data[key]
           );
         }
-        console.log("returns after looping", wordFormsLines); // returns an array of undefined
         return wordFormsLines;
       }
-      console.log("did not go inside the loop, returns: ", this.chartProp);
       return this.chartProp;
     },
     flatDomainItems() {
       console.log(this.chartData, this.valueType);
       const domainData = this.chartData[this.valueType].data;
       const domainItems = [];
-      console.log("domainData: ", domainData);
       if (domainData.length !== 0) {
         for (let i = 0; i < domainData.length; i += 1) {
           if (domainData[i] !== undefined) {
             for (let j = 0; j < domainData[i].data.length; j += 1) {
               domainItems.push(domainData[i].data[j]);
             }
-          } else {
-            console.log('it was undefined')
-          }
+          } 
         }
       }
       return domainItems;

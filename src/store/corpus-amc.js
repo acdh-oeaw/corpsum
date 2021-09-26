@@ -714,6 +714,9 @@ const getters = {
 };
 
 const actions = {
+  /**
+   * This query conducts the collection of data from the backend with the new search input 
+   */
   async corpusQuery({ state, commit, dispatch }, queryTerm) {
     try {
       commit('changeLoadingStatus', { status: true });
@@ -948,6 +951,9 @@ const actions = {
     }, */
 };
 
+/**
+ * holds all relevant information and the values are updated with each query
+ */
 const state = {
   engineAPI: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
   engineAPINoCache: 'https://corpsum-proxy.acdh-dev.oeaw.ac.at/run.cgi/',
@@ -971,7 +977,7 @@ const state = {
     docsrcSizes: [],
     ressortSizes: [],
   },
-  chartElements: [
+  chartElements: [ // holds all relevant components for the charts
     {
       component: 'corpsumBarChart',
       class: 'col-md-4 vis-component',
@@ -1070,6 +1076,7 @@ const state = {
       chartProp: 'topLCs',
     }, */
   ],
+  // each component receives the relevant object to create the chart
   infoData: {
     corpusBasicInfo: {
       logo: 'https://www.oeaw.ac.at/fileadmin/_processed_/6/8/csm_acdh_projects_amc_logo_web_a92e4e1d33.png',
@@ -1137,8 +1144,7 @@ const state = {
     }, */
   },
   /**
-   * chartData is especially important for the corpsumLineChart vue component 
-   * that is mainly in charge of the Yearly Freq. table. 
+   * chartData holds the relevant variables that are needed for creating the different charts 
    * 
    */
   chartData: {

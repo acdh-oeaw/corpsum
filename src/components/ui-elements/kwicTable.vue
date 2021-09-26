@@ -233,13 +233,11 @@ export default {
       this.filteredItemsByCharts = [];
       for (let i = 0; i < items.length; i += 1) {
         if (items[i].source === payload.mediaName && items[i].queryTerm === payload.mediaQuery) {
-          console.log(items[i]);
           this.filteredItemsByCharts.push(items[i]);
         }
       }
     });
     this.bus.$on('onRegionClick', (payload) => {
-      console.log('REGION NAME: ', payload.regionName);
       this.activeFilters.push(payload.regionName);
       this.activeFilters.push(payload.regionQuery);
       switch (payload.regionName) {
