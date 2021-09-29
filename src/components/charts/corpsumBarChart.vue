@@ -524,8 +524,6 @@ export default {
         .select('#gridlines-y')
         .call(d3.axisLeft(this.yScale).ticks(5).tickSize(-this.svgWidth + this.svgPadding.left + this.svgPadding.right).tickFormat(''));
 
-      console.log(barsData);
-
       // Define container groups for bars
       const barsGroup = d3.select('#bars-group');
 

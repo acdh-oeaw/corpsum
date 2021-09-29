@@ -509,20 +509,19 @@ export default {
           relative: { data: [] },
         };
         for (let i = 0; i < this.wordFormsToShow.length; i += 1) {
-          console.log(
-            "this.chartProp:",
-            this.chartProp,
-            " AND ",
-            this.chartProp.wordForms.absolute,
-            " | ",
-            this.chartProp.wordForms.relative
-          ); // these relative and absolute values return objects of length 0
+          // console.log(
+          //   "this.chartProp:",
+          //   this.chartProp,
+          //   " AND ",
+          //   this.chartProp.wordForms.absolute,
+          //   " | ",
+          //   this.chartProp.wordForms.relative
+          // ); // these relative and absolute values return objects of length 0
           let key = this.getObjectKey(
             this.chartProp.wordForms.absolute.data,
             `[word="${this.wordFormsToShow[i].name}"]`,
             "name"
           );
-          console.log("key: ", key); // returns undefined
           wordFormsLines.absolute.data.push(
             this.chartProp.wordForms[this.valueType].data[key]
           );

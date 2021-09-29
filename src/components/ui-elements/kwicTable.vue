@@ -466,7 +466,6 @@ export default {
       this.$root.$emit('bv::show::modal', this.subcorpusModal.id, button);
     },
     toggleSelectAllDocs(checked) {
-      console.log(checked);
       if (!checked) {
         this.selectedDocs = [];
         // Loop all items and deselect

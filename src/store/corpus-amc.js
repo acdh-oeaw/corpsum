@@ -24,11 +24,9 @@ function getObjectKey(object, value, property) {
 const mutations = {
   resetQueryTerms(state, payload) {
     state.chartData.queryTerms = payload;
-    console.log(payload);
   },
   resetChartData(state, payload) {
     state.chartData = payload;
-    console.log(payload);
   },
   updateRawResults(state, payload) {
     state.rawResults.push(payload);
