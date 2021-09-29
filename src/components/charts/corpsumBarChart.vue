@@ -481,7 +481,6 @@ export default {
         this.activeDrilldownParentIndex = i;
         this.createBars(barsData, i);
         // this.$store.commit('queryTermAdded', val.tag);
-        console.log('barsData, i', barsData, i)
         if (barsData !== undefined && i !== undefined) {
           this.bus.$emit('onDrilldownClick', { barsData, i });
         }
@@ -610,7 +609,6 @@ export default {
       this.$refs.chart.chart.exportChartLocal({ type: 'image/svg+xml' });
     },
     exportCSV() {
-      console.log('CSV', this.$refs.chart, this.$refs.chart.$children)
       this.$refs.chart.chart.downloadCSV();
     },
     showTable() {

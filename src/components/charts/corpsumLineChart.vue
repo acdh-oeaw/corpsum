@@ -75,10 +75,10 @@
       </div>
       <b-modal
         :id="chartInfoModal.id"
-        :title="this.chartProp.title"
+        :title="`${valueType === 'absolute' ? this.chartProp.absolute.title : this.chartProp.relative.title }`"
         ok-only
         scrollable
-        >{{ this.chartProp.subtitle }}</b-modal
+        >{{ valueType === "absolute" ? this.chartProp.absolute.subtitle : this.chartProp.relative.subtitle }}</b-modal
       >
       <!-- <highcharts :options="chartOptions" ref="chart" v-show="showChartElement"></highcharts>     -->
       <div
@@ -540,7 +540,6 @@ export default {
       return this.chartProp;
     },
     flatDomainItems() {
-      console.log(this.chartData, this.valueType);
       const domainData = this.chartData[this.valueType].data;
       const domainItems = [];
       if (domainData.length !== 0) {

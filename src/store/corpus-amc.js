@@ -1308,6 +1308,7 @@ const state = {
     },
     kwic: {
       loadingStatus: 0,
+      subtitle: '', // TODO: add the text for the information button.
       items: [],
       annotationOptions: [],
       fields: [

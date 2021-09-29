@@ -209,6 +209,7 @@ import { FileTextIcon, ExternalLinkIcon, InfoIcon } from 'vue-feather-icons';
 export default {
   props: {
     chartProp: Object,
+    elKey: Number,
   },
   components: {
     FileTextIcon, ExternalLinkIcon, InfoIcon,
@@ -291,6 +292,9 @@ export default {
         title: '',
         content: '',
         rowId: 0,
+      },
+      chartInfoModal: {
+        id: `chart-info-modal-${this.elKey}`,
       },
       subcorpusModal: {
         id: 'create-subcorpus-modal',
