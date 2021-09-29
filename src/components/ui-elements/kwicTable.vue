@@ -409,13 +409,17 @@ export default {
       do {
         nextRow++;
       }
-      while (this.$refs.table.sortedItems[[nextRow]].docid === this.$refs.table.sortedItems[[curRow]].docid);
-      const item = this.$refs.table.sortedItems[[nextRow]];
-      this.infoModal.title = `${item.source} - ${item.date}`;
-      this.infoModal.rowId = nextRow;
-      this.modalTextContent = '';
-      this.$store.dispatch('modalTextQuery', item);
-      this.infoModal.content = JSON.stringify(item, null, 2);
+      while (this.$refs.table.sortedItems[[nextRow]] !== undefined && this.$refs.table.sortedItems[[nextRow]].docid === this.$refs.table.sortedItems[[curRow]].docid);
+      if (this.$refs.table.sortedItems[[nextRow]] !== undefined) {
+        const item = this.$refs.table.sortedItems[[nextRow]];
+        this.infoModal.title = `${item.source} - ${item.date}`;
+        this.infoModal.rowId = nextRow;
+        this.modalTextContent = '';
+        this.$store.dispatch('modalTextQuery', item);
+        this.infoModal.content = JSON.stringify(item, null, 2);
+      } else {
+        console.log('no further document is availbale')
+      }
     },
     prevDoc() {
       const curRow = this.infoModal.rowId;
@@ -423,13 +427,17 @@ export default {
       do {
         prevRow--;
       }
-      while (this.$refs.table.sortedItems[[prevRow]].docid === this.$refs.table.sortedItems[[curRow]].docid);
-      const item = this.$refs.table.sortedItems[[prevRow]];
-      this.infoModal.title = `${item.source} - ${item.date}`;
-      this.infoModal.rowId = prevRow;
-      this.modalTextContent = '';
-      this.$store.dispatch('modalTextQuery', item);
-      this.infoModal.content = JSON.stringify(item, null, 2);
+      while (this.$refs.table.sortedItems[[prevRow]] !== undefined && this.$refs.table.sortedItems[[prevRow]].docid === this.$refs.table.sortedItems[[curRow]].docid); // error reading docid of undefined
+      if (this.$refs.table.sortedItems[[prevRow]] !== undefined) {
+        const item = this.$refs.table.sortedItems[[prevRow]];
+        this.infoModal.title = `${item.source} - ${item.date}`;
+        this.infoModal.rowId = prevRow;
+        this.modalTextContent = '';
+        this.$store.dispatch('modalTextQuery', item);
+        this.infoModal.content = JSON.stringify(item, null, 2);
+      } else {
+        console.log('no previous document is available.');
+      }
     },
     info(item, index, button) {
       // this.infoModal.title = `Row index: ${index}`
@@ -458,20 +466,20 @@ export default {
       if (!checked) {
         this.selectedDocs = [];
         // Loop all items and deselect
-        for (let i = 0; i < this.items.length; i += 1) {
-          this.items[i].selected = false;
-        }
+        this.items.forEach((item) => {
+          item.selected = false;
+        });
       } else {
         // Loop all items and add them to selectedDocs (ignore duplicates)
-        for (let i = 0; i < this.items.length; i += 1) {
-          if (!this.selectedDocs.includes(this.items[i].docid)) {
-            this.selectedDocs.push(this.items[i].docid);
+          this.items.forEach((item) => {
+          if (!this.selectedDocs.includes(item.docid)) {
+            this.selectedDocs.push(item.docid);
           }
-        }
+        });        
         // Loop all items and select
-        for (let i = 0; i < this.items.length; i += 1) {
-          this.items[i].selected = true;
-        }
+        this.items.forEach((item) => {
+          item.selected = true;
+        });
       }
     },
     toggleSelectedDocs(item) {
