@@ -13,6 +13,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: Pack Build
+        env:
+          ALLOW_INSECURE_HEROKU_18_BUILDER: 1
         uses: dfreilich/pack-action@v2.1.1
         with:
           args: 'build tmp-cnb-image --builder heroku/buildpacks:18'
