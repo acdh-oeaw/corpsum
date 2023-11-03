@@ -11,7 +11,7 @@
   },
   "engines": {
     "node": "14.x",
-    "npm": "7.24.x"
+    "npm": "7.24.2"
   },
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
